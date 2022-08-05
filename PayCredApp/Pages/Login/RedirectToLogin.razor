@@ -1,0 +1,10 @@
+﻿@inject NavigationManager navManager
+
+
+@code{
+	protected override Task OnAfterRenderAsync(bool firstRender)
+	{
+		navManager.NavigateTo("/");
+		return base.OnAfterRenderAsync(firstRender);
+	}
+} 

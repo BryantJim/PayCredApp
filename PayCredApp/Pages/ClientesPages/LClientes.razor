@@ -1,0 +1,83 @@
+﻿@page "/Clientes"
+
+@inject ClienteBLL clienteBLL
+
+<div class="page">
+	<div class="page-header">
+		<div class="row align-items-center mw-100">
+			<div class="col">
+				<div class="mb-1">
+					<ol class="breadcrumb" aria-label="breadcrumbs">
+						<li class="breadcrumb-item"><a href="/Home">Home</a></li>
+						<li class="breadcrumb-item active" aria-current="page"><a href="/Clientes">Clientes</a></li>
+					</ol>
+				</div>
+				<h2 class="page-title">
+					<span class="text-truncate">Listado de Clientes</span>
+				</h2>
+			</div>
+			<div class="col-auto">
+				<div class="btn-list">
+					<a href="" class="btn btn-primary">
+						<span class="oi oi-plus me-2"></span>Agregar Clientes
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="page-body">
+		<div class="container-xl">
+			<div class="card">
+				<div class="card-body">
+					<div class="table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th><button class="table-sort">ID</button></th>
+									<th><button class="table-sort">Nombres</button></th>
+									<th><button class="table-sort">Cédula</button></th>
+									<th><button class="table-sort">Teléfono</button></th>
+									<th><button class="table-sort">Celular</button></th>
+									<th>Dirección</th>
+									<th class="w-1"></th>
+								</tr>
+							</thead>
+							<tbody class="table-tbody">
+								@foreach (var item in clientes)
+								{
+									<tr>
+										<td>@item.IdCliente</td>
+										<td>@(item.Nombres + " " + item.Apellidos)</td>
+										<td>@item.Cedula</td>
+										<td>@item.Telefono</td>
+										<td>@item.Celular</td>
+										<td>@item.Direccion</td>
+										<td class="text-end">
+											<div class="btn-list flex-nowrap">
+												
+												<a class="btn btn-info"><span class="oi oi-pencil me-2"></span>Editar</a>
+												<a class="btn btn-danger"><span class="oi oi-basket me-2"></span>Eliminar</a>
+											</div>
+
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+@code {
+	List<Clientes> clientes = new List<Clientes>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		clientes = await clienteBLL.GetList(x => true);
+	}
+}

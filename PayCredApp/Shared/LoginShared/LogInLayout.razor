@@ -1,0 +1,36 @@
+﻿@inherits LayoutComponentBase
+
+ <BlazoredToasts Position="Blazored.Toast.Configuration.ToastPosition.TopRight"
+                Timeout="2"
+                IconType="Blazored.Toast.IconType.FontAwesome"
+                SuccessClass="success-toast-override"
+                SuccessIcon="fa fa-thumbs-up"
+                ErrorIcon="fa fa-bug" />
+
+<body class="border-top-wide border-primary d-flex flex-column theme-light">
+	<div class="page page-center">
+		<div class="container-tight py-4">
+			<div class="text-center mt-3">
+				<a href="" class="navbar-brand navbar-brand-autodark mb-2">
+					<img src="img/LogoPayCredSinFondoPNG.png" height="70"/>
+				</a>
+			</div>
+			<form class="card card-md" autocomplete="off">
+				@Body
+			</form>
+			<div class="text-center text-muted mt-3">
+				<strong>Copyright ©️ Anthony Brian Jiménez 2022</strong>
+			</div>
+		</div>
+	</div>
+</body>
+
+<style>
+	body{
+		background-color:#DCDCDC;
+	}
+</style>
+
+@code {
+
+}

@@ -1,0 +1,78 @@
+﻿@layout LogInLayout
+@page "/"
+@inject IToastService toastService
+@inject AuthenticationStateProvider authProvider
+@inject NavigationManager navManager
+
+@inject UsuarioBLL usuarioBLL
+
+<EditForm Model="@model" OnValidSubmit="@LogInButton">
+	<DataAnnotationsValidator />
+	<div class="card-body">
+		<h1 class="text-center mb-4">Iniciar Sesión</h1>
+
+		<div class="mb-3">
+			<label class="form-label">Nombre de Usuario</label>
+			<InputText type="text" class="form-control" placeholder="Ej. admin" @bind-Value="model.NombreUsuario" />
+			<ValidationMessage For="() => model.NombreUsuario" />
+		</div>
+
+		<div class="mb-2">
+			<label class="form-label">Contraseña</label>
+			<InputText type="password" class="form-control" placeholder="Ej. 1234" @bind-Value="model.Contrasena" />
+			<ValidationMessage For="() => model.NombreUsuario" />
+		</div>
+
+		<div class="mb-2">
+			<a href="#">¿No recuerdas la contraseña?</a>
+		</div>
+
+		<div class="form-footer">
+			<button type="submit" class="btn btn-primary w-100" style="font-size:16px;">Entrar <span class="oi oi-account-login ms-2"></span></button>
+		</div>
+	</div>
+</EditForm>
+
+
+
+@code {
+
+	private class LoginViewModel
+	{
+		[Required(ErrorMessage = "Usuario es requerido")]
+		public string NombreUsuario { get; set; } = string.Empty;
+		[Required(ErrorMessage = "Contraseña es requerida")]
+		public string Contrasena { get; set; } = string.Empty;
+	}
+
+	LoginViewModel model = new LoginViewModel();
+
+	private async Task LogInButton(EditContext editContext)
+	{
+		if (editContext.Validate())
+		{
+			var Usuario = await usuarioBLL.LogIn(model.NombreUsuario, model.Contrasena);
+
+			if (Usuario.IdUsuario != 0)
+			{
+				var customAuthProvider = (CustomAuthenticationStateProvider)authProvider;
+
+				await customAuthProvider.UpdateAuthenticationState(new UserSession
+					{
+						IdUsuario = Usuario.IdUsuario,
+						Nombres = Usuario.Nombres,
+						NombreUsuario = Usuario.NombreUsuario,
+						Correo = Usuario.Correo,
+						Rol = Usuario.Roles.Nombre,
+						Expiracion = DateTime.UtcNow
+					});
+
+				navManager.NavigateTo("/Home", true);
+			}
+			else
+			{
+				toastService.ShowError("Usuario o contraseña incorrecto", "Error");
+			}
+		}
+	}
+}

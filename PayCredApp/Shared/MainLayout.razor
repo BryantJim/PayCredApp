@@ -1,0 +1,25 @@
+﻿@inherits LayoutComponentBase
+@inject AuthenticationStateProvider authStateProvider
+@inject NavigationManager navManager
+
+<AuthorizeView>
+	<Authorized>
+		<body class="layout-fluid theme-light">
+			<BlazoredToasts />
+			<div class="page">
+				<NavMenu />
+				<div class="page-wrapper">
+					<div class="container-xl mt-3">
+						@Body
+					</div>
+				</div>
+			</div>
+		</body>
+	</Authorized>
+	<NotAuthorized>
+		<RedirectToLogin />
+	</NotAuthorized>
+</AuthorizeView>
+
+
+

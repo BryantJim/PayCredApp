@@ -1,0 +1,132 @@
+﻿@using System.Security.Claims
+@inject AuthenticationStateProvider authStateProvider
+@inject NavigationManager navManager
+
+<header class="navbar navbar-expand-md navbar-dark d-print-none">
+	<div class="container-xl">
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
+			<a href="/home">
+				<img src="/img/LogoPayCredSinFondoPNG.png" width="110" height="32" alt="" class="navbar-brand-image">
+			</a>
+		</h1>
+		<div class="navbar-nav flex-row order-md-last">
+			<div class="nav-item dropdown mr-3">
+				<a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
+					<span class="avatar avatar-sm" style="background-image: url(/img/avatar.png)"></span>
+					<div class="d-none d-xl-block ps-2">
+						<div>@Nombres</div>
+						<div class="mt-1 small text-muted">@Rol</div>
+					</div>
+				</a>
+				<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+					<span class="dropdown-header">Opciones</span>
+					@*<a href="#" class="dropdown-item">Prueba</a>
+					<div class="dropdown-divider"></div>*@
+					<a href="" class="dropdown-item" @onclick="Logout">
+						<span class="oi oi-account-logout me-2"></span>Cerrar sesión
+					</a>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</header>
+<div class="navbar-expand-md">
+	<div class="collapse navbar-collapse" id="navbar-menu">
+		<div class="navbar navbar-light">
+			<div class="container-xl">
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link" href="/Home">
+							<span class="oi oi-dashboard">
+								Home
+							</span>
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/Clientes">
+							<span class="oi oi-person">
+								Clientes
+							</span>
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/counter">
+							<span class="oi oi-calculator">
+								Contador
+							</span>
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/fetchdata">
+							<span class="oi oi-calendar">
+								Datos Fecha
+							</span>
+						</a>
+					</li>
+					@*<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#navbar-third" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
+					<span class="nav-link-icon d-md-none d-lg-inline-block">
+					<!-- Download SVG icon from http://tabler-icons.io/i/star -->
+					<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"></path></svg>
+					</span>
+					<span class="nav-link-title">
+					Third
+					</span>
+					</a>
+					<div class="dropdown-menu">
+					<a class="dropdown-item" href="./#">
+					First
+					</a>
+					<a class="dropdown-item" href="./#">
+					Second
+					</a>
+					<a class="dropdown-item" href="./#">
+					Third
+					</a>
+					</div>
+					</li>
+					<li class="nav-item">
+					<a class="nav-link disabled" href="./#">
+					<span class="nav-link-icon d-md-none d-lg-inline-block">
+					<!-- Download SVG icon from http://tabler-icons.io/i/star -->
+					<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"></path></svg>
+					</span>
+					<span class="nav-link-title">
+					Disabled
+					</span>
+					</a>
+					</li>*@
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@code {
+	private string Nombres { get; set; } = string.Empty;
+	private string Rol { get; set; } = string.Empty;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+		ClaimsPrincipal usuario = (await customAuthStateProvider.GetAuthenticationStateAsync()).User;
+
+		if (usuario.Claims.Any())
+		{
+			Nombres = usuario.Claims.First(c => c.Type == ClaimTypes.GivenName).Value;
+			Rol = usuario.Claims.First(c => c.Type == ClaimTypes.Role).Value;
+		}
+	}
+
+	private async Task Logout()
+	{
+		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+		await customAuthStateProvider.UpdateAuthenticationState(null);
+		navManager.NavigateTo("/", true);
+	}
+}
