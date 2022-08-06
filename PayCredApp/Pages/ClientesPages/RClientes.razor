@@ -1,0 +1,135 @@
+﻿@page "/Registro/Clientes"
+
+@inject ClienteBLL clienteBLL
+
+<div class="page">
+	<div class="page-header">
+		<div class="row align-items-center mw-100">
+			<div class="col">
+				<h2 class="page-title">
+					<span class="text-truncate">Registro de Clientes</span>
+				</h2>
+			</div>
+			<div class="col-auto">
+				<div class="btn-list">
+					<a href="/Clientes" class="btn btn-primary">
+						<span class="oi oi-arrow-thick-left me-2"></span>Atrás
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="page-body">
+		<div class="container-xl">
+			<div class="card">
+				<EditForm Model="cliente" OnValidSubmit="Guardar">
+					<div class="card-body">
+						<div class="row mb-3">
+							<div class="col-4">
+								<label class="form-label">Id Cliente</label>
+								<input type="text" class="form-control" placeholder="ID" readonly />
+							</div>
+						</div>
+
+						<div class="row mb-3">
+							<div class="col-6">
+								<label class="form-label">Nombres</label>
+								<input type="text" class="form-control" placeholder="Nombres del cliente" />
+							</div>
+							<div class="col-6">
+								<label class="form-label">Apellidos</label>
+								<input type="text" class="form-control" placeholder="Apellidos del cliente" />
+							</div>
+						</div>
+
+						<div class="row mb-3">
+							<div class="col-6">
+								<label class="form-label">Fecha de Nacimiento</label>
+								<input class="form-control " placeholder="Select a date" type="date">
+							</div>
+							<div class="col-6">
+								<label class="form-label">Cédula</label>
+								<InputMask @ref="mask" id="cedula" @bind-Value="cliente.Cedula" class="form-control" data-mask="000-0000000-0" placeholder="000-0000000-0" validateOnKeyPress="false" returnRawValue="true" />
+							</div>
+						</div>
+
+						<div class="row mb-3">
+							<div class="col-6">
+								<label class="form-label">Teléfono</label>
+								<InputMask @ref="mask" id="telefono" @bind-Value="cliente.Telefono" class="form-control" data-mask="(000)-000-0000" placeholder="(000)-000-0000" validateOnKeyPress="false" returnRawValue="true" />
+							</div>
+							<div class="col-6">
+								<label class="form-label">Celular</label>
+								<InputMask @ref="mask" id="celular" @bind-Value="cliente.Celular" class="form-control" data-mask="(000)-000-0000" placeholder="(000)-000-0000" validateOnKeyPress="false" returnRawValue="true" />
+							</div>
+						</div>
+
+						<div class="row mb-3">
+							<div class="col-12">
+								<label class="form-label">Dirección</label>
+								<input type="text" class="form-control" placeholder="Dirección del cliente" />
+							</div>
+						</div>
+
+						<div class="row mb-3">
+							<div class="col-6">
+								<label class="form-label">Provincia</label>
+								<div class="row g-2">
+									<div class="col">
+										<input type="text" class="form-control">
+										<div class="mb-3">
+											<label class="form-label">Advanced tags input</label>
+											<select type="text" class="form-select" placeholder="Select a date" id="select-tags-advanced" value="">
+												<option value="HTML">HTML</option>
+												<option value="JavaScript">JavaScript</option>
+												<option value="CSS">CSS</option>
+												<option value="jQuery">jQuery</option>
+												<option value="Bootstrap">Bootstrap</option>
+												<option value="Ruby">Ruby</option>
+												<option value="Python">Python</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-auto">
+										<a class="btn btn-indigo btn-icon" style="height:100%"><span class="oi oi-plus"></span></a>
+									</div>
+								</div>
+							</div>
+							<div class="col-6">
+								<label class="form-label">Ciudad</label>
+								<div class="row g-2">
+									<div class="col">
+										<input type="text" class="form-control">
+									</div>
+									<div class="col-auto">
+										<a class="btn btn-indigo btn-icon" style="height:100%"><span class="oi oi-plus"></span></a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card-footer">
+						<div class="text-center">
+							<button type="submit" class="btn btn-success btn-lg"><span class="oi oi-plus me-2"></span>Guardar</button>
+						</div>
+					</div>
+				</EditForm>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	Clientes cliente = new Clientes();
+	InputMask mask { get; set; }
+
+	protected override Task OnInitializedAsync()
+	{
+		return base.OnInitializedAsync();
+	}
+
+	public async Task Guardar()
+	{
+
+	}
+}
