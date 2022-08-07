@@ -1,6 +1,14 @@
 ﻿@page "/Registro/Clientes"
 
+@using System.Security.Claims
+
+@inject AuthenticationStateProvider authStateProvider
 @inject ClienteBLL clienteBLL
+@inject CiudadBLL ciudadBLL
+@inject ProvinciaBLL provinciaBLL
+@inject UsuarioBLL usuarioBLL
+@inject IToastService toastService
+@inject NavigationManager navManager
 
 <div class="page">
 	<div class="page-header">
@@ -34,18 +42,18 @@
 						<div class="row mb-3">
 							<div class="col-6">
 								<label class="form-label">Nombres</label>
-								<input type="text" class="form-control" placeholder="Nombres del cliente" />
+								<input type="text" class="form-control" placeholder="Nombres del cliente" @bind-value="cliente.Nombres" />
 							</div>
 							<div class="col-6">
 								<label class="form-label">Apellidos</label>
-								<input type="text" class="form-control" placeholder="Apellidos del cliente" />
+								<input type="text" class="form-control" placeholder="Apellidos del cliente" @bind-value="cliente.Apellidos" />
 							</div>
 						</div>
 
 						<div class="row mb-3">
 							<div class="col-6">
 								<label class="form-label">Fecha de Nacimiento</label>
-								<input class="form-control " placeholder="Select a date" type="date">
+								<input class="form-control " placeholder="Select a date" type="date" @bind-value="cliente.FechaNacimiento">
 							</div>
 							<div class="col-6">
 								<label class="form-label">Cédula</label>
@@ -67,31 +75,25 @@
 						<div class="row mb-3">
 							<div class="col-12">
 								<label class="form-label">Dirección</label>
-								<input type="text" class="form-control" placeholder="Dirección del cliente" />
+								<input type="text" class="form-control" placeholder="Dirección del cliente" @bind-value="cliente.Direccion" />
 							</div>
 						</div>
 
-						<div class="row mb-3">
+						<div class="row">
 							<div class="col-6">
 								<label class="form-label">Provincia</label>
 								<div class="row g-2">
 									<div class="col">
-										<input type="text" class="form-control">
-										<div class="mb-3">
-											<label class="form-label">Advanced tags input</label>
-											<select type="text" class="form-select" placeholder="Select a date" id="select-tags-advanced" value="">
-												<option value="HTML">HTML</option>
-												<option value="JavaScript">JavaScript</option>
-												<option value="CSS">CSS</option>
-												<option value="jQuery">jQuery</option>
-												<option value="Bootstrap">Bootstrap</option>
-												<option value="Ruby">Ruby</option>
-												<option value="Python">Python</option>
-											</select>
-										</div>
+										<select class="form-select" @bind="cliente.IdProvincia">
+											<option value="0" selected>Seleccionar Provincia</option>
+											@foreach (var item in provincias)
+											{
+												<option value="@item.IdProvincia">@item.Nombres</option>
+											}
+										</select>
 									</div>
 									<div class="col-auto">
-										<a class="btn btn-indigo btn-icon" style="height:100%"><span class="oi oi-plus"></span></a>
+										<a class="btn btn-indigo btn-icon" data-bs-toggle="modal" data-bs-target="#modal-team" style="height:100%"><span class="oi oi-plus"></span></a>
 									</div>
 								</div>
 							</div>
@@ -99,7 +101,13 @@
 								<label class="form-label">Ciudad</label>
 								<div class="row g-2">
 									<div class="col">
-										<input type="text" class="form-control">
+										<select class="form-select" @bind="cliente.IdCiudad">
+											<option value="0" selected>Seleccionar Ciudad</option>
+											@foreach (var item in ciudades)
+											{
+												<option value="@item.IdCiudad">@item.Nombres</option>
+											}
+										</select>
 									</div>
 									<div class="col-auto">
 										<a class="btn btn-indigo btn-icon" style="height:100%"><span class="oi oi-plus"></span></a>
@@ -119,17 +127,91 @@
 	</div>
 </div>
 
+<div class="modal modal-blur fade" id="modal-team" tabindex="-1" style="display: none;" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Registrar Provincia</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<EditForm Model="provincia" OnValidSubmit="GuardarProvincia">
+					<div class="row mb-3">
+						<div class="col">
+							<label class="form-label">Id Provincia</label>
+							<InputNumber class="form-control" @bind-Value="provincia.IdProvincia" placeholder="ID" readonly />
+						</div>
+					</div>
+					<div class="row mb-3">
+						<div class="col">
+							<label class="form-label">Nombre</label>
+							<InputText class="form-control" @bind-Value="provincia.Nombres" placeholder="Nombre de la provincia" />
+						</div>
+					</div>
+				</EditForm>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-success" data-bs-dismiss="modal"><span class="oi oi-plus me-2"></span>Guardar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 @code {
 	Clientes cliente = new Clientes();
+	Provincias provincia = new Provincias();
+	Ciudades ciudad = new Ciudades();
+
+	List<Provincias> provincias = new List<Provincias>();
+	List<Ciudades> ciudades = new List<Ciudades>();
+
+	public int UsuarioCreador { get; set; }
 	InputMask mask { get; set; }
 
-	protected override Task OnInitializedAsync()
+	protected override async Task OnInitializedAsync()
 	{
-		return base.OnInitializedAsync();
+		await LlenarProvincias();
+		await LlenarCiudades();
+
+		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+		ClaimsPrincipal usuario = (await customAuthStateProvider.GetAuthenticationStateAsync()).User;
+
+		if (usuario.Claims.Any())
+		{
+			UsuarioCreador = Convert.ToInt32(usuario.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+		}
 	}
 
-	public async Task Guardar()
+	public async Task Guardar(EditContext editContext)
+	{
+		if (editContext.Validate())
+		{
+			cliente.Ciudades = await ciudadBLL.Buscar(cliente.IdCiudad);
+			cliente.Provincias = await provinciaBLL.Buscar(cliente.IdProvincia);
+			cliente.Usuarios = await usuarioBLL.Buscar(UsuarioCreador);
+
+			var paso = await clienteBLL.Guardar(cliente);
+
+			if (paso)
+				navManager.NavigateTo("/Clientes");
+			else
+				toastService.ShowError("No fue posible guardar");
+		}
+	}
+
+	private async Task GuardarProvincia()
 	{
 
 	}
+
+	private async Task LlenarProvincias()
+	{
+		provincias = await provinciaBLL.GetList(x => true);
+	}
+
+	private async Task LlenarCiudades()
+	{
+		ciudades = await ciudadBLL.GetList(x => true);
+	}
+
 }

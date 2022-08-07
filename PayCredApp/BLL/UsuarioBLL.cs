@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PayCredApp.Data;
-using PayCredApp.Models;
 using PayCredApp.Configuraciones;
 using System.Linq.Expressions;
+using PayCredApp.Models;
 
 namespace PayCredApp.BLL
 {
-    public class UsuarioBLL
+	public class UsuarioBLL
     {
         private readonly Contexto _context;
 

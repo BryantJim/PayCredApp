@@ -24,6 +24,8 @@ builder.Services.AddBlazoredToast();
 //Añadiendo BLL
 builder.Services.AddTransient<UsuarioBLL>();
 builder.Services.AddTransient<ClienteBLL>();
+builder.Services.AddTransient<CiudadBLL>();
+builder.Services.AddTransient<ProvinciaBLL>();
 
 var app = builder.Build();
 

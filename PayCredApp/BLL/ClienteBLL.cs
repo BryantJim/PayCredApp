@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace PayCredApp.BLL
 {
-    public class ClienteBLL
+	public class ClienteBLL
     {
         private readonly Contexto _context;
 
@@ -38,11 +38,16 @@ namespace PayCredApp.BLL
 
         }
 
-        public async Task<bool> Insertar(Clientes cliente)
+        private async Task<bool> Insertar(Clientes cliente)
         {
             bool guardado = false;
             try
             {
+                cliente.CreadoPor = cliente.Usuarios.IdUsuario;
+                cliente.FechaCreacion = DateTime.Now;
+                cliente.ModificadoPor = cliente.Usuarios.IdUsuario;
+                cliente.FechaModificacion = DateTime.Now;
+
                 await _context.Clientes.AddAsync(cliente);
                 guardado = await _context.SaveChangesAsync() > 0;
             }
@@ -54,11 +59,14 @@ namespace PayCredApp.BLL
             return guardado;
         }
 
-        public async Task<bool> Modificar(Clientes cliente)
+        private async Task<bool> Modificar(Clientes cliente)
         {
             bool modificado = false;
             try
             {
+                cliente.ModificadoPor = cliente.Usuarios.IdUsuario;
+                cliente.FechaModificacion = DateTime.Now;
+
                 _context.Entry(cliente).State = EntityState.Modified;
                 modificado = await _context.SaveChangesAsync() > 0;
             }
@@ -76,7 +84,10 @@ namespace PayCredApp.BLL
 
             try
             {
-                var clienteEncontrado = await _context.Clientes.FindAsync(id);
+                var clienteEncontrado = await _context.Clientes.Where(x => x.IdCliente == id)
+                                                                .Include(x => x.Ciudades)
+                                                                .Include(x => x.Provincias)
+                                                                .FirstOrDefaultAsync();
 
                 if (clienteEncontrado != null)
                     cliente = clienteEncontrado;
@@ -94,7 +105,7 @@ namespace PayCredApp.BLL
 
             try
             {
-                var cliente = await _context.Clientes.FindAsync(id);
+                var cliente = await Buscar(id);
 
                 if (cliente != null)
                 {
