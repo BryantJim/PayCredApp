@@ -17,7 +17,6 @@ builder.Services.AddDbContext<Contexto>(options => options.UseSqlServer(builder.
 builder.Services.AddAuthenticationCore();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<ProtectedLocalStorage>();
 builder.Services.AddBlazoredToast();
