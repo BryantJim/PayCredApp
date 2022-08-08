@@ -1,4 +1,5 @@
 ﻿@page "/Registro/Clientes"
+@page "/Registro/Clientes/{Id:int}"
 
 @using System.Security.Claims
 
@@ -35,7 +36,7 @@
 						<div class="row mb-3">
 							<div class="col-4">
 								<label class="form-label">Id Cliente</label>
-								<input type="text" class="form-control" placeholder="ID" readonly />
+								<InputNumber type="text" class="form-control" @bind-Value="cliente.IdCliente" placeholder="ID del clientes" readonly />
 							</div>
 						</div>
 
@@ -110,7 +111,7 @@
 										</select>
 									</div>
 									<div class="col-auto">
-										<a class="btn btn-indigo btn-icon" style="height:100%"><span class="oi oi-plus"></span></a>
+										<a class="btn btn-indigo btn-icon" data-bs-toggle="modal" data-bs-target="#modal-ciudades" style="height:100%"><span class="oi oi-plus"></span></a>
 									</div>
 								</div>
 							</div>
@@ -134,8 +135,8 @@
 				<h5 class="modal-title">Registrar Provincia</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
-			<div class="modal-body">
-				<EditForm Model="provincia" OnValidSubmit="GuardarProvincia">
+			<EditForm Model="provincia" OnValidSubmit="GuardarProvincia">
+				<div class="modal-body">
 					<div class="row mb-3">
 						<div class="col">
 							<label class="form-label">Id Provincia</label>
@@ -148,11 +149,42 @@
 							<InputText class="form-control" @bind-Value="provincia.Nombres" placeholder="Nombre de la provincia" />
 						</div>
 					</div>
-				</EditForm>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-success" data-bs-dismiss="modal"><span class="oi oi-plus me-2"></span>Guardar</button>
+				</div>
+			</EditForm>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal modal-blur fade" id="modal-ciudades" tabindex="-1" style="display: none;" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Registrar Ciudad</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
-			<div class="modal-footer">
-				<button type="submit" class="btn btn-success" data-bs-dismiss="modal"><span class="oi oi-plus me-2"></span>Guardar</button>
-			</div>
+			<EditForm Model="ciudad" OnValidSubmit="GuardarCiudad">
+				<div class="modal-body">
+					<div class="row mb-3">
+						<div class="col">
+							<label class="form-label">Id Ciudad</label>
+							<InputNumber class="form-control" @bind-Value="ciudad.IdCiudad" placeholder="ID" readonly />
+						</div>
+					</div>
+					<div class="row mb-3">
+						<div class="col">
+							<label class="form-label">Nombre</label>
+							<InputText class="form-control" @bind-Value="ciudad.Nombres" placeholder="Nombre de la provincia" />
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-success" data-bs-dismiss="modal"><span class="oi oi-plus me-2"></span>Guardar</button>
+				</div>
+			</EditForm>
 		</div>
 	</div>
 </div>
@@ -168,6 +200,9 @@
 	public int UsuarioCreador { get; set; }
 	InputMask mask { get; set; }
 
+	[Parameter]
+	public int Id { get; set; }
+
 	protected override async Task OnInitializedAsync()
 	{
 		await LlenarProvincias();
@@ -179,6 +214,30 @@
 		if (usuario.Claims.Any())
 		{
 			UsuarioCreador = Convert.ToInt32(usuario.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+		}
+
+		await BuscarParametro();
+	}
+
+	private async Task BuscarParametro()
+	{
+		if (Id > 0)
+		{
+			cliente = await clienteBLL.Buscar(Id);
+
+			if (cliente.Activo == true)
+			{
+				if (cliente == null)
+				{
+					cliente = new Clientes();
+					toastService.ShowError("Cliente no encontrado");
+				}
+			}
+			else
+			{
+				toastService.ShowError("El cliente está nulo");
+				cliente = new Clientes();
+			}
 		}
 	}
 
@@ -199,9 +258,36 @@
 		}
 	}
 
-	private async Task GuardarProvincia()
+	private async Task GuardarProvincia(EditContext editContext)
 	{
+		if (editContext.Validate())
+		{
+			var paso = await provinciaBLL.Guardar(provincia);
 
+			if (paso)
+			{
+				toastService.ShowSuccess("Provincia agregada con éxito!!");
+				await LlenarProvincias();
+			}
+			else
+				toastService.ShowError("Provincia no fue agregada!!");
+		}
+	}
+
+	private async Task GuardarCiudad(EditContext editContext)
+	{
+		if (editContext.Validate())
+		{
+			var paso = await ciudadBLL.Guardar(ciudad);
+
+			if (paso)
+			{
+				toastService.ShowSuccess("Ciudad agregada con éxito!!");
+				await LlenarCiudades();
+			}
+			else
+				toastService.ShowError("Ciudad no fue agregada!!");
+		}
 	}
 
 	private async Task LlenarProvincias()

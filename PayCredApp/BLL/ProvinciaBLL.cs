@@ -14,6 +14,61 @@ namespace PayCredApp.BLL
         {
             _context = context;
         }
+        public async Task<bool> Existe(int id)
+        {
+            bool existe = false;
+            try
+            {
+                existe = await _context.Provincias.AnyAsync(x => x.IdProvincia == id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return existe;
+        }
+
+        public async Task<bool> Guardar(Provincias provincia)
+        {
+            if (await Existe(provincia.IdProvincia))
+                return await Modificar(provincia);
+            else
+                return await Insertar(provincia);
+
+        }
+
+        private async Task<bool> Insertar(Provincias provincia)
+        {
+            bool guardado = false;
+            try
+            {
+                await _context.Provincias.AddAsync(provincia);
+                guardado = await _context.SaveChangesAsync() > 0;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return guardado;
+        }
+
+        private async Task<bool> Modificar(Provincias provincia)
+        {
+            bool modificado = false;
+            try
+            {
+                _context.Entry(provincia).State = EntityState.Modified;
+                modificado = await _context.SaveChangesAsync() > 0;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return modificado;
+        }
 
         public async Task<List<Provincias>> GetList(Expression<Func<Provincias, bool>> expression)
         {

@@ -50,6 +50,7 @@ namespace PayCredApp.BLL
 
                 await _context.Clientes.AddAsync(cliente);
                 guardado = await _context.SaveChangesAsync() > 0;
+                _context.ChangeTracker.Clear();
             }
             catch (Exception)
             {
@@ -69,6 +70,7 @@ namespace PayCredApp.BLL
 
                 _context.Entry(cliente).State = EntityState.Modified;
                 modificado = await _context.SaveChangesAsync() > 0;
+                _context.ChangeTracker.Clear();
             }
             catch (Exception)
             {
@@ -87,6 +89,7 @@ namespace PayCredApp.BLL
                 var clienteEncontrado = await _context.Clientes.Where(x => x.IdCliente == id)
                                                                 .Include(x => x.Ciudades)
                                                                 .Include(x => x.Provincias)
+                                                                .AsNoTracking()
                                                                 .FirstOrDefaultAsync();
 
                 if (clienteEncontrado != null)
@@ -112,6 +115,7 @@ namespace PayCredApp.BLL
                     cliente.Activo = false;
                     _context.Entry(cliente).State = EntityState.Modified;
                     eliminado = await _context.SaveChangesAsync() > 0;
+                    _context.ChangeTracker.Clear();
                 }
             }
             catch (Exception)
@@ -121,12 +125,12 @@ namespace PayCredApp.BLL
             return eliminado;
         }
 
-        public async Task<List<Clientes>> GetList(Expression<Func<Clientes, bool>> cliente)
+        public async Task<List<Clientes>> GetList(Expression<Func<Clientes, bool>> expression)
         {
             List<Clientes> Lista = new List<Clientes>();
             try
             {
-                Lista = await _context.Clientes.Where(cliente).AsNoTracking().ToListAsync();
+                Lista = await _context.Clientes.Where(expression).Where(x => x.Activo == true).AsNoTracking().ToListAsync();
             }
             catch (Exception)
             {
