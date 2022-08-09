@@ -29,7 +29,7 @@
 		</div>
 	</div>
 	<div class="page-body">
-		<div class="container-xl">
+		<div class="container-xl p-0">
 			<div class="card">
 				<EditForm Model="cliente" OnValidSubmit="Guardar">
 					<div class="card-body">
@@ -41,33 +41,33 @@
 						</div>
 
 						<div class="row mb-3">
-							<div class="col-6">
+							<div class="col-12 col-md-6">
 								<label class="form-label">Nombres</label>
 								<input type="text" class="form-control" placeholder="Nombres del cliente" @bind-value="cliente.Nombres" />
 							</div>
-							<div class="col-6">
+							<div class="col-12 col-md-6 mt-2 mt-md-0">
 								<label class="form-label">Apellidos</label>
 								<input type="text" class="form-control" placeholder="Apellidos del cliente" @bind-value="cliente.Apellidos" />
 							</div>
 						</div>
 
 						<div class="row mb-3">
-							<div class="col-6">
+							<div class="col-12 col-md-6">
 								<label class="form-label">Fecha de Nacimiento</label>
 								<input class="form-control " placeholder="Select a date" type="date" @bind-value="cliente.FechaNacimiento">
 							</div>
-							<div class="col-6">
+							<div class="col-12 col-md-6 mt-2 mt-md-0">
 								<label class="form-label">Cédula</label>
 								<InputMask @ref="mask" id="cedula" @bind-Value="cliente.Cedula" class="form-control" data-mask="000-0000000-0" placeholder="000-0000000-0" validateOnKeyPress="false" returnRawValue="true" />
 							</div>
 						</div>
 
 						<div class="row mb-3">
-							<div class="col-6">
+							<div class="col-12 col-md-6">
 								<label class="form-label">Teléfono</label>
 								<InputMask @ref="mask" id="telefono" @bind-Value="cliente.Telefono" class="form-control" data-mask="(000)-000-0000" placeholder="(000)-000-0000" validateOnKeyPress="false" returnRawValue="true" />
 							</div>
-							<div class="col-6">
+							<div class="col-12 col-md-6 mt-2 mt-md-0">
 								<label class="form-label">Celular</label>
 								<InputMask @ref="mask" id="celular" @bind-Value="cliente.Celular" class="form-control" data-mask="(000)-000-0000" placeholder="(000)-000-0000" validateOnKeyPress="false" returnRawValue="true" />
 							</div>
@@ -81,7 +81,7 @@
 						</div>
 
 						<div class="row">
-							<div class="col-6">
+							<div class="col-12 col-md-6">
 								<label class="form-label">Provincia</label>
 								<div class="row g-2">
 									<div class="col">
@@ -98,7 +98,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-6">
+							<div class="col-12 col-md-6 mt-2 mt-md-0">
 								<label class="form-label">Ciudad</label>
 								<div class="row g-2">
 									<div class="col">

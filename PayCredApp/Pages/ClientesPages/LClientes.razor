@@ -40,7 +40,7 @@
 								<div class="accordion-body pt-0">
 
 									<div class="row">
-										<div class="col-6">
+										<div class="col-12 col-md-2">
 											<label class="form-label">Campo a buscar</label>
 											<select class="form-select">
 												<option value="Id">Id Cliente</option>
@@ -48,44 +48,18 @@
 												<option value="Cedula">Cédula</option>
 											</select>
 										</div>
-										<div class="col-6">
+										<div class="col-12 col-md-2">
 											<label class="form-label">Forma</label>
 											<select class="form-select">
 												<option value="Similitud">Similitud</option>
 												<option value="Igualdad">Igualdad</option>
 											</select>
 										</div>
-									</div>
-
-									<div class="row mt-1">
-										<div class="col-6">
+										<div class="col-12 col-md-8">
 											<label class="form-label">Criterio</label>
 											<input type="text" class="form-control" placeholder="Criterio del campo" />
 										</div>
-										<div class="col-6 mt-4">
-											<div class="form-check">
-												<input class="form-check-input" type="checkbox" @onclick="DesdeHasta" id="flexCheckDefault">
-												<label class="form-check-label" for="flexCheckDefault">
-													Fechas
-												</label>
-											</div>
-										</div>
 									</div>
-
-									@if (Fechas == true)
-									{
-										<div class="row">
-											<div class="col-6">
-												<label class="form-label">Desde</label>
-												<input type="date" class="form-control" />
-											</div>
-											<div class="col-6">
-												<label class="form-label">Hasta</label>
-												<input type="date" class="form-control" />
-											</div>
-										</div>
-									}
-
 									<div class="row">
 										<div class="col mt-3 text-end">
 											<button class="btn btn-primary">
