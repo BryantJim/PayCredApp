@@ -89,6 +89,7 @@ namespace PayCredApp.BLL
                 var clienteEncontrado = await _context.Clientes.Where(x => x.IdCliente == id)
                                                                 .Include(x => x.Ciudades)
                                                                 .Include(x => x.Provincias)
+                                                                .Include(x => x.Usuarios)
                                                                 .AsNoTracking()
                                                                 .FirstOrDefaultAsync();
 
