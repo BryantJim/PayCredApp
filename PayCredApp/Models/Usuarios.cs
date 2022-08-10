@@ -12,9 +12,10 @@ namespace PayCredApp.Models
 		public string Contrasena { get; set; } = string.Empty;
 		public string Correo { get; set; } = string.Empty;
 		public int IdRol { get; set; } = 1;
-		public Roles Roles { get; set; } = new Roles();
+		public Roles? Roles { get; set; }
 		public bool EsNulo { get; set; } = false;
 
 		public virtual ICollection<Clientes> Clientes { get; set; } = new HashSet<Clientes>();
+		public virtual ICollection<ePrestamos> ePrestamos { get; set; } = new HashSet<ePrestamos>();
 	}
 }

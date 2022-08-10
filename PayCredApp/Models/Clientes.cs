@@ -15,14 +15,17 @@ namespace PayCredApp.Models
 		public string Celular { get; set; } = string.Empty;
 		public string Direccion { get; set; } = string.Empty;
 		public int IdCiudad { get; set; } = 1;
-		public virtual Ciudades Ciudades { get; set; } = new Ciudades();
+		public virtual Ciudades? Ciudades { get; set; }
 		public int IdProvincia { get; set; } = 1;
-		public virtual Provincias Provincias { get; set; } = new Provincias();
+		public virtual Provincias? Provincias { get; set; }
 		public bool Activo { get; set; } = true;
 		public int CreadoPor { get; set; } = 1;
-		public virtual Usuarios Usuarios { get; set; } = new Usuarios();
+		public virtual Usuarios? Usuarios { get; set; }
 		public DateTime FechaCreacion { get; set; } = DateTime.Now;
 		public int ModificadoPor { get; set; } = 1;
 		public DateTime FechaModificacion { get; set; } = DateTime.Now;
+
+
+		public virtual ICollection<ePrestamos> ePrestamos { get; set; } = new HashSet<ePrestamos>();
 	}
 }

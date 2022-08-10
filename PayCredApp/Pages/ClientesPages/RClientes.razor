@@ -245,8 +245,6 @@
 	{
 		if (editContext.Validate())
 		{
-			cliente.Ciudades = await ciudadBLL.Buscar(cliente.IdCiudad);
-			cliente.Provincias = await provinciaBLL.Buscar(cliente.IdProvincia);
 			cliente.Usuarios = await usuarioBLL.Buscar(UsuarioCreador);
 
 			var paso = await clienteBLL.Guardar(cliente);
