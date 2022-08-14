@@ -6,22 +6,22 @@ namespace PayCredApp.Models
     {
         [Key]
         public int IdPrestamo { get; set; }
-        public int IdCliente { get; set; }
+        public int IdCliente { get; set; } = 1;
         public virtual Clientes? Clientes { get; set; }
-        public DateTime Fecha { get; set; }
-        public DateTime FechaInicio { get; set; }
-        public decimal Capital { get; set; }
-        public decimal Interes { get; set; }
-        public int Cuotas { get; set; }
-        public decimal TasaInteres { get; set; }
-        public decimal TasaMora { get; set; }
-        public int IdTipoPrestamo { get; set; }
+        public DateTime Fecha { get; set; } = DateTime.Now;
+        public DateTime FechaInicio { get; set; } = DateTime.Now;
+        public decimal Capital { get; set; } = 0;
+        public decimal Interes { get; set; } = 0;
+        public int Cuotas { get; set; } = 0;
+        public decimal TasaInteres { get; set; } = 0;
+        public decimal TasaMora { get; set; } = 0;
+        public int IdTipoPrestamo { get; set; } = 2;
         public virtual TipoPrestamos? TipoPrestamos { get; set; }
-        public DateTime FechaVencimiento { get; set; }
-        public decimal BceCapital { get; set; }
-        public decimal BceInteres { get; set; }
+        public DateTime FechaVencimiento { get; set; } = DateTime.Now;
+        public decimal BceCapital { get; set; } = 0;
+        public decimal BceInteres { get; set; } = 0;
         public string Observaciones { get; set; } = string.Empty;
-        public bool EsNulo { get; set; }
+        public bool EsNulo { get; set; } = false;
         public int CreadoPor { get; set; } = 1;
         public virtual Usuarios? Usuarios { get; set; }
         public DateTime FechaCreacion { get; set; } = DateTime.Now;

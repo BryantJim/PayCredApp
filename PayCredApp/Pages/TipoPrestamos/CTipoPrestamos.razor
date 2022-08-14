@@ -1,0 +1,111 @@
+﻿@page "/TipoPrestamos"
+
+@inject ClienteBLL clienteBLL
+@inject TipoPrestamoBLL tipoPrestamoBLL
+
+<div class="page">
+	<div class="page-header">
+		<div class="row align-items-center mw-100">
+			<div class="col">
+				<div class="mb-1">
+					<ol class="breadcrumb" aria-label="breadcrumbs">
+						<li class="breadcrumb-item"><a href="/Home">Home</a></li>
+						<li class="breadcrumb-item active" aria-current="page"><a href="/TipoPrestamos">Tipo Prestamos</a></li>
+					</ol>
+				</div>
+				<h2 class="page-title">
+					<span class="text-truncate">Listado de Tipos Prestamos</span>
+				</h2>
+			</div>
+		</div>
+	</div>
+	<div class="page-body">
+		<div class="container-xl">
+			<div class="card">
+				<div class="card-body">
+					<div class="accordion mb-3">
+						<div class="accordion-item">
+							<h2 class="accordion-header" style="background-color:#DDDDDD;">
+								<button class="accordion-button " type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1" aria-expanded="true">
+									Criterio de Búsqueda
+								</button>
+							</h2>
+							<div id="collapse-1" class="accordion-collapse collapse mt-2" data-bs-parent="#accordion-example">
+								<div class="accordion-body pt-0">
+
+									<div class="row">
+										<div class="col-12 col-md-2">
+											<label class="form-label">Campo a buscar</label>
+											<select class="form-select">
+												<option value="Descripción">Descripción</option>
+											</select>
+										</div>
+										<div class="col-12 col-md-2">
+											<label class="form-label">Forma</label>
+											<select class="form-select">
+												<option value="Similitud">Similitud</option>
+												<option value="Igualdad">Igualdad</option>
+											</select>
+										</div>
+										<div class="col-12 col-md-8">
+											<label class="form-label">Criterio</label>
+											<input type="text" class="form-control" placeholder="Criterio del campo" />
+										</div>
+									</div>
+									<div class="row">
+										<div class="col mt-3 text-end">
+											<button class="btn btn-primary">
+												<span class="oi oi-magnifying-glass me-2"></span>Consultar
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th><button class="table-sort">Descripción</button></th>
+									<th>Dia de gracia</th>
+									<th class="w-1"></th>
+								</tr>
+							</thead>
+							<tbody class="table-tbody">
+								@foreach (var item in tipoPrestamos)
+								{
+									<tr>
+										<td>@item.Descripcion</td>
+										<td>@item.DiaGracias</td>
+										<td class="text-end">
+											<div class="btn-list flex-nowrap">
+												<a class="btn btn-info" href="/Registro/TipoPrestamos/@item.IdTipoPrestamo"><span class="oi oi-pencil me-2"></span>Editar</a>
+											</div>
+
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	List<TipoPrestamos> tipoPrestamos = new List<TipoPrestamos>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LlenarLista();
+	}
+
+	private async Task LlenarLista()
+	{
+		tipoPrestamos = await tipoPrestamoBLL.GetList(x => true);
+	}
+
+}

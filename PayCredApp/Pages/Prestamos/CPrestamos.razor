@@ -1,0 +1,202 @@
+﻿@page "/Prestamos"
+
+@inject ePrestamoBLL eprestamoBLL
+
+<div class="page">
+	<div class="page-header">
+		<div class="row align-items-center mw-100">
+			<div class="col">
+				<div class="mb-1">
+					<ol class="breadcrumb" aria-label="breadcrumbs">
+						<li class="breadcrumb-item"><a href="/Home">Home</a></li>
+						<li class="breadcrumb-item active" aria-current="page"><a href="/Prestamos">Prestamos</a></li>
+					</ol>
+				</div>
+				<h2 class="page-title">
+					<span class="text-truncate">Listado de Prestamos</span>
+				</h2>
+			</div>
+			<div class="col-auto">
+				<div class="btn-list">
+					<a href="/Registro/Prestamos" class="btn btn-primary">
+						<span class="oi oi-plus me-2"></span>Agregar Prestamos
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="page-body">
+		<div class="container-xl">
+			<div class="card">
+				<div class="card-body">
+					<div class="accordion mb-3">
+						<div class="accordion-item">
+							<h2 class="accordion-header" style="background-color:#DDDDDD;">
+								<button class="accordion-button " type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1" aria-expanded="true">
+									Criterio de Búsqueda
+								</button>
+							</h2>
+							<div id="collapse-1" class="accordion-collapse collapse mt-2" data-bs-parent="#accordion-example">
+								<div class="accordion-body pt-0">
+
+									<div class="row">
+										<div class="col-12 col-md-2">
+											<label class="form-label">Campo a buscar</label>
+											<select class="form-select">
+												<option value="Id">Id Prestamo</option>
+												<option value="Nombre">Cliente</option>
+												<option value="Cedula">Tipo Prestamo</option>
+											</select>
+										</div>
+										<div class="col-12 col-md-2">
+											<label class="form-label">Forma</label>
+											<select class="form-select">
+												<option value="Similitud">Similitud</option>
+												<option value="Igualdad">Igualdad</option>
+											</select>
+										</div>
+										<div class="col-12 col-md-8">
+											<label class="form-label">Criterio</label>
+											<input type="text" class="form-control" placeholder="Criterio del campo" />
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12 col-md-6 mt-3">
+											<div class="form-check form-switch">
+												<input class="form-check-input" type="checkbox" id="SwitchCheckFechas" @onclick="DesdeHasta">
+												<label class="form-check-label" for="SwitchCheckFechas">Filtrar por fecha</label>
+											</div>
+											@if (Fechas)
+											{
+												<div class="row">
+													<div class="col-12 col-md-6">
+														<label>Desde</label>
+														<input type="date" class="form-control" />
+													</div>
+													<div class="col-12 col-md-6">
+														<label>Hasta</label>
+														<input type="date" class="form-control" />
+													</div>
+												</div>
+											}
+
+										</div>
+										<div class="col-12 col-md-6 mt-3 text-end">
+											<button class="btn btn-primary">
+												<span class="oi oi-magnifying-glass me-2"></span>Consultar
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th><button class="table-sort">ID</button></th>
+									<th><button class="table-sort">Cliente</button></th>
+									<th>Fecha</th>
+									<th>Cuotas</th>
+									<th>Capital</th>
+									<th>Interes</th>
+									<th>Total</th>
+									<th class="w-1"></th>
+								</tr>
+							</thead>
+							<tbody class="table-tbody">
+								@foreach (var item in ListPrestamos)
+								{
+									<tr>
+										<td>@item.IdPrestamo</td>
+										<td>@(item.Clientes.Nombres + " " + item.Clientes.Apellidos)</td>
+										<td>@item.Fecha</td>
+										<td>@item.Cuotas</td>
+										<td>@item.Capital</td>
+										<td>@item.Interes</td>
+										<td>@(item.Capital + item.Interes)</td>
+										<td class="text-end">
+											<div class="btn-list flex-nowrap">
+
+												<a class="btn btn-info" href="/Registro/Prestamos/@item.IdPrestamo"><span class="oi oi-pencil me-2"></span>Editar</a>
+												<a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-danger" @onclick="() => LlenarClienteEliminar(item.IdCliente)"><span class="oi oi-trash me-2"></span>Eliminar</a>
+											</div>
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal modal-blur fade" id="modal-danger" tabindex="-1" style="display: none;" aria-modal="true">
+	<div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			<div class="modal-status bg-danger"></div>
+			<div class="modal-body text-center py-4">
+				<svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 9v2m0 4v.01"></path><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path></svg>
+				<h3>¿Está seguro?</h3>
+				<div class="text-muted">¿Realmente quiere eliminar el cliente? Esta acción no se puede deshacer.</div>
+			</div>
+			<div class="modal-footer">
+				<div class="w-100">
+					<div class="row">
+						<div class="col">
+							<a href="#" class="btn w-100" data-bs-dismiss="modal">
+								<span class="oi oi-arrow-thick-left me-2"></span>Cancelar
+							</a>
+						</div>
+						<div class="col">
+							<a href="#" class="btn btn-danger w-100" data-bs-dismiss="modal" @onclick="EliminarPrestamos">
+								<span class="oi oi-basket me-2"></span>Eliminar
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	List<ePrestamos> ListPrestamos = new List<ePrestamos>();
+	public int ClienteEliminar { get; set; } = 0;
+	public bool Fechas { get; set; } = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LlenarLista();
+	}
+
+	private async Task LlenarLista()
+	{
+		ListPrestamos = await eprestamoBLL.GetList(x => true);
+	}
+
+	private async Task LlenarClienteEliminar(int Id)
+	{
+		//await Task.Run(() => ClienteEliminar = Id);
+	}
+
+	private async Task EliminarPrestamos()
+	{
+		//var paso = await eprestamoBLL.Eliminar(ClienteEliminar);
+		//await LlenarLista();
+	}
+
+	private void DesdeHasta()
+	{
+		if (Fechas == false)
+			Fechas = true;
+		else
+			Fechas = false;
+
+		this.StateHasChanged();
+	}
+}

@@ -25,6 +25,8 @@ builder.Services.AddTransient<UsuarioBLL>();
 builder.Services.AddTransient<ClienteBLL>();
 builder.Services.AddTransient<CiudadBLL>();
 builder.Services.AddTransient<ProvinciaBLL>();
+builder.Services.AddTransient<ePrestamoBLL>();
+builder.Services.AddTransient<TipoPrestamoBLL>();
 
 var app = builder.Build();
 
