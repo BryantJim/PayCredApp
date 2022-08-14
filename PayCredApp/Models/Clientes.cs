@@ -27,5 +27,6 @@ namespace PayCredApp.Models
 
 
 		public virtual ICollection<ePrestamos> ePrestamos { get; set; } = new HashSet<ePrestamos>();
+		public virtual ICollection<eCobros> eCobros { get; set; } = new HashSet<eCobros>();
 	}
 }

@@ -64,6 +64,35 @@ namespace PayCredApp.Data
                 .HasOne<ePrestamos>(x => x.ePrestamos)
                 .WithMany(c => c.dPrestamos)
                 .HasForeignKey(x => x.IdPrestamo);
+
+            //eCobros
+            modelBuilder.Entity<eCobros>()
+                .HasOne<ePrestamos>(x => x.ePrestamos)
+                .WithMany(x => x.eCobros)
+                .HasForeignKey(x => x.IdPrestamo)
+                .OnDelete(DeleteBehavior.NoAction); 
+
+            modelBuilder.Entity<eCobros>()
+               .HasOne<Clientes>(x => x.Clientes)
+               .WithMany(x => x.eCobros)
+               .HasForeignKey(x => x.IdCliente);
+
+            modelBuilder.Entity<eCobros>()
+                .HasOne<Usuarios>(x => x.Usuarios)
+                .WithMany(c => c.eCobros)
+                .HasForeignKey(x => x.CreadoPor);
+
+            modelBuilder.Entity<eCobros>()
+                .HasOne<Usuarios>(x => x.Usuarios)
+                .WithMany(c => c.eCobros)
+                .HasForeignKey(x => x.ModificadoPor)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            //dCobros
+            modelBuilder.Entity<dCobros>()
+                .HasOne<eCobros>(x => x.eCobros)
+                .WithMany(c => c.dCobros)
+                .HasForeignKey(x => x.IdCobro);
         }
         public DbSet<Usuarios> Usuarios { get; set; }
         public DbSet<Roles> Roles { get; set; }
@@ -73,6 +102,8 @@ namespace PayCredApp.Data
         public DbSet<ePrestamos> ePrestamos { get; set; }
         public DbSet<dPrestamos> dPrestamos { get; set; }
         public DbSet<TipoPrestamos> TipoPrestamos { get; set; }
+        public DbSet<eCobros> eCobros { get; set; }
+        public DbSet<dCobros> dCobros { get; set; }
 
     }
 }

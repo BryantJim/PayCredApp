@@ -21,7 +21,8 @@ namespace PayCredApp.Models
         public decimal BceCapital { get; set; } = 0;
         public decimal BceInteres { get; set; } = 0;
         public string Observaciones { get; set; } = string.Empty;
-        public bool EsNulo { get; set; } = false;
+        public bool Saldo { get; set; } = false;
+		public bool EsNulo { get; set; } = false;
         public int CreadoPor { get; set; } = 1;
         public virtual Usuarios? Usuarios { get; set; }
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
@@ -29,5 +30,6 @@ namespace PayCredApp.Models
         public DateTime FechaModificacion { get; set; } = DateTime.Now;
 
         public virtual ICollection<dPrestamos> dPrestamos { get; set; } = new HashSet<dPrestamos>();
+        public virtual ICollection<eCobros> eCobros { get; set; } = new HashSet<eCobros>();
     }
 }

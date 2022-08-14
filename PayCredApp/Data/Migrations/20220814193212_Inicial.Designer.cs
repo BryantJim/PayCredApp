@@ -12,8 +12,8 @@ using PayCredApp.Data;
 namespace PayCredApp.Data.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20220810012025_Prestamos")]
-    partial class Prestamos
+    [Migration("20220814193212_Inicial")]
+    partial class Inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -108,6 +108,39 @@ namespace PayCredApp.Data.Migrations
                     b.ToTable("Clientes");
                 });
 
+            modelBuilder.Entity("PayCredApp.Models.dCobros", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<decimal>("CapitalCobrado")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("IdCobro")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdPrestamo")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("InteresCobrado")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("MoraCobrada")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("NoCuota")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdCobro");
+
+                    b.ToTable("dCobros");
+                });
+
             modelBuilder.Entity("PayCredApp.Models.dPrestamos", b =>
                 {
                     b.Property<int>("Id")
@@ -142,6 +175,64 @@ namespace PayCredApp.Data.Migrations
                     b.HasIndex("IdPrestamo");
 
                     b.ToTable("dPrestamos");
+                });
+
+            modelBuilder.Entity("PayCredApp.Models.eCobros", b =>
+                {
+                    b.Property<int>("IdCobro")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdCobro"), 1L, 1);
+
+                    b.Property<decimal>("CapitalCobrado")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CreadoPor")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Descuento")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("EsNulo")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IdCliente")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdPrestamo")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("InteresCobrado")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ModificadoPor")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Monto")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("MoraCobrada")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("IdCobro");
+
+                    b.HasIndex("IdCliente");
+
+                    b.HasIndex("IdPrestamo");
+
+                    b.HasIndex("ModificadoPor");
+
+                    b.ToTable("eCobros");
                 });
 
             modelBuilder.Entity("PayCredApp.Models.ePrestamos", b =>
@@ -200,6 +291,9 @@ namespace PayCredApp.Data.Migrations
                     b.Property<string>("Observaciones")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Saldo")
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("TasaInteres")
                         .HasColumnType("decimal(18,2)");
@@ -326,7 +420,7 @@ namespace PayCredApp.Data.Migrations
                     b.HasOne("PayCredApp.Models.Usuarios", "Usuarios")
                         .WithMany("Clientes")
                         .HasForeignKey("ModificadoPor")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Ciudades");
@@ -336,6 +430,17 @@ namespace PayCredApp.Data.Migrations
                     b.Navigation("Usuarios");
                 });
 
+            modelBuilder.Entity("PayCredApp.Models.dCobros", b =>
+                {
+                    b.HasOne("PayCredApp.Models.eCobros", "eCobros")
+                        .WithMany("dCobros")
+                        .HasForeignKey("IdCobro")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("eCobros");
+                });
+
             modelBuilder.Entity("PayCredApp.Models.dPrestamos", b =>
                 {
                     b.HasOne("PayCredApp.Models.ePrestamos", "ePrestamos")
@@ -343,6 +448,33 @@ namespace PayCredApp.Data.Migrations
                         .HasForeignKey("IdPrestamo")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ePrestamos");
+                });
+
+            modelBuilder.Entity("PayCredApp.Models.eCobros", b =>
+                {
+                    b.HasOne("PayCredApp.Models.Clientes", "Clientes")
+                        .WithMany("eCobros")
+                        .HasForeignKey("IdCliente")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PayCredApp.Models.ePrestamos", "ePrestamos")
+                        .WithMany("eCobros")
+                        .HasForeignKey("IdPrestamo")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("PayCredApp.Models.Usuarios", "Usuarios")
+                        .WithMany("eCobros")
+                        .HasForeignKey("ModificadoPor")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Clientes");
+
+                    b.Navigation("Usuarios");
 
                     b.Navigation("ePrestamos");
                 });
@@ -364,7 +496,7 @@ namespace PayCredApp.Data.Migrations
                     b.HasOne("PayCredApp.Models.Usuarios", "Usuarios")
                         .WithMany("ePrestamos")
                         .HasForeignKey("ModificadoPor")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Clientes");
@@ -392,12 +524,21 @@ namespace PayCredApp.Data.Migrations
 
             modelBuilder.Entity("PayCredApp.Models.Clientes", b =>
                 {
+                    b.Navigation("eCobros");
+
                     b.Navigation("ePrestamos");
+                });
+
+            modelBuilder.Entity("PayCredApp.Models.eCobros", b =>
+                {
+                    b.Navigation("dCobros");
                 });
 
             modelBuilder.Entity("PayCredApp.Models.ePrestamos", b =>
                 {
                     b.Navigation("dPrestamos");
+
+                    b.Navigation("eCobros");
                 });
 
             modelBuilder.Entity("PayCredApp.Models.Provincias", b =>
@@ -418,6 +559,8 @@ namespace PayCredApp.Data.Migrations
             modelBuilder.Entity("PayCredApp.Models.Usuarios", b =>
                 {
                     b.Navigation("Clientes");
+
+                    b.Navigation("eCobros");
 
                     b.Navigation("ePrestamos");
                 });
