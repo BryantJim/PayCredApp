@@ -1,0 +1,199 @@
+﻿@page "/Registro/Cobros"
+@page "/Registro/Cobros/{Id:int}"
+
+@using System.Security.Claims
+
+@inject AuthenticationStateProvider authStateProvider
+@inject ClienteBLL clienteBLL
+@inject CiudadBLL ciudadBLL
+@inject ProvinciaBLL provinciaBLL
+@inject UsuarioBLL usuarioBLL
+@inject TipoPrestamoBLL tipoPrestamoBLL
+@inject ePrestamoBLL eprestamoBLL
+@inject IToastService toastService
+@inject NavigationManager navManager
+
+
+<div class="page">
+
+	<div class="page-header">
+		<div class="row align-items-center mw-100">
+			<div class="col">
+				<h2 class="page-title">
+					<span class="text-truncate">Registro de Cobros</span>
+				</h2>
+			</div>
+			<div class="col-auto">
+				<div class="btn-list">
+					<a href="/Cobros" class="btn btn-primary">
+						<span class="oi oi-arrow-thick-left me-2"></span>Atrás
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="page-body">
+		<div class="container-xl p-0">
+			<div class="card">
+
+				<EditForm Model="eCobro">
+
+					<div class="card-body">
+
+						<div class="row mb-2">
+							<div class="col-12 col-md-8">
+								<div class="row">
+									<div class="col-12 col-md-5">
+										<label class="form-label">Id Cobro</label>
+										<InputNumber @bind-Value="eCobro.IdCobro" class="form-control" placeholder="ID" readonly />
+									</div>
+								</div>
+							</div>
+							<div class="col-12 col-md-4 mt-2 mt-md-0">
+								<label class="form-label">Fecha</label>
+								<input class="form-control " type="date" @bind-value="eCobro.Fecha">
+							</div>
+						</div>
+
+						<div class="row mb-2">
+							<div class="col-12 col-md-4">
+								<label class="form-label">Cliente</label>
+								<div class="row g-2">
+									<div class="col">
+										<select class="form-select" @bind="eCobro.IdCliente">
+											<option value="0" selected>Seleccionar un cliente</option>
+											@foreach (var item in clientes)
+											{
+												<option value="@item.IdCliente">@(item.Nombres+" "+item.Apellidos)</option>
+											}
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-12 col-md-4 mt-2 mt-md-0">
+								<label class="form-label">Prestamo</label>
+								<div class="row g-2">
+									<div class="col">
+										<select class="form-select" @bind="eCobro.IdPrestamo">
+											<option value="0" selected>Seleccionar un Prestamo</option>
+											@foreach (var item in eprestamos)
+											{
+												<option value="@item.IdPrestamo">@($"{item.IdPrestamo} - {item.Clientes.Nombres} {item.Clientes.Apellidos} - {item.Capital}")</option>
+											}
+										</select>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-12 col-md-4 mt-2 mt-md-0">
+								<div class="row g-2">
+									<div class="col">
+										<label class="form-label">Monto a Pagar</label>
+										<input class="form-control" type="number" min="0" @bind-value="eCobro.Monto" />
+									</div>
+									<div class="col-auto mt-4">
+										<button class="btn btn-primary"><span class="oi oi-plus me-2"></span>Pagar</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="row mb-3">
+							<div class="table-responsive">
+								<table class="table">
+									<thead>
+										<tr>
+											<th>NoCuota</th>
+											<th>Fecha Cuota</th>
+											<th>Capital</th>
+											<th>Interes</th>
+											<th>Total</th>
+										</tr>
+									</thead>
+									<tbody class="table-tbody">
+										@foreach (var item in ePrestamo.dPrestamos)
+										{
+											<tr>
+												<td>@item.NoCuota</td>
+												<td>@item.FechaCuota.ToShortDateString()</td>
+												<td>@item.Capital</td>
+												<td>@item.Interes</td>
+												<td>@(item.Capital+item.Interes)</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<div class="row justify-content-end mt-1">
+							<div class="col-7 col-md-5 col-xl-2">
+								<label class="form-label">Monto</label>
+								<input type="number" disabled class="form-control" @bind-value="eCobro.Monto" />
+							</div>
+						</div>
+
+						<div class="row justify-content-end mt-1">
+							<div class="col-7 col-md-5 col-xl-2">
+								<label class="form-label">Descuento</label>
+								<input type="number" class="form-control" @bind-value="eCobro.Descuento" />
+							</div>
+						</div>
+
+						<div class="row justify-content-end mt-1">
+							<div class="col-7 col-md-5 col-xl-2">
+								<label class="form-label">Total</label>
+								<input type="number" disabled class="form-control" @bind-value="Total" />
+							</div>
+						</div>
+
+						<div class="row mb-2 mt-3">
+							<div class="col-12">
+								<label class="form-label">Observaciones</label>
+								<textarea class="form-control" />
+							</div>
+						</div>
+
+
+
+					</div>
+					<div class="card-footer">
+						<div class="text-center">
+							<button type="submit" class="btn btn-success btn-lg"><span class="oi oi-plus me-2"></span>Guardar</button>
+						</div>
+					</div>
+				</EditForm>
+
+
+			</div>
+		</div>
+	</div>
+
+</div>
+
+@code {
+	[Parameter]
+	public int Id { get; set; }
+	public decimal Total = 0;
+
+	eCobros eCobro = new eCobros();
+	ePrestamos ePrestamo = new ePrestamos();
+
+	List<Clientes> clientes = new List<Clientes>();
+	List<ePrestamos> eprestamos = new List<ePrestamos>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LlenarListas();
+	}
+
+	private async Task LlenarListas()
+	{
+		clientes = await clienteBLL.GetList(x => true);
+		eprestamos = await eprestamoBLL.GetList(x => true);
+
+		ePrestamo = await eprestamoBLL.Buscar(eCobro.IdPrestamo);
+	}
+}
+
