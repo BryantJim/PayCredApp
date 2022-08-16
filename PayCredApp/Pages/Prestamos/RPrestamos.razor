@@ -43,14 +43,14 @@
 								<div class="row">
 									<div class="col-12 col-md-5">
 										<label class="form-label">Id Prestamo</label>
-										<InputNumber @bind-Value="ePrestamo.IdPrestamo" class="form-control" placeholder="ID" readonly />
+										<InputNumber @bind-Value="ePrestamo.IdPrestamo" disabled class="form-control" placeholder="ID" />
 									</div>
 								</div>
 							</div>
 
 							<div class="col-12 col-md-4 mt-2 mt-md-0">
 								<label class="form-label">Fecha</label>
-								<input class="form-control " type="date" @bind-value="ePrestamo.Fecha">
+								<input class="form-control " type="date" disabled="@IsDisabled" @bind-value="ePrestamo.Fecha">
 							</div>
 						</div>
 
@@ -59,7 +59,7 @@
 								<label class="form-label">Cliente</label>
 								<div class="row g-2">
 									<div class="col">
-										<select class="form-select" @bind="ePrestamo.IdCliente">
+										<select class="form-select" disabled="@IsDisabled" @bind="ePrestamo.IdCliente">
 											<option value="0" selected>Seleccionar un cliente</option>
 											@foreach (var item in clientes)
 											{
@@ -71,7 +71,7 @@
 							</div>
 							<div class="col-12 col-md-4 mt-2 mt-md-0">
 								<label class="form-label">Fecha Inicio</label>
-								<input class="form-control" type="date" @bind-value="ePrestamo.FechaInicio">
+								<input class="form-control" type="date" disabled="@IsDisabled" @bind-value="ePrestamo.FechaInicio">
 							</div>
 							<div class="col-12 col-md-4 mt-2 mt-md-0">
 								<label class="form-label">Fecha Vencimiento</label>
@@ -82,25 +82,25 @@
 						<div class="row mb-2 border">
 							<div class="col-12 col-md-2 mt-2 mb-2">
 								<label class="form-label">Cuotas</label>
-								<input type="number" class="form-control" @bind-value="ePrestamo.Cuotas" min="0" @onblur="CalcularFechaVencimiento" />
+								<input type="number" class="form-control" disabled="@IsDisabled" @bind-value="ePrestamo.Cuotas" min="0" @onblur="CalcularFechaVencimiento" />
 							</div>
 							<div class="col-12 col-md-2 mt-2 mb-2">
 								<label class="form-label">Capital</label>
-								<input type="number" class="form-control" @bind-value="ePrestamo.Capital" min="0" placeholder="Capital" />
+								<input type="number" class="form-control" disabled="@IsDisabled" @bind-value="ePrestamo.Capital" min="0" placeholder="Capital" />
 							</div>
 							<div class="col-12 col-md-2 mt-2 mb-2">
 								<label class="form-label">Interes (%)</label>
-								<input type="number" class="form-control" @bind-value="ePrestamo.TasaInteres" min="0" placeholder="Capital" />
+								<input type="number" class="form-control" disabled="@IsDisabled" @bind-value="ePrestamo.TasaInteres" min="0" placeholder="Capital" />
 							</div>
 							<div class="col-12 col-md-2 mt-2 mb-2">
 								<label class="form-label">Mora (%)</label>
-								<input type="number" class="form-control" @bind-value="ePrestamo.TasaMora" min="0" placeholder="Capital" />
+								<input type="number" class="form-control" disabled="@IsDisabled" @bind-value="ePrestamo.TasaMora" min="0" placeholder="Capital" />
 							</div>
 							<div class="col-12 col-md-2 mt-2 mb-2">
 								<label class="form-label">Tipo Prestamo</label>
 								<div class="row g-2">
 									<div class="col">
-										<select class="form-select" @bind="ePrestamo.IdTipoPrestamo" @onblur="CalcularFechaVencimiento">
+										<select class="form-select" @bind="ePrestamo.IdTipoPrestamo" disabled="@IsDisabled" @onblur="CalcularFechaVencimiento">
 											@foreach (var item in TipoPrestamo)
 											{
 												<option value="@item.IdTipoPrestamo">@item.Descripcion</option>
@@ -110,7 +110,7 @@
 								</div>
 							</div>
 							<div class="col-12 col-md-2 mt-md-4 mt-3 mb-3 text-center">
-								<button class="btn btn-primary" @onclick="Calcular"><span class="oi oi-plus me-2"></span>Calcular</button>
+								<button class="btn btn-primary" disabled="@IsDisabled" @onclick="Calcular"><span class="oi oi-plus me-2"></span>Calcular</button>
 							</div>
 
 						</div>
@@ -169,14 +169,15 @@
 						<div class="row mb-2 mt-3">
 							<div class="col-12">
 								<label class="form-label">Observaciones</label>
-								<textarea class="form-control" @bind="ePrestamo.Observaciones" />
+								<textarea class="form-control" disabled="@IsDisabled" @bind="ePrestamo.Observaciones" />
 							</div>
 						</div>
 
 					</div>
 					<div class="card-footer">
 						<div class="text-center">
-							<button type="submit" class="btn btn-success btn-lg"><span class="oi oi-plus me-2"></span>Guardar</button>
+							<button type="submit" disabled="@IsDisabled" class="btn btn-success btn-lg"><span class="oi oi-plus me-2"></span>Guardar</button>
+							<button type="button" disabled="@IsDisabled" class="btn btn-info btn-lg"><span class="oi oi-pencil me-2"></span>Editar</button>
 						</div>
 					</div>
 				</EditForm>
@@ -192,6 +193,8 @@
 	[Parameter]
 	public int Id { get; set; }
 	public decimal Total, TotalInteres, TotalCapital = 0;
+	bool IsDisabled = false;
+	public int Usuario { get; set; }
 
 	ePrestamos ePrestamo = new ePrestamos();
 
@@ -202,6 +205,41 @@
 	{
 		await LlenaClientes();
 		await LlenaTipoPrestamos();
+
+		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+		ClaimsPrincipal usuario = (await customAuthStateProvider.GetAuthenticationStateAsync()).User;
+
+		if (usuario.Claims.Any())
+		{
+			Usuario = Convert.ToInt32(usuario.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+		}
+
+		await BuscarParametro();
+	}
+
+	private async Task BuscarParametro()
+	{
+		if (Id > 0)
+		{
+			ePrestamo = await eprestamoBLL.Buscar(Id);
+
+			if (ePrestamo.EsNulo == false)
+			{
+				if (ePrestamo.IdPrestamo == 0)
+				{
+					ePrestamo = new ePrestamos();
+					toastService.ShowError("Préstamo no encontrado");
+					return;
+				}
+			}
+			else
+			{
+				toastService.ShowError("El Préstamo está nulo");
+				ePrestamo = new ePrestamos();
+				return;
+			}
+			IsDisabled = true;
+		}
 	}
 
 	private async Task LlenaClientes()
