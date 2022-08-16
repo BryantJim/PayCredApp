@@ -48,6 +48,9 @@ namespace PayCredApp.BLL
                 ePrestamo.ModificadoPor = ePrestamo.Usuarios.IdUsuario;
                 ePrestamo.FechaModificacion = DateTime.Now;
 
+                ePrestamo.BceCapital = ePrestamo.Capital;
+                ePrestamo.BceInteres = ePrestamo.Interes;
+
                 await _context.ePrestamos.AddAsync(ePrestamo);
                 guardado = await _context.SaveChangesAsync() > 0;
                 _context.ChangeTracker.Clear();
@@ -74,6 +77,8 @@ namespace PayCredApp.BLL
 
                 ePrestamo.ModificadoPor = ePrestamo.Usuarios.IdUsuario;
                 ePrestamo.FechaModificacion = DateTime.Now;
+                ePrestamo.BceCapital = ePrestamo.Capital;
+                ePrestamo.BceInteres = ePrestamo.Interes;
 
                 _context.Entry(ePrestamo).State = EntityState.Modified;
                 modificado = await _context.SaveChangesAsync() > 0;
@@ -139,7 +144,7 @@ namespace PayCredApp.BLL
             List<ePrestamos> Lista = new List<ePrestamos>();
             try
             {
-                Lista = await _context.ePrestamos.Where(expression).Where(x => x.EsNulo == true).AsNoTracking().ToListAsync();
+                Lista = await _context.ePrestamos.Where(expression).Where(x => x.EsNulo == false).Include(x => x.Clientes).AsNoTracking().ToListAsync();
             }
             catch (Exception)
             {

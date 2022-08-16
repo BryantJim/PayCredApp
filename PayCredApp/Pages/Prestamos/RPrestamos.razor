@@ -35,7 +35,7 @@
 	<div class="page-body">
 		<div class="container-xl p-0">
 			<div class="card">
-				<EditForm Model="ePrestamo">
+				<EditForm Model="ePrestamo" OnValidSubmit="Guardar">
 					<div class="card-body">
 
 						<div class="row mb-2">
@@ -110,7 +110,7 @@
 								</div>
 							</div>
 							<div class="col-12 col-md-2 mt-md-4 mt-3 mb-3 text-center">
-								<button class="btn btn-primary" disabled="@IsDisabled" @onclick="Calcular"><span class="oi oi-plus me-2"></span>Calcular</button>
+								<button class="btn btn-info" type="button" disabled="@IsDisabled" @onclick="Calcular"><span class="oi oi-plus me-2"></span>Calcular</button>
 							</div>
 
 						</div>
@@ -176,8 +176,9 @@
 					</div>
 					<div class="card-footer">
 						<div class="text-center">
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-info btn-lg" @onclick="Editar"><span class="oi oi-pencil me-2"></span>Editar</button>
 							<button type="submit" disabled="@IsDisabled" class="btn btn-success btn-lg"><span class="oi oi-plus me-2"></span>Guardar</button>
-							<button type="button" disabled="@IsDisabled" class="btn btn-info btn-lg"><span class="oi oi-pencil me-2"></span>Editar</button>
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-danger btn-lg"><span class="oi oi-trash me-2"></span>Eliminar</button>
 						</div>
 					</div>
 				</EditForm>
@@ -187,13 +188,12 @@
 </div>
 
 
-<h3>RPrestamos</h3>
-
 @code {
 	[Parameter]
 	public int Id { get; set; }
 	public decimal Total, TotalInteres, TotalCapital = 0;
 	bool IsDisabled = false;
+	bool IsDisabledButtons = true;
 	public int Usuario { get; set; }
 
 	ePrestamos ePrestamo = new ePrestamos();
@@ -238,8 +238,58 @@
 				ePrestamo = new ePrestamos();
 				return;
 			}
+
+			TotalCapital = Utilitarios.ConverToN2(ePrestamo.Capital);
+			TotalInteres = Utilitarios.ConverToN2(ePrestamo.Interes * ePrestamo.Cuotas);
+			Total = Utilitarios.ConverToN2(TotalCapital + TotalInteres);
+
 			IsDisabled = true;
+			IsDisabledButtons = false;
 		}
+	}
+
+	public async Task Guardar()
+	{
+		if (ePrestamo.dPrestamos.Count == 0)
+		{
+			toastService.ShowError("Debe Calcular un prestamo");
+			return;
+		}
+
+		if (ePrestamo.IdCliente == 0)
+		{
+			toastService.ShowError("Debe seleccionar un cliente, para guardar", "Seleccionar Cliente");
+			return;
+		}
+
+		if (ePrestamo.Cuotas <= 0)
+		{
+			toastService.ShowInfo("El número de cuotas debe ser mayor a 0");
+			return;
+		}
+
+		if (ePrestamo.Capital <= 0)
+		{
+			toastService.ShowInfo("El capital debe ser mayor a 0");
+			return;
+		}
+
+		ePrestamo.Usuarios = await usuarioBLL.Buscar(Usuario);
+		ePrestamo.Interes = TotalInteres;
+
+		bool paso = await eprestamoBLL.Guardar(ePrestamo);
+
+		if (paso)
+		{
+			toastService.ShowSuccess("Prestamo Guardado!!!");
+			navManager.NavigateTo("/Prestamos");
+		}
+	}
+
+	public async Task Editar()
+	{
+		IsDisabled = false;
+		IsDisabledButtons = true;
 	}
 
 	private async Task LlenaClientes()

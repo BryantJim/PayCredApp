@@ -6,7 +6,7 @@ namespace PayCredApp.Models
     {
         [Key]
         public int IdPrestamo { get; set; }
-        public int IdCliente { get; set; } = 1;
+        public int IdCliente { get; set; } = 0;
         public virtual Clientes? Clientes { get; set; }
         public DateTime Fecha { get; set; } = DateTime.Now;
         public DateTime FechaInicio { get; set; } = DateTime.Now;
