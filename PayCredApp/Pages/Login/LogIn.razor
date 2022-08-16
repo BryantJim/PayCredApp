@@ -40,9 +40,9 @@
 	private class LoginViewModel
 	{
 		[Required(ErrorMessage = "Usuario es requerido")]
-		public string NombreUsuario { get; set; } = string.Empty;
+		public string NombreUsuario { get; set; } = "admin";
 		[Required(ErrorMessage = "Contraseña es requerida")]
-		public string Contrasena { get; set; } = string.Empty;
+		public string Contrasena { get; set; } = "1234";
 	}
 
 	LoginViewModel model = new LoginViewModel();

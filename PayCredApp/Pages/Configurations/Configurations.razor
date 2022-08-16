@@ -1,0 +1,122 @@
+﻿@page "/Configurations"
+
+@using System.Security.Claims
+@using PayCredApp.Configuraciones
+
+@inject AuthenticationStateProvider authStateProvider
+@inject ConfiguracionBLL configuracionBLL
+@inject UsuarioBLL usuarioBLL
+@inject IToastService toastService
+@inject NavigationManager navManager
+
+<div class="page">
+	<div class="page-header">
+		<div class="row align-items-center mw-100">
+			<div class="col">
+				<h2 class="page-title">
+					<span class="text-truncate">Configuración</span>
+				</h2>
+			</div>
+			<div class="col-auto">
+				<div class="btn-list">
+					<a href="/Home" class="btn btn-primary">
+						<span class="oi oi-arrow-thick-left me-2"></span>Atrás
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="page-body">
+		<div class="container-xl p-0">
+			<div class="card">
+				<EditForm Model="configuracion" OnValidSubmit="Guardar">
+					<div class="card-body">
+
+						<div class="row mb-3">
+							<div class="col-12 col-md-6">
+								<label class="form-label">Nombres</label>
+								<input type="text" class="form-control"@bind-value="configuracion.Nombres" placeholder="Colocar Su Nombre"/>
+							</div>
+						</div>
+
+						<div class="row mb-3">
+							<div class="col-12 col-md-6">
+								<label class="form-label">Teléfono</label>
+								<InputMask @ref="mask" id="telefono" @bind-Value="configuracion.Telefono" class="form-control" data-mask="(000)-000-0000" placeholder="(000)-000-0000" validateOnKeyPress="false" returnRawValue="true" />
+							</div>
+							<div class="col-12 col-md-6 mt-2 mt-md-0">
+								<label class="form-label">Dirección</label>
+								<input type="text" class="form-control"@bind-value="configuracion.Direccion" placeholder="Su Dirección"/>
+							</div>
+						</div>
+
+						<div class="row mb-3">
+							<div class="col-12 col-md-6">
+								<label class="form-label">Correo</label>
+								<InputText type="text" class="form-control" @bind-Value="model.correo" placeholder="Colocar su Correo" />
+								<ValidationMessage For="() => model.correo"/>
+							</div>
+							<div class="col-12 col-md-6 mt-2 mt-md-0">
+								<label class="form-label">Contraseña</label>
+								<InputText type="password" class="form-control" placeholder="Contraseña del Correo" @bind-Value="model.Contrasena" />
+								<ValidationMessage For="() => model.correo" />
+							</div>
+						</div>
+					</div>
+					<div class="card-footer">
+						<div class="text-center">
+							<button type="submit" class="btn btn-success btn-lg"><span class="oi oi-plus me-2"></span>Guardar Cambios</button>
+						</div>
+					</div>
+				</EditForm>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+
+	private class LoginViewModel
+	{
+		[Required(ErrorMessage = "correo es requerido")]
+		public string correo { get; set; } = string.Empty;
+		[Required(ErrorMessage = "Contraseña es requerida")]
+		public string Contrasena { get; set; } = string.Empty;
+	}
+
+	LoginViewModel model = new LoginViewModel();
+
+	Configuracion configuracion = new Configuracion();
+
+	InputMask mask { get; set; }
+
+	public int Id = 1;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Llenar();
+		model.correo = configuracion.Correo;
+		model.Contrasena = configuracion.Clave;
+	}
+
+	private async Task Llenar()
+	{
+		configuracion = await configuracionBLL.Buscar(Id);
+	}
+
+	public async Task Guardar(EditContext editContext)
+	{
+		if (editContext.Validate())
+		{
+			configuracion.Correo = model.correo;
+			configuracion.Clave = model.Contrasena;
+
+			var paso = await configuracionBLL.Modificar(configuracion);
+
+			if (paso)
+				toastService.ShowSuccess("Cambios Realizados");
+			else
+				toastService.ShowError("No fue posible guardar");
+		}
+	}
+}

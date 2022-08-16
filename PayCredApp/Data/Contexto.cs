@@ -93,6 +93,16 @@ namespace PayCredApp.Data
                 .HasOne<eCobros>(x => x.eCobros)
                 .WithMany(c => c.dCobros)
                 .HasForeignKey(x => x.IdCobro);
+
+            modelBuilder.Entity<Configuracion>().HasData(new Configuracion
+            {
+                IdConfiguracion = 1,
+                Nombres = string.Empty,
+                Correo = string.Empty,
+                Clave = string.Empty,
+                Telefono = string.Empty,
+                Direccion = string.Empty,
+            });
         }
         public DbSet<Usuarios> Usuarios { get; set; }
         public DbSet<Roles> Roles { get; set; }
@@ -104,6 +114,7 @@ namespace PayCredApp.Data
         public DbSet<TipoPrestamos> TipoPrestamos { get; set; }
         public DbSet<eCobros> eCobros { get; set; }
         public DbSet<dCobros> dCobros { get; set; }
+        public DbSet<Configuracion> Configuraciones { get; set; }
 
     }
 }

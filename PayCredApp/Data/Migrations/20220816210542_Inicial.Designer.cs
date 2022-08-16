@@ -12,7 +12,7 @@ using PayCredApp.Data;
 namespace PayCredApp.Data.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20220814193212_Inicial")]
+    [Migration("20220816210542_Inicial")]
     partial class Inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,6 +106,50 @@ namespace PayCredApp.Data.Migrations
                     b.HasIndex("ModificadoPor");
 
                     b.ToTable("Clientes");
+                });
+
+            modelBuilder.Entity("PayCredApp.Models.Configuracion", b =>
+                {
+                    b.Property<int>("IdConfiguracion")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdConfiguracion"), 1L, 1);
+
+                    b.Property<string>("Clave")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Correo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombres")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IdConfiguracion");
+
+                    b.ToTable("Configuraciones");
+
+                    b.HasData(
+                        new
+                        {
+                            IdConfiguracion = 1,
+                            Clave = "",
+                            Correo = "",
+                            Direccion = "",
+                            Nombres = "",
+                            Telefono = ""
+                        });
                 });
 
             modelBuilder.Entity("PayCredApp.Models.dCobros", b =>

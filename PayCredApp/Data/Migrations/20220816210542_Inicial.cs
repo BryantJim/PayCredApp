@@ -23,6 +23,23 @@ namespace PayCredApp.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Configuraciones",
+                columns: table => new
+                {
+                    IdConfiguracion = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombres = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Correo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Clave = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Telefono = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Direccion = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Configuraciones", x => x.IdConfiguracion);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Provincias",
                 columns: table => new
                 {
@@ -267,6 +284,11 @@ namespace PayCredApp.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Configuraciones",
+                columns: new[] { "IdConfiguracion", "Clave", "Correo", "Direccion", "Nombres", "Telefono" },
+                values: new object[] { 1, "", "", "", "", "" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Clientes_IdCiudad",
                 table: "Clientes",
@@ -330,6 +352,9 @@ namespace PayCredApp.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Configuraciones");
+
             migrationBuilder.DropTable(
                 name: "dCobros");
 
