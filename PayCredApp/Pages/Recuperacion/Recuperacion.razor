@@ -26,7 +26,7 @@
 
 		<div class="mb-2">
 			<label class="form-label">Usuario</label>
-			<InputText @bind-Value="model.Usuario" type="email" class="form-control" placeholder="Ingresar Usuario"  />
+			<InputText @bind-Value="model.Usuario" type="text" class="form-control" placeholder="Ingresar Usuario"  />
 			<ValidationMessage For="() => model.Correo" />
 		</div>
 
@@ -85,21 +85,21 @@
         InfoCorreo.NombreEmisor = "PayCred";
         InfoCorreo.CorreoEmisor = "paycred1@outlook.com";
         InfoCorreo.ClaveEmisor = "CredPay1";
-        InfoCorreo.CorreoReceptores = "";
-        InfoCorreo.CorreoReceptoresCopias = "";
-        InfoCorreo.Asunto = "Recuperación de Contraseña";
-        InfoCorreo.CuerpoCorreo = "";
-
     }
 
     private async Task RecuperarButton(EditContext editContext)
     {
         if (editContext.Validate())
         {
-            var Usuario = await usuarioBLL.BuscarCorreo(model.Usuario, model.Correo);
+            bool paso = await usuarioBLL.ValidarCorreo(model.Usuario, model.Correo);
 
-            if (Usuario == true)
+            if (paso == true)
             {
+                var usuario = await usuarioBLL.BuscarCorreo(model.Usuario, model.Correo);
+                InfoCorreo.CorreoReceptores = usuario.Correo;
+                InfoCorreo.CorreoReceptoresCopias = "";
+                InfoCorreo.Asunto = "Recuperación de Contraseña";
+                InfoCorreo.CuerpoCorreo = "La Contraseña suya es: " + Seguridad.Descrypt(usuario.Contrasena);
                 await EnviarCorreo();
             }
 			else

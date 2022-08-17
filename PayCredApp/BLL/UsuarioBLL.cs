@@ -148,7 +148,27 @@ namespace PayCredApp.BLL
             return usuario;
         }
 
-        public async Task<bool> BuscarCorreo(string NombreUsuario, string Correo)
+        public async Task<Usuarios> BuscarCorreo(string NombreUsuario, string Correo)
+        {
+            Usuarios usuario = new Usuarios();
+
+            try
+            {
+                var user = await _context.Usuarios.Where(x =>
+                    x.NombreUsuario == NombreUsuario && x.Correo == Correo).FirstOrDefaultAsync();
+
+                if (user != null)
+                    usuario = user;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return usuario;
+        }
+
+        public async Task<bool> ValidarCorreo(string NombreUsuario, string Correo)
         {
             bool paso = false;
 
