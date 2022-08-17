@@ -148,14 +148,13 @@ namespace PayCredApp.BLL
             return usuario;
         }
 
-        public async Task<Usuarios> BuscarCorreo(string NombreUsuario, string Correo)
+        public async Task<Usuarios> BuscarCorreo(string Correo)
         {
             Usuarios usuario = new Usuarios();
 
             try
             {
-                var user = await _context.Usuarios.Where(x =>
-                    x.NombreUsuario == NombreUsuario && x.Correo == Correo).FirstOrDefaultAsync();
+                var user = await _context.Usuarios.Where(x => x.Correo == Correo).FirstOrDefaultAsync();
 
                 if (user != null)
                     usuario = user;
@@ -168,7 +167,7 @@ namespace PayCredApp.BLL
             return usuario;
         }
 
-        public async Task<bool> ValidarCorreo(string NombreUsuario, string Correo)
+        public async Task<bool> ValidarCorreo(string Correo)
         {
             bool paso = false;
 
@@ -176,8 +175,7 @@ namespace PayCredApp.BLL
 
             try
             {
-                var user = await _context.Usuarios.Where(x =>
-                    x.NombreUsuario == NombreUsuario && x.Correo == Correo).FirstOrDefaultAsync();
+                var user = await _context.Usuarios.Where(x => x.Correo == Correo).FirstOrDefaultAsync();
 
                 if (user != null)
                     paso = true;

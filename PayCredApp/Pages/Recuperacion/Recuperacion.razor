@@ -24,11 +24,11 @@
 			<ValidationMessage For="() => model.Correo" />
 		</div>
 
-		<div class="mb-2">
+		@*<div class="mb-2">
 			<label class="form-label">Usuario</label>
 			<InputText @bind-Value="model.Usuario" type="text" class="form-control" placeholder="Ingresar Usuario"  />
 			<ValidationMessage For="() => model.Correo" />
-		</div>
+		</div>*@
 
 		<div class="mb-2">
 			<a href="/">Volver al Login</a>
@@ -46,8 +46,8 @@
     {
         [Required(ErrorMessage = "Correo es requerido")]
         public string Correo { get; set; } = "";
-        [Required(ErrorMessage = "Usurio es requerido")]
-        public string Usuario { get; set; } = "";
+        //[Required(ErrorMessage = "Usurio es requerido")]
+        //public string Usuario { get; set; } = "";
     }
 
     LoginViewModel model = new LoginViewModel();
@@ -91,20 +91,20 @@
     {
         if (editContext.Validate())
         {
-            bool paso = await usuarioBLL.ValidarCorreo(model.Usuario, model.Correo);
+            bool paso = await usuarioBLL.ValidarCorreo(model.Correo);
 
             if (paso == true)
             {
-                var usuario = await usuarioBLL.BuscarCorreo(model.Usuario, model.Correo);
+                var usuario = await usuarioBLL.BuscarCorreo(model.Correo);
                 InfoCorreo.CorreoReceptores = usuario.Correo;
                 InfoCorreo.CorreoReceptoresCopias = "";
                 InfoCorreo.Asunto = "Recuperación de Contraseña";
-                InfoCorreo.CuerpoCorreo = "La Contraseña suya es: " + Seguridad.Descrypt(usuario.Contrasena);
+                InfoCorreo.CuerpoCorreo = "Su Usuario es: (" + (usuario.NombreUsuario) + "), La Contraseña suya es: (" + Seguridad.Descrypt(usuario.Contrasena) + ")";
                 await EnviarCorreo();
             }
 			else
 			{
-				toastService.ShowError("Correo o Usuario incorrecto", "Error");
+				toastService.ShowError("Correo incorrecto", "Error");
 			}
 		}
 
