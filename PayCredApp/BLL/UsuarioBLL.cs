@@ -127,14 +127,14 @@ namespace PayCredApp.BLL
             return Lista;
         }
 
-        public async Task<Usuarios> LogIn(string NombreUsuario,string Contrasena)
+        public async Task<Usuarios> LogIn(string NombreUsuario, string Contrasena)
         {
             Usuarios usuario = new Usuarios();
             try
             {
                 Contrasena = Seguridad.Encrypt(Contrasena);
 
-                var user = await _context.Usuarios.Where(x => 
+                var user = await _context.Usuarios.Where(x =>
                     x.NombreUsuario == NombreUsuario && x.Contrasena == Contrasena).Include(x => x.Roles).FirstOrDefaultAsync();
 
                 if (user != null)
@@ -146,6 +146,28 @@ namespace PayCredApp.BLL
                 throw;
             }
             return usuario;
+        }
+
+        public async Task<bool> BuscarCorreo(string NombreUsuario, string Correo)
+        {
+            bool paso = false;
+
+            Usuarios usuario = new Usuarios();
+
+            try
+            {
+                var user = await _context.Usuarios.Where(x =>
+                    x.NombreUsuario == NombreUsuario && x.Correo == Correo).FirstOrDefaultAsync();
+
+                if (user != null)
+                    paso = true;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return paso;
         }
     }
 }
