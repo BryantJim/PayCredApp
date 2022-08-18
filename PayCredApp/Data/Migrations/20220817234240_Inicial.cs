@@ -118,6 +118,7 @@ namespace PayCredApp.Data.Migrations
                     Direccion = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IdCiudad = table.Column<int>(type: "int", nullable: false),
                     IdProvincia = table.Column<int>(type: "int", nullable: false),
+                    Correo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Activo = table.Column<bool>(type: "bit", nullable: false),
                     CreadoPor = table.Column<int>(type: "int", nullable: false),
                     FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),

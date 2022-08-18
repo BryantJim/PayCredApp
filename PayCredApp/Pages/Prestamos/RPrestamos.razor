@@ -19,7 +19,7 @@
 		<div class="row align-items-center mw-100">
 			<div class="col">
 				<h2 class="page-title">
-					<span class="text-truncate">Registro de Prestamos</span>
+					<span class="text-truncate">Registro de Préstamos</span>
 				</h2>
 			</div>
 			<div class="col-auto">
@@ -42,7 +42,7 @@
 							<div class="col-12 col-md-8">
 								<div class="row">
 									<div class="col-12 col-md-5">
-										<label class="form-label">Id Prestamo</label>
+										<label class="form-label">Id Préstamo</label>
 										<InputNumber @bind-Value="ePrestamo.IdPrestamo" disabled class="form-control" placeholder="ID" />
 									</div>
 								</div>
@@ -86,18 +86,18 @@
 							</div>
 							<div class="col-12 col-md-2 mt-2 mb-2">
 								<label class="form-label">Capital</label>
-								<input type="number" class="form-control" disabled="@IsDisabled" @bind-value="ePrestamo.Capital" min="0" placeholder="Capital" />
+								<input type="number" class="form-control" disabled="@IsDisabled" @bind-value="ePrestamo.Capital" min="0" />
 							</div>
 							<div class="col-12 col-md-2 mt-2 mb-2">
-								<label class="form-label">Interes (%)</label>
-								<input type="number" class="form-control" disabled="@IsDisabled" @bind-value="ePrestamo.TasaInteres" min="0" placeholder="Capital" />
+								<label class="form-label">Interés (%)</label>
+								<input type="number" class="form-control" disabled="@IsDisabled" @bind-value="ePrestamo.TasaInteres" min="0" step=".01"/>
 							</div>
 							<div class="col-12 col-md-2 mt-2 mb-2">
 								<label class="form-label">Mora (%)</label>
-								<input type="number" class="form-control" disabled="@IsDisabled" @bind-value="ePrestamo.TasaMora" min="0" placeholder="Capital" />
+								<input type="number" class="form-control" disabled="@IsDisabled" @bind-value="ePrestamo.TasaMora" min="0" step=".01"/>
 							</div>
 							<div class="col-12 col-md-2 mt-2 mb-2">
-								<label class="form-label">Tipo Prestamo</label>
+								<label class="form-label">Tipo Préstamo</label>
 								<div class="row g-2">
 									<div class="col">
 										<select class="form-select" @bind="ePrestamo.IdTipoPrestamo" disabled="@IsDisabled" @onblur="CalcularFechaVencimiento">
@@ -123,7 +123,7 @@
 											<th>NoCuota</th>
 											<th>Fecha Cuota</th>
 											<th>Capital</th>
-											<th>Interes</th>
+											<th>Interés</th>
 											<th>Total</th>
 										</tr>
 									</thead>
@@ -153,7 +153,7 @@
 
 						<div class="row justify-content-end mt-1">
 							<div class="col-7 col-md-5 col-xl-2">
-								<label class="form-label">Total Interes</label>
+								<label class="form-label">Total Interés</label>
 								<input type="number" disabled class="form-control" @bind-value="TotalInteres" />
 							</div>
 						</div>
@@ -176,9 +176,11 @@
 					</div>
 					<div class="card-footer">
 						<div class="text-center">
-							<button type="button" disabled="@IsDisabledButtons" class="btn btn-info btn-lg" @onclick="Editar"><span class="oi oi-pencil me-2"></span>Editar</button>
-							<button type="submit" disabled="@IsDisabled" class="btn btn-success btn-lg"><span class="oi oi-plus me-2"></span>Guardar</button>
-							<button type="button" disabled="@IsDisabledButtons" class="btn btn-danger btn-lg"><span class="oi oi-trash me-2"></span>Eliminar</button>
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-info btn-lg" @onclick="Editar"><i class="fa-solid fa-pen-to-square me-2"></i>Editar</button>
+							<button type="submit" disabled="@IsDisabled" class="btn btn-success btn-lg"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>	
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-info btn-lg" style="background-color:#25d366;"><i class="fa-brands fa-whatsapp me-2"></i>Enviar a WhatsApp</button>
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-secondary btn-lg"><i class="fa-solid fa-envelope me-2"></i>Enviar al Correo</button>
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-danger btn-lg"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</button>
 						</div>
 					</div>
 				</EditForm>
@@ -245,6 +247,7 @@
 
 			IsDisabled = true;
 			IsDisabledButtons = false;
+			await Calcular();
 		}
 	}
 
@@ -276,6 +279,7 @@
 
 		ePrestamo.Usuarios = await usuarioBLL.Buscar(Usuario);
 		ePrestamo.Interes = TotalInteres;
+		await Calcular();
 
 		bool paso = await eprestamoBLL.Guardar(ePrestamo);
 

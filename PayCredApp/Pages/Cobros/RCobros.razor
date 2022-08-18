@@ -61,7 +61,7 @@
 								<label class="form-label">Cliente</label>
 								<div class="row g-2">
 									<div class="col">
-										<select class="form-select" @bind="eCobro.IdCliente">
+										<select class="form-select" @bind="eCobro.IdCliente" @onblur="LlenarPrestamos">
 											<option value="0" selected>Seleccionar un cliente</option>
 											@foreach (var item in clientes)
 											{
@@ -75,7 +75,7 @@
 								<label class="form-label">Prestamo</label>
 								<div class="row g-2">
 									<div class="col">
-										<select class="form-select" @bind="eCobro.IdPrestamo">
+										<select class="form-select" @bind="eCobro.IdPrestamo" @onblur="LlenarGrid">
 											<option value="0" selected>Seleccionar un Prestamo</option>
 											@foreach (var item in eprestamos)
 											{
@@ -108,18 +108,22 @@
 											<th>Fecha Cuota</th>
 											<th>Capital</th>
 											<th>Interes</th>
+											<th>Mora</th>
 											<th>Total</th>
+											<th>Pago</th>
 										</tr>
 									</thead>
 									<tbody class="table-tbody">
-										@foreach (var item in ePrestamo.dPrestamos)
+										@foreach (var item in CobroPendientes)
 										{
 											<tr>
 												<td>@item.NoCuota</td>
 												<td>@item.FechaCuota.ToShortDateString()</td>
 												<td>@item.Capital</td>
 												<td>@item.Interes</td>
-												<td>@(item.Capital+item.Interes)</td>
+												<td>@item.Mora</td>
+												<td>@item.Total</td>
+												<td>@item.TotalAPagar</td>
 											</tr>
 										}
 									</tbody>
@@ -173,12 +177,16 @@
 	[Parameter]
 	public int Id { get; set; }
 	public decimal Total = 0;
+	public decimal Mora = 0;
 
 	eCobros eCobro = new eCobros();
 	ePrestamos ePrestamo = new ePrestamos();
 
 	List<Clientes> clientes = new List<Clientes>();
 	List<ePrestamos> eprestamos = new List<ePrestamos>();
+
+	ModeloCobro CobroPendiente = new ModeloCobro();
+	List<ModeloCobro> CobroPendientes = new List<ModeloCobro>();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -189,8 +197,84 @@
 	{
 		clientes = await clienteBLL.GetList(x => true);
 		eprestamos = await eprestamoBLL.GetList(x => true);
+	}
 
+	private void LlenarCobrosPendientes()
+	{
+		if (ePrestamo != null)
+		{
+			foreach (var item in ePrestamo.dPrestamos)
+			{
+				CobroPendiente = new ModeloCobro();
+				CobroPendiente.NoCuota = item.NoCuota;
+				CobroPendiente.FechaCuota = item.FechaCuota;
+				CobroPendiente.Capital = item.Capital;
+				CobroPendiente.Interes = item.Interes;
+				CobroPendiente.Mora = CalcularMora(item.Capital, ePrestamo.TasaMora, item.FechaCuota);
+				CobroPendiente.Total = CobroPendiente.Capital + CobroPendiente.Interes + CobroPendiente.Mora;
+				CobroPendiente.TotalAPagar = 0;
+
+				CobroPendientes.Add(CobroPendiente);
+			}
+		}
+	}
+
+	private async Task LlenarGrid()
+	{
 		ePrestamo = await eprestamoBLL.Buscar(eCobro.IdPrestamo);
+		CobroPendientes = new List<ModeloCobro>();
+
+		if (ePrestamo.IdPrestamo > 0)
+		{
+			eCobro.IdCliente = ePrestamo.IdCliente;
+			LlenarCobrosPendientes();
+		}
+		else
+		{
+			eCobro = new eCobros();
+		}
+	}
+
+	private async Task LlenarPrestamos()
+	{
+		eprestamos = await eprestamoBLL.GetList(x => true);
+
+		if (eCobro.IdCliente > 0)
+		{
+			eprestamos = eprestamos.Where(x => x.IdCliente == eCobro.IdCliente).ToList();
+			eCobro.IdPrestamo = 0;
+		}
+	}
+
+	private decimal CalcularMora(decimal Capital, decimal TasaMora, DateTime FechaCuota)
+	{
+		Mora = 0;
+		decimal MontoMoraxDia = Capital * (TasaMora / 100);
+
+		int DiasAtrazados = (DateTime.Now - FechaCuota).Days;
+
+		if (DiasAtrazados > 0)
+			DiasAtrazados -= ePrestamo.TipoPrestamos.DiaGracias;
+
+		if (DiasAtrazados < 0)
+			DiasAtrazados = 0;
+
+		Mora = (MontoMoraxDia * DiasAtrazados);
+
+		eCobro.MoraCobrada += Mora;
+
+		return Math.Round(Mora, 2);
+	}
+
+	private class ModeloCobro
+	{
+		public int NoCuota { get; set; }
+		public DateTime FechaCuota { get; set; }
+		public decimal Capital { get; set; }
+		public decimal Interes { get; set; }
+		public decimal Mora { get; set; }
+		public decimal Total { get; set; }
+		public decimal TotalAPagar { get; set; }
 	}
 }
 

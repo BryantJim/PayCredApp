@@ -18,6 +18,7 @@ namespace PayCredApp.Models
 		public virtual Ciudades? Ciudades { get; set; }
 		public int IdProvincia { get; set; } = 1;
 		public virtual Provincias? Provincias { get; set; }
+		public string Correo { get; set; } = string.Empty;
 		public bool Activo { get; set; } = true;
 		public int CreadoPor { get; set; } = 1;
 		public virtual Usuarios? Usuarios { get; set; }

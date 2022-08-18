@@ -12,7 +12,7 @@ using PayCredApp.Data;
 namespace PayCredApp.Data.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20220816210542_Inicial")]
+    [Migration("20220817234240_Inicial")]
     partial class Inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,6 +61,10 @@ namespace PayCredApp.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Celular")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Correo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

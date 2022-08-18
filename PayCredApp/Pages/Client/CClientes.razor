@@ -8,7 +8,7 @@
 			<div class="col">
 				<div class="mb-1">
 					<ol class="breadcrumb" aria-label="breadcrumbs">
-						<li class="breadcrumb-item"><a href="/Home">Home</a></li>
+						<li class="breadcrumb-item"><a href="/Home">Inicio</a></li>
 						<li class="breadcrumb-item active" aria-current="page"><a href="/Clientes">Clientes</a></li>
 					</ol>
 				</div>
@@ -63,7 +63,7 @@
 									<div class="row">
 										<div class="col mt-3 text-end">
 											<button class="btn btn-primary">
-												<span class="oi oi-magnifying-glass me-2"></span>Consultar
+												<i class="fa-solid fa-magnifying-glass me-2"></i>Consultar
 											</button>
 										</div>
 									</div>
@@ -97,8 +97,8 @@
 										<td class="text-end">
 											<div class="btn-list flex-nowrap">
 
-												<a class="btn btn-info" href="/Registro/Clientes/@item.IdCliente"><span class="oi oi-pencil me-2"></span>Editar</a>
-												<a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-danger" @onclick="() => LlenarClienteEliminar(item.IdCliente)"><span class="oi oi-trash me-2"></span>Eliminar</a>
+												<a class="btn btn-info" href="/Registro/Clientes/@item.IdCliente"><i class="fa-solid fa-eye me-2"></i>Ver</a>
+												<a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-danger" @onclick="() => LlenarClienteEliminar(item.IdCliente)"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</a>
 											</div>
 
 										</td>
@@ -128,12 +128,12 @@
 					<div class="row">
 						<div class="col">
 							<a href="#" class="btn w-100" data-bs-dismiss="modal">
-								<span class="oi oi-arrow-thick-left me-2"></span>Cancelar
+								<i class="fa-solid fa-ban me-2"></i>Cancelar
 							</a>
 						</div>
 						<div class="col">
 							<a href="#" class="btn btn-danger w-100" data-bs-dismiss="modal" @onclick="EliminarCliente">
-								<span class="oi oi-basket me-2"></span>Eliminar
+								<i class="fa-solid fa-trash-can me-2"></i>Eliminar
 							</a>
 						</div>
 					</div>

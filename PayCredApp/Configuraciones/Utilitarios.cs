@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace PayCredApp.Configuraciones
 {
@@ -6,7 +7,7 @@ namespace PayCredApp.Configuraciones
 	{
 		public static decimal ConverToN2(decimal valor)
 		{
-			return Math.Round(valor,2);
+            return Convert.ToDecimal(valor.ToString("N2"));
 		}
 
         public static string ToStringFromArray(this object[] array, string separator = ", ")

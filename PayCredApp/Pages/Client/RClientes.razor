@@ -36,47 +36,47 @@
 						<div class="row mb-3">
 							<div class="col-4">
 								<label class="form-label">Id Cliente</label>
-								<InputNumber type="text" class="form-control" @bind-Value="cliente.IdCliente" placeholder="ID del clientes" readonly />
+								<InputNumber type="text" class="form-control" @bind-Value="cliente.IdCliente" placeholder="ID del clientes" disabled />
 							</div>
 						</div>
 
 						<div class="row mb-3">
 							<div class="col-12 col-md-6">
 								<label class="form-label">Nombres</label>
-								<input type="text" class="form-control" placeholder="Nombres del cliente" @bind-value="cliente.Nombres" />
+								<input type="text" class="form-control" disabled="@IsDisabled" placeholder="Nombres del cliente" @bind-value="cliente.Nombres" />
 							</div>
 							<div class="col-12 col-md-6 mt-2 mt-md-0">
 								<label class="form-label">Apellidos</label>
-								<input type="text" class="form-control" placeholder="Apellidos del cliente" @bind-value="cliente.Apellidos" />
+								<input type="text" class="form-control" disabled="@IsDisabled" placeholder="Apellidos del cliente" @bind-value="cliente.Apellidos" />
 							</div>
 						</div>
 
 						<div class="row mb-3">
 							<div class="col-12 col-md-6">
 								<label class="form-label">Fecha de Nacimiento</label>
-								<input class="form-control " type="date" @bind-value="cliente.FechaNacimiento">
+								<input class="form-control " type="date" disabled="@IsDisabled" @bind-value="cliente.FechaNacimiento">
 							</div>
 							<div class="col-12 col-md-6 mt-2 mt-md-0">
 								<label class="form-label">Cédula</label>
-								<InputMask @ref="mask" id="cedula" @bind-Value="cliente.Cedula" class="form-control" data-mask="000-0000000-0" placeholder="000-0000000-0" validateOnKeyPress="false" returnRawValue="true" />
+								<InputMask @ref="mask" id="cedula" @bind-Value="cliente.Cedula" disabled="@IsDisabled" class="form-control" data-mask="000-0000000-0" placeholder="000-0000000-0" validateOnKeyPress="false" returnRawValue="true" />
 							</div>
 						</div>
 
 						<div class="row mb-3">
 							<div class="col-12 col-md-6">
 								<label class="form-label">Teléfono</label>
-								<InputMask @ref="mask" id="telefono" @bind-Value="cliente.Telefono" class="form-control" data-mask="(000)-000-0000" placeholder="(000)-000-0000" validateOnKeyPress="false" returnRawValue="true" />
+								<InputMask @ref="mask" id="telefono" @bind-Value="cliente.Telefono" disabled="@IsDisabled" class="form-control" data-mask="(000)-000-0000" placeholder="(000)-000-0000" validateOnKeyPress="false" returnRawValue="true" />
 							</div>
 							<div class="col-12 col-md-6 mt-2 mt-md-0">
 								<label class="form-label">Celular</label>
-								<InputMask @ref="mask" id="celular" @bind-Value="cliente.Celular" class="form-control" data-mask="(000)-000-0000" placeholder="(000)-000-0000" validateOnKeyPress="false" returnRawValue="true" />
+								<InputMask @ref="mask" id="celular" @bind-Value="cliente.Celular" disabled="@IsDisabled" class="form-control" data-mask="(000)-000-0000" placeholder="(000)-000-0000" validateOnKeyPress="false" returnRawValue="true" />
 							</div>
 						</div>
 
 						<div class="row mb-3">
 							<div class="col-12">
 								<label class="form-label">Dirección</label>
-								<input type="text" class="form-control" placeholder="Dirección del cliente" @bind-value="cliente.Direccion" />
+								<input type="text" class="form-control" placeholder="Dirección del cliente" disabled="@IsDisabled" @bind-value="cliente.Direccion" />
 							</div>
 						</div>
 
@@ -85,7 +85,7 @@
 								<label class="form-label">Provincia</label>
 								<div class="row g-2">
 									<div class="col">
-										<select class="form-select" @bind="cliente.IdProvincia">
+										<select class="form-select" @bind="cliente.IdProvincia" disabled="@IsDisabled">
 											<option value="0" selected>Seleccionar Provincia</option>
 											@foreach (var item in provincias)
 											{
@@ -102,7 +102,7 @@
 								<label class="form-label">Ciudad</label>
 								<div class="row g-2">
 									<div class="col">
-										<select class="form-select" @bind="cliente.IdCiudad">
+										<select class="form-select" @bind="cliente.IdCiudad" disabled="@IsDisabled">
 											<option value="0" selected>Seleccionar Ciudad</option>
 											@foreach (var item in ciudades)
 											{
@@ -115,11 +115,20 @@
 									</div>
 								</div>
 							</div>
+
+							<div class="row mt-2">
+								<div class="col-12">
+									<label class="form-label">Correo</label>
+									<input type="text" class="form-control" placeholder="Dirección de correo electronico" @bind-value="cliente.Correo"  disabled="@IsDisabled"/>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="card-footer">
 						<div class="text-center">
-							<button type="submit" class="btn btn-success btn-lg"><span class="oi oi-plus me-2"></span>Guardar</button>
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-info btn-lg" @onclick="Editar"><i class="fa-solid fa-pen-to-square me-2"></i>Editar</button>
+							<button type="submit" disabled="@IsDisabled" class="btn btn-success btn-lg"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-danger btn-lg"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</button>
 						</div>
 					</div>
 				</EditForm>
@@ -139,19 +148,13 @@
 				<div class="modal-body">
 					<div class="row mb-3">
 						<div class="col">
-							<label class="form-label">Id Provincia</label>
-							<InputNumber class="form-control" @bind-Value="provincia.IdProvincia" placeholder="ID" readonly />
-						</div>
-					</div>
-					<div class="row mb-3">
-						<div class="col">
 							<label class="form-label">Nombre</label>
 							<InputText class="form-control" @bind-Value="provincia.Nombres" placeholder="Nombre de la provincia" />
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="submit" class="btn btn-success" data-bs-dismiss="modal"><span class="oi oi-plus me-2"></span>Guardar</button>
+					<button type="submit" class="btn btn-success" data-bs-dismiss="modal"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
 				</div>
 			</EditForm>
 		</div>
@@ -170,19 +173,13 @@
 				<div class="modal-body">
 					<div class="row mb-3">
 						<div class="col">
-							<label class="form-label">Id Ciudad</label>
-							<InputNumber class="form-control" @bind-Value="ciudad.IdCiudad" placeholder="ID" readonly />
-						</div>
-					</div>
-					<div class="row mb-3">
-						<div class="col">
 							<label class="form-label">Nombre</label>
 							<InputText class="form-control" @bind-Value="ciudad.Nombres" placeholder="Nombre de la Ciudad" />
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="submit" class="btn btn-success" data-bs-dismiss="modal"><span class="oi oi-plus me-2"></span>Guardar</button>
+					<button type="submit" class="btn btn-success" data-bs-dismiss="modal"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
 				</div>
 			</EditForm>
 		</div>
@@ -193,6 +190,9 @@
 	Clientes cliente = new Clientes();
 	Provincias provincia = new Provincias();
 	Ciudades ciudad = new Ciudades();
+
+	bool IsDisabled = false;
+	bool IsDisabledButtons = true;
 
 	List<Provincias> provincias = new List<Provincias>();
 	List<Ciudades> ciudades = new List<Ciudades>();
@@ -238,7 +238,15 @@
 				toastService.ShowError("El cliente está nulo");
 				cliente = new Clientes();
 			}
+			IsDisabled = true;
+			IsDisabledButtons = false;
 		}
+	}
+
+	public async Task Editar()
+	{
+		IsDisabled = false;
+		IsDisabledButtons = true;
 	}
 
 	public async Task Guardar(EditContext editContext)

@@ -62,6 +62,10 @@ namespace PayCredApp.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Correo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("CreadoPor")
                         .HasColumnType("int");
 

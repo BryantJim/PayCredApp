@@ -11,7 +11,7 @@ using Blazored.Toast;
 var builder = WebApplication.CreateBuilder(args);
 
 // Añadiendo los servicios de la base de datos
-builder.Services.AddDbContext<Contexto>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Luis")), ServiceLifetime.Scoped);
+builder.Services.AddDbContext<Contexto>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnDb")), ServiceLifetime.Scoped);
 
 // Add services to the container.
 builder.Services.AddAuthenticationCore();
