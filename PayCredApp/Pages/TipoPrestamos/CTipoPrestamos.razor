@@ -10,26 +10,20 @@
 				<div class="mb-1">
 					<ol class="breadcrumb" aria-label="breadcrumbs">
 						<li class="breadcrumb-item"><a href="/Configurations">Configuraciones</a></li>
-						<li class="breadcrumb-item active" aria-current="page"><a href="/TipoPrestamos">Tipo Prestamos</a></li>
+						<li class="breadcrumb-item active" aria-current="page"><a href="/TipoPrestamos">Tipo Préstamos</a></li>
 					</ol>
 				</div>
-				<br/>
+				<br />
 				<div class="btn-list">
 					<h2 class="page-title">
-						<span class="text-truncate">Listado de Tipos Prestamos</span>
+						<span class="text-truncate">Listado de Tipos Préstamos</span>
 					</h2>
 				</div>
 			</div>
 			<div class="col-auto">
 				<div class="btn-list">
-					<a href="/Home" class="btn btn-primary">
-						<span class="oi oi-arrow-thick-left me-2"></span>Atrás
-					</a>
-				</div>
-				<br/>
-				<div class="btn-list">
 					<a href="/Configurations" class="btn btn-primary">
-						<i class="fa-solid fa-gear me-2"></i>Configuraciones
+						<span class="oi oi-arrow-thick-left me-2"></span>Atrás
 					</a>
 				</div>
 			</div>
@@ -84,7 +78,7 @@
 							<thead>
 								<tr>
 									<th><button class="table-sort">Descripción</button></th>
-									<th>Dia de gracia</th>
+									<th>Día de gracia</th>
 									<th class="w-1"></th>
 								</tr>
 							</thead>
@@ -96,7 +90,7 @@
 										<td>@item.DiaGracias</td>
 										<td class="text-end">
 											<div class="btn-list flex-nowrap">
-												<a class="btn btn-info" href="/Registro/TipoPrestamos/@item.IdTipoPrestamo"><span class="oi oi-pencil me-2"></span>Editar</a>
+												<a class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modal-edit"><i class="fa-solid fa-pen-to-square me-2"></i>Editar</a>
 											</div>
 
 										</td>
@@ -104,6 +98,47 @@
 								}
 							</tbody>
 						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal modal-blur fade" id="modal-edit" tabindex="-1" style="display: none;" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Tipo de préstamo</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="row mb-3">
+					<div class="col">
+						<label class="form-label">Descripción</label>
+						<input type="text" class="form-control" value="Anual" disabled>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<div class="col">
+						<label class="form-label">Día de gracia</label>
+						<input type="number" class="form-control" value="5">
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<div class="w-100">
+					<div class="row">
+						<div class="col">
+							<a href="#" class="btn w-100" data-bs-dismiss="modal">
+								<i class="fa-solid fa-ban me-2"></i>Cancelar
+							</a>
+						</div>
+						<div class="col">
+							<a href="#" class="btn btn-success w-100" data-bs-dismiss="modal">
+								<i class="fa-solid fa-floppy-disk me-2"></i>Guardar
+							</a>
+						</div>
 					</div>
 				</div>
 			</div>
