@@ -44,8 +44,9 @@ namespace PayCredApp.BLL
             bool guardado = false;
             try
             {
-                usuario.Contrasena = Seguridad.Encrypt(usuario.Contrasena);
-                usuario.IdRol = 1;
+                //string contra = usuario.Contrasena;
+                //usuario.Contrasena = Seguridad.Encrypt(contra);
+                //usuario.IdRol = 1;
                 await _context.Usuarios.AddAsync(usuario);
                 guardado = await _context.SaveChangesAsync() > 0;
             }
@@ -62,6 +63,8 @@ namespace PayCredApp.BLL
             bool modificado = false;
             try
             {
+                //string contra = usuario.Contrasena;
+                //usuario.Contrasena = Seguridad.Encrypt(contra);
                 _context.Entry(usuario).State = EntityState.Modified;
                 modificado = await _context.SaveChangesAsync() > 0;
             }
@@ -118,7 +121,7 @@ namespace PayCredApp.BLL
             List<Usuarios> Lista = new List<Usuarios>();
             try
             {
-                Lista = await _context.Usuarios.Where(usuario).AsNoTracking().ToListAsync();
+                Lista = await _context.Usuarios.Where(usuario).Where(x => x.EsNulo == false).AsNoTracking().ToListAsync();
             }
             catch (Exception)
             {
@@ -135,7 +138,7 @@ namespace PayCredApp.BLL
                 Contrasena = Seguridad.Encrypt(Contrasena);
 
                 var user = await _context.Usuarios.Where(x =>
-                    x.NombreUsuario == NombreUsuario && x.Contrasena == Contrasena).Include(x => x.Roles).FirstOrDefaultAsync();
+                    x.NombreUsuario == NombreUsuario && x.Contrasena == Contrasena && x.EsNulo == false).Include(x => x.Roles).FirstOrDefaultAsync();
 
                 if (user != null)
                     usuario = user;
@@ -154,7 +157,7 @@ namespace PayCredApp.BLL
 
             try
             {
-                var user = await _context.Usuarios.Where(x => x.Correo == Correo).FirstOrDefaultAsync();
+                var user = await _context.Usuarios.Where(x => x.Correo == Correo && x.EsNulo == false).FirstOrDefaultAsync();
 
                 if (user != null)
                     usuario = user;
@@ -175,7 +178,7 @@ namespace PayCredApp.BLL
 
             try
             {
-                var user = await _context.Usuarios.Where(x => x.Correo == Correo).FirstOrDefaultAsync();
+                var user = await _context.Usuarios.Where(x => x.Correo == Correo && x.EsNulo == false).FirstOrDefaultAsync();
 
                 if (user != null)
                     paso = true;
@@ -186,6 +189,41 @@ namespace PayCredApp.BLL
                 throw;
             }
             return paso;
+        }
+
+        public async Task<bool> ValidarUsuario(string Usuario)
+        {
+            bool paso = false;
+
+            Usuarios usuario = new Usuarios();
+
+            try
+            {
+                var user = await _context.Usuarios.Where(x => x.NombreUsuario == Usuario && x.EsNulo == false).FirstOrDefaultAsync();
+
+                if (user != null)
+                    paso = true;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return paso;
+        }
+
+        public async Task<List<Roles>> GetListRoles(Expression<Func<Roles, bool>> roles)
+        {
+            List<Roles> Lista = new List<Roles>();
+            try
+            {
+                Lista = await _context.Roles.Where(roles).AsNoTracking().ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return Lista;
         }
     }
 }

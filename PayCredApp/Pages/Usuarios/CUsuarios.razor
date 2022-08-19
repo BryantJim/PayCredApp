@@ -84,7 +84,7 @@
 								</tr>
 							</thead>
 							<tbody class="table-tbody">
-								@foreach (var item in clientes)
+								@foreach (var item in usuarios)
 								{
 									<tr>
 										<td>@item.IdUsuario</td>
@@ -95,8 +95,8 @@
 										<td class="text-end">
 											<div class="btn-list flex-nowrap">
 
-												<a class="btn btn-info" href="/Registro/Clientes/"><i class="fa-solid fa-eye me-2"></i>Ver</a>
-												<a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-danger" ><i class="fa-solid fa-trash-can me-2"></i>Eliminar</a>
+												<a class="btn btn-info" href="/Registro/Usuarios/@item.IdUsuario"><i class="fa-solid fa-eye me-2"></i>Ver</a>
+												<a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-danger" @onclick="() => LlenarUsuarioEliminar(item.IdUsuario)"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</a>
 											</div>
 
 										</td>
@@ -130,7 +130,7 @@
 							</a>
 						</div>
 						<div class="col">
-							<a href="#" class="btn btn-danger w-100" data-bs-dismiss="modal" >
+							<a href="#" class="btn btn-danger w-100" data-bs-dismiss="modal" @onclick="EliminarUsuario">
 								<i class="fa-solid fa-trash-can me-2"></i>Eliminar
 							</a>
 						</div>
@@ -142,39 +142,40 @@
 </div>
 
 @code {
-	List<Usuarios> clientes = new List<Usuarios>();
-	//public int ClienteEliminar { get; set; } = 0;
-	//public bool Fechas { get; set; } = false;
+	List<Usuarios> usuarios = new List<Usuarios>();
+	public int UsuarioEliminar { get; set; } = 0;
+	public bool Fechas { get; set; } = false;
 
-	//protected override async Task OnInitializedAsync()
-	//{
-	//	await LlenarLista();
-	//}
+	protected override async Task OnInitializedAsync()
+	{
+		await LlenarLista();
+	}
 
-	//private async Task LlenarLista()
-	//{
-	//	//clientes = await clienteBLL.GetList(x => true);
-	//	//clientes.OrderByDescending(x => x.IdCliente);
-	//}
+	private async Task LlenarLista()
+	{
+		usuarios = await usuarioBLL.GetList(x => true);
+		usuarios.OrderByDescending(x => x.IdUsuario);
+	}
 
-	//private async Task LlenarClienteEliminar(int Id)
-	//{
-	//	await Task.Run(() => ClienteEliminar = Id);
-	//}
+	private async Task LlenarUsuarioEliminar(int Id)
+	{
+		await Task.Run(() => UsuarioEliminar = Id);
+	}
 
-	//private async Task EliminarCliente()
-	//{
-	//	var paso = await clienteBLL.Eliminar(ClienteEliminar);
-	//	await LlenarLista();
-	//}
+	private async Task EliminarUsuario()
+	{
+		var paso = await usuarioBLL.Eliminar(UsuarioEliminar);
+		
+		await LlenarLista();
+	}
 
-	//private void DesdeHasta()
-	//{
-	//	if (Fechas == false)
-	//		Fechas = true;
-	//	else
-	//		Fechas = false;
+	private void DesdeHasta()
+	{
+		if (Fechas == false)
+			Fechas = true;
+		else
+			Fechas = false;
 
-	//	this.StateHasChanged();
-	//}
+		this.StateHasChanged();
+	}
 }

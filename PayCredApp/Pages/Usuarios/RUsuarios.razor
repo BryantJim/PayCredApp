@@ -1,9 +1,9 @@
 ﻿@page "/Registro/Usuarios"
+@page "/Registro/Usuarios/{Id:int}"
 
 @using System.Security.Claims
 
 @inject AuthenticationStateProvider authStateProvider
-@inject ClienteBLL clienteBLL
 @inject CiudadBLL ciudadBLL
 @inject ProvinciaBLL provinciaBLL
 @inject UsuarioBLL usuarioBLL
@@ -31,7 +31,7 @@
 	<div class="page-body">
 		<div class="container-xl p-0">
 			<div class="card">
-				<EditForm Model="model" >
+				<EditForm Model="usuario" OnValidSubmit="@Guardar">
 					<div class="card-body">
 						<div class="row mb-3">
 							<div class="col-4">
@@ -45,8 +45,12 @@
 								<label class="form-label">Rol</label>
 								<div class="row g-2">
 									<div class="col">
-										<select class="form-select" @bind="usuario.IdRol">
+										<select class="form-select" @bind="usuario.IdRol" disabled="@IsDisabled">
 											<option value="0" selected>Seleccionar Rol</option>
+											@foreach(var item in roles)
+											{
+												<option value="@item.IdRol">@item.Nombre</option>
+											}
 										</select>
 									</div>
 								</div>
@@ -56,26 +60,26 @@
 						<div class="row mb-3">
 							<div class="col-12 col-md-12">
 								<label class="form-label">Nombres</label>
-								<input type="text" class="form-control" placeholder="" @bind-value="usuario.Nombres" />
+								<input type="text" class="form-control" placeholder="" @bind-value="usuario.Nombres" disabled="@IsDisabled"/>
 							</div>
 						</div>
 
 						<div class="row mb-3">
 							<div class="col-12 col-md-12">
 								<label class="form-label">Usuario</label>
-								<input class="form-control " type="text"  @bind-value="usuario.NombreUsuario">
+								<input class="form-control " type="text"  @bind-value="usuario.NombreUsuario" disabled="@IsDisabled">
 							</div>
 						</div>
 
 						<div class="row mb-3">
 							<div class="col-12 col-md-6">
 								<label class="form-label">Contraseña</label>
-								<InputText type="password" class="form-control" placeholder="Introducir contraseña nueva" @bind-Value="model.Contrasena" />
+								<InputText type="password" class="form-control" placeholder="Introducir contraseña nueva" @bind-Value="model.Contrasena" disabled="@IsDisabled" />
 								<ValidationMessage For="() => model.Contrasena" />
 							</div>
 							<div class="col-12 col-md-6 mt-2 mt-md-0">
 								<label class="form-label">Confirmar Contraseña</label>
-								<InputText type="password" class="form-control" placeholder="Vuelva a introducir la nueva contraseña" @bind-Value="model.ConfirmarContrasena" />
+								<InputText type="password" class="form-control" placeholder="Vuelva a introducir la nueva contraseña" @bind-Value="model.ConfirmarContrasena" disabled="@IsDisabled" />
 								<ValidationMessage For="() => model.ConfirmarContrasena" />
 							</div>
 						</div>
@@ -83,19 +87,49 @@
 						<div class="row mb-3">
 							<div class="col-12 col-md-12">
 								<label class="form-label">Correo</label>
-								<InputText type="text" class="form-control" @bind-Value="model.correo" placeholder="Colocar su Correo" />
+								<InputText type="text" class="form-control" @bind-Value="model.correo" placeholder="Colocar su Correo" disabled="@IsDisabled" />
 								<ValidationMessage For="() => model.correo" />
 							</div>
 						</div>
 					</div>
 					<div class="card-footer">
 						<div class="text-center">
-							<button type="button"  class="btn btn-info btn-lg"><i class="fa-solid fa-pen-to-square me-2"></i>Editar</button>
-							<button type="submit" class="btn btn-success btn-lg"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
-							<button type="button"  class="btn btn-danger btn-lg"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</button>
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-info btn-lg"><i class="fa-solid fa-pen-to-square me-2" @onclick="Editar"></i>Editar</button>
+							<button type="submit" disabled="@IsDisabled" class="btn btn-success btn-lg"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-danger btn-lg"><i class="fa-solid fa-trash-can me-2" @onclick="() => LlenarUsuarioEliminar(usuario.IdUsuario)"></i>Eliminar</button>
 						</div>
 					</div>
 				</EditForm>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal modal-blur fade" id="modal-danger" tabindex="-1" style="display: none;" aria-modal="true">
+	<div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			<div class="modal-status bg-danger"></div>
+			<div class="modal-body text-center py-4">
+				<svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 9v2m0 4v.01"></path><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path></svg>
+				<h3>¿Está seguro?</h3>
+				<div class="text-muted">¿Realmente quiere eliminar el Usuario? Esta acción no se puede deshacer.</div>
+			</div>
+			<div class="modal-footer">
+				<div class="w-100">
+					<div class="row">
+						<div class="col">
+							<a href="#" class="btn w-100" data-bs-dismiss="modal">
+								<i class="fa-solid fa-ban me-2"></i>Cancelar
+							</a>
+						</div>
+						<div class="col">
+							<a href="#" class="btn btn-danger w-100" data-bs-dismiss="modal" @onclick="EliminarUsuario">
+								<i class="fa-solid fa-trash-can me-2"></i>Eliminar
+							</a>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -113,123 +147,111 @@
 	}
 	LoginViewModel model = new LoginViewModel();
 	Usuarios usuario = new Usuarios();
-	//List<Usuarios> usuarios = new List<Usuarios>();
-	//Clientes cliente = new Clientes();
-	//Provincias provincia = new Provincias();
-	//Ciudades ciudad = new Ciudades();
+	List<Roles> roles = new List<Roles>();
+	public int UsuarioEliminar { get; set; } = 0;
 
-	//bool IsDisabled = false;
-	//bool IsDisabledButtons = true;
+	bool IsDisabled = false;
+	bool IsDisabledButtons = true;
 
-	//List<Provincias> provincias = new List<Provincias>();
-	//List<Ciudades> ciudades = new List<Ciudades>();
+	public int UsuarioCreador { get; set; }
 
-	//public int UsuarioCreador { get; set; }
-	//InputMask mask { get; set; }
+	[Parameter]
+	public int Id { get; set; }
 
-	//[Parameter]
-	//public int Id { get; set; }
+	protected override async Task OnInitializedAsync()
+	{
+		await LlenarRoles();
 
-	//protected override async Task OnInitializedAsync()
-	//{
-	//	await LlenarProvincias();
-	//	await LlenarCiudades();
+		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+		ClaimsPrincipal usuario = (await customAuthStateProvider.GetAuthenticationStateAsync()).User;
 
-	//	var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
-	//	ClaimsPrincipal usuario = (await customAuthStateProvider.GetAuthenticationStateAsync()).User;
+		if (usuario.Claims.Any())
+		{
+			UsuarioCreador = Convert.ToInt32(usuario.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+		}
 
-	//	if (usuario.Claims.Any())
-	//	{
-	//		UsuarioCreador = Convert.ToInt32(usuario.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
-	//	}
+		await BuscarParametro();
+	}
 
-	//	await BuscarParametro();
-	//}
+	private async Task BuscarParametro()
+	{
+		if (Id > 0)
+		{
+			usuario = await usuarioBLL.Buscar(Id);
+			usuario.Contrasena = Seguridad.Descrypt(usuario.Contrasena);
+			model.correo = usuario.Correo;
+			model.Contrasena = usuario.Contrasena;
 
-	//private async Task BuscarParametro()
-	//{
-	//	if (Id > 0)
-	//	{
-	//		cliente = await clienteBLL.Buscar(Id);
+			if (usuario.EsNulo == false)
+			{
+				if (usuario == null)
+				{
+					toastService.ShowError("Usuario no encontrado");
+					usuario = new Usuarios();
+				}
+			}
+			else
+			{
+				toastService.ShowError("El usuario no existe");
+				usuario = new Usuarios();
+			}
 
-	//		if (cliente.Activo == true)
-	//		{
-	//			if (cliente == null)
-	//			{
-	//				cliente = new Clientes();
-	//				toastService.ShowError("Cliente no encontrado");
-	//			}
-	//		}
-	//		else
-	//		{
-	//			toastService.ShowError("El cliente está nulo");
-	//			cliente = new Clientes();
-	//		}
-	//		IsDisabled = true;
-	//		IsDisabledButtons = false;
-	//	}
-	//}
+			IsDisabled = true;
+			IsDisabledButtons = false;
+		}
+	}
 
-	//public async Task Editar()
-	//{
-	//	IsDisabled = false;
-	//	IsDisabledButtons = true;
-	//}
+	public void Editar()
+	{
+		IsDisabled = false;
+		IsDisabledButtons = true;
+	}
 
-	//public async Task Guardar(EditContext editContext)
-	//{
-	//	if (editContext.Validate())
-	//	{
-	//		cliente.Usuarios = await usuarioBLL.Buscar(UsuarioCreador);
+	public async Task Guardar(EditContext editContext)
+	{
+		if (editContext.Validate())
+		{
+			if(await usuarioBLL.ValidarCorreo(model.correo) == false || usuario.IdUsuario > 0)
+			{
+				if(await usuarioBLL.ValidarUsuario(usuario.NombreUsuario) == false || usuario.IdUsuario > 0)
+				{
+					if(model.Contrasena == model.ConfirmarContrasena)
+					{
+						usuario.Correo = model.correo;
+						usuario.Contrasena = Seguridad.Encrypt(model.Contrasena);
+						var paso = await usuarioBLL.Guardar(usuario);
 
-	//		var paso = await clienteBLL.Guardar(cliente);
+						if (paso)
+							navManager.NavigateTo("/Usuarios");
+						else
+							toastService.ShowError("No fue posible guardar");
+					}
+					else
+						toastService.ShowError("Contraseña y Confirmar Contraseña no coinciden");
+				}
+				else
+					toastService.ShowError("El usuario ya existe.");
+			}
+			else
+				toastService.ShowError("El correo ya existe.");
+		}
+	}
 
-	//		if (paso)
-	//			navManager.NavigateTo("/Clientes");
-	//		else
-	//			toastService.ShowError("No fue posible guardar");
-	//	}
-	//}
+	private async Task LlenarRoles()
+	{
+		roles = await usuarioBLL.GetListRoles(x => true);
+	}
 
-	//private async Task GuardarProvincia(EditContext editContext)
-	//{
-	//	if (editContext.Validate())
-	//	{
-	//		var paso = await provinciaBLL.Guardar(provincia);
+	private async Task LlenarUsuarioEliminar(int Id)
+	{
+		await Task.Run(() => UsuarioEliminar = Id);
+	}
 
-	//		if (paso)
-	//		{
-	//			toastService.ShowSuccess("Provincia agregada con éxito!!");
-	//			await LlenarProvincias();
-	//		}
-	//		else
-	//			toastService.ShowError("Provincia no fue agregada!!");
-	//	}
-	//}
-
-	//private async Task GuardarCiudad(EditContext editContext)
-	//{
-	//	if (editContext.Validate())
-	//	{
-	//		var paso = await ciudadBLL.Guardar(ciudad);
-
-	//		if (paso)
-	//		{
-	//			toastService.ShowSuccess("Ciudad agregada con éxito!!");
-	//			await LlenarCiudades();
-	//		}
-	//		else
-	//			toastService.ShowError("Ciudad no fue agregada!!");
-	//	}
-	//}
-
-	//private async Task LlenarProvincias()
-	//{
-	//	provincias = await provinciaBLL.GetList(x => true);
-	//}
-
-	//private async Task LlenarCiudades()
-	//{
-	//	ciudades = await ciudadBLL.GetList(x => true);
-	//}
+	private async Task EliminarUsuario()
+	{
+		if(usuario.IdUsuario > 0)
+		{
+			var paso = await usuarioBLL.Eliminar(Id);
+		}
+	}
 }
