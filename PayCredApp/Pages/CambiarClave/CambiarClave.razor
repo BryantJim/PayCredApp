@@ -38,8 +38,14 @@
 	<div class="page-body">
 		<div class="container-xl p-0">
 			<div class="card">
-				<EditForm Model="model" >
+				<EditForm Model="model" OnValidSubmit="@Confirmar">
 					<div class="card-body">
+						@*<div class="row mb-3">
+							<div class="col-12 col-md-6">
+								<label class="form-label">Usuario</label>
+								<InputText type="text" class="form-control" @bind-Value="model.Usuario" />
+							</div>
+						</div>*@
 
 						<div class="row mb-3">
 							<div class="col-12 col-md-6">
@@ -77,6 +83,7 @@
 
 	private class LoginViewModel
 	{
+		public string Usuario { get; set; } = string.Empty;
 		[Required(ErrorMessage = "Contraseña Actual es requerida")]
 		public string ContrasenaActual { get; set; } = string.Empty;
 		[Required(ErrorMessage = "Contraseña Nueva es requerida")]
@@ -86,28 +93,43 @@
 	}
 
 	LoginViewModel model = new LoginViewModel();
+	Usuarios usuarios = new Usuarios();
 
-	Configuracion configuracion = new Configuracion();
+	protected override async Task OnInitializedAsync()
+	{
+		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+		ClaimsPrincipal usuario = (await customAuthStateProvider.GetAuthenticationStateAsync()).User;
 
-	//InputMask mask { get; set; }
+		if (usuario.Claims.Any())
+		{
+			model.Usuario = usuario.Claims.First(c => c.Type == ClaimTypes.Name).Value;
+			//var customAuthProvider = (CustomAuthenticationStateProvider)authStateProvider;
+			//authStateProvider.
+		}
+	}
 
-	public int Id = 1;
+	private async Task Confirmar(EditContext editContext)
+	{
+		if (editContext.Validate())
+		{
+			var Usuario = await usuarioBLL.LogIn(model.Usuario, model.ContrasenaActual);
 
-	//protected override async Task OnInitializedAsync()
-	//{
-		
-	//}
-
-	//public async Task CambiarClave(EditContext editContext)
-	//{
-	//	if (editContext.Validate())
-	//	{
-	//		var paso = await configuracionBLL.Modificar(configuracion);
-
-	//		if (paso)
-	//			toastService.ShowSuccess("Cambios Realizados");
-	//		else
-	//			toastService.ShowError("No fue posible guardar");
-	//	}
-	//}
+			if (Usuario.IdUsuario != 0)
+			{
+				if(model.ContrasenaNueva == model.ConfirmarContrasena)
+				{
+					usuarios = Usuario;
+					usuarios.Contrasena = Seguridad.Encrypt(model.ContrasenaNueva);
+					await usuarioBLL.Guardar(usuarios);
+					toastService.ShowSuccess("Contraseña Actualizada");
+				}
+				else
+					toastService.ShowError("Contraseña Nueva y Confirmar Contraseña no coinciden");
+			}
+			else
+			{
+				toastService.ShowError("contraseña incorrecta", "Error");
+			}
+		}
+	}
 }
