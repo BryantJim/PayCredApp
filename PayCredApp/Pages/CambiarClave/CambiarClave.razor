@@ -1,0 +1,113 @@
+﻿@page "/CambiarClave"
+
+@using System.Security.Claims
+@using PayCredApp.Configuraciones
+
+@inject AuthenticationStateProvider authStateProvider
+@inject ConfiguracionBLL configuracionBLL
+@inject UsuarioBLL usuarioBLL
+@inject IToastService toastService
+@inject NavigationManager navManager
+
+<div class="page">
+	<div class="page-header">
+		<div class="row align-items-center mw-100">
+			<div class="col">
+				<div class="mb-1">
+					<ol class="breadcrumb" aria-label="breadcrumbs">
+						<li class="breadcrumb-item"><a href="/Home">Inicio</a></li>
+						<li class="breadcrumb-item active" aria-current="page"><a href="/CambiarClave">Cambiar Contraseña</a></li>
+					</ol>
+				</div>
+				<br/>
+				<div class="btn-list">
+					<h2 class="page-title">
+						<span class="text-truncate">Cambiar Contraseña</span>
+					</h2>
+				</div>
+			</div>
+			<div class="col-auto">
+				<div class="btn-list">
+					<a href="/Home" class="btn btn-primary">
+						<span class="oi oi-arrow-thick-left me-2"></span>Atrás
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="page-body">
+		<div class="container-xl p-0">
+			<div class="card">
+				<EditForm Model="model" >
+					<div class="card-body">
+
+						<div class="row mb-3">
+							<div class="col-12 col-md-6">
+								<label class="form-label">Contraseña Actual</label>
+								<InputText type="password" class="form-control" placeholder="Introducir contraseña actual" @bind-Value="model.ContrasenaActual" />
+								<ValidationMessage For="() => model.ContrasenaActual" />
+							</div>
+						</div>
+
+						<div class="row mb-3">
+							<div class="col-12 col-md-6">
+								<label class="form-label">Contraseña Nueva</label>
+								<InputText type="password" class="form-control" placeholder="Introducir contraseña nueva" @bind-Value="model.ContrasenaNueva" />
+								<ValidationMessage For="() => model.ContrasenaNueva" />
+							</div>
+							<div class="col-12 col-md-6 mt-2 mt-md-0">
+								<label class="form-label">Confirmar Contraseña</label>
+								<InputText type="password" class="form-control" placeholder="Vuelva a introducir la nueva contraseña" @bind-Value="model.ConfirmarContrasena" />
+								<ValidationMessage For="() => model.ConfirmarContrasena" />
+							</div>
+						</div>
+					</div>
+					<div class="card-footer">
+						<div class="text-center">
+							<button type="submit" class="btn btn-success btn-lg"><i class="fa-solid fa-floppy-disk me-2"></i>Cambiar Contraseña</button>
+						</div>
+					</div>
+				</EditForm>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+
+	private class LoginViewModel
+	{
+		[Required(ErrorMessage = "Contraseña Actual es requerida")]
+		public string ContrasenaActual { get; set; } = string.Empty;
+		[Required(ErrorMessage = "Contraseña Nueva es requerida")]
+		public string ContrasenaNueva { get; set; } = string.Empty;
+		[Required(ErrorMessage = "Contraseña es requerida")]
+		public string ConfirmarContrasena { get; set; } = string.Empty;
+	}
+
+	LoginViewModel model = new LoginViewModel();
+
+	Configuracion configuracion = new Configuracion();
+
+	//InputMask mask { get; set; }
+
+	public int Id = 1;
+
+	//protected override async Task OnInitializedAsync()
+	//{
+		
+	//}
+
+	//public async Task CambiarClave(EditContext editContext)
+	//{
+	//	if (editContext.Validate())
+	//	{
+	//		var paso = await configuracionBLL.Modificar(configuracion);
+
+	//		if (paso)
+	//			toastService.ShowSuccess("Cambios Realizados");
+	//		else
+	//			toastService.ShowError("No fue posible guardar");
+	//	}
+	//}
+}
