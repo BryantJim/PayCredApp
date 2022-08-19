@@ -1,5 +1,5 @@
 ﻿@layout LogInLayout
-@page "/Recuperacion"
+@page "/CambiarContrasena"
 
 @using System.Net.Mail
 @using System.Text
@@ -13,29 +13,29 @@
 
 @inject UsuarioBLL usuarioBLL
 
-<EditForm Model="@model" OnValidSubmit="@RecuperarButton">
+<EditForm Model="@model" OnValidSubmit="@Cambiar">
 	<DataAnnotationsValidator />
 	<div class="card-body">
 		<h1 class="text-center mb-4">Recuperar Contraseña</h1>
 
-		<div class="mb-3">
-			<label class="form-label">Correo</label>
-			<InputText  @bind-Value="model.Correo" type="email" class="form-control" placeholder="Ingresar Correo para recibir el código" />
-			<ValidationMessage For="() => model.Correo" />
+		<div class="mb-2">
+			<label class="form-label">Contraseña Nueva</label>
+			<InputText type="password" class="form-control" placeholder="Introducir Nueva Contraseña" @bind-Value="model.ContrasenaNueva" />
+			<ValidationMessage For="() => model.ContrasenaNueva" />
 		</div>
 
-		@*<div class="mb-2">
-			<label class="form-label">Usuario</label>
-			<InputText @bind-Value="model.Usuario" type="text" class="form-control" placeholder="Ingresar Usuario"  />
-			<ValidationMessage For="() => model.Correo" />
-		</div>*@
+		<div class="mb-2">
+			<label class="form-label">Confirmar Contraseña</label>
+			<InputText type="password" class="form-control" placeholder="Volver a introducir la nueva contraseña" @bind-Value="model.ConfirmarContrasena" />
+			<ValidationMessage For="() => model.ConfirmarContrasena" />
+		</div>
 
 		<div class="mb-2">
 			<a href="/">Volver al Login</a>
 		</div>
 
 		<div class="form-footer">
-			<button type="submit" class="btn btn-primary w-100" style="font-size:16px;">Enviar Correo <span class="oi oi-account-login ms-2"></span></button>
+			<button type="submit" class="btn btn-primary w-100" style="font-size:16px;">Cambiar Contraseña<span class="oi oi-account-login ms-2"></span></button>
 		</div>
 	</div>
 </EditForm>
@@ -44,10 +44,10 @@
     //Correo paycred1@outlook.com contraseña CredPay1
     private class LoginViewModel
     {
-        [Required(ErrorMessage = "Correo es requerido")]
-        public string Correo { get; set; } = "";
-        //[Required(ErrorMessage = "Usurio es requerido")]
-        //public string Usuario { get; set; } = "";
+        [Required(ErrorMessage = "Contraseña nueva es requerida")]
+        public string ContrasenaNueva { get; set; } = "";
+        [Required(ErrorMessage = "Confirmar contraseña es requerido")]
+        public string ConfirmarContrasena { get; set; } = "";
     }
 
     LoginViewModel model = new LoginViewModel();
@@ -87,26 +87,25 @@
         InfoCorreo.ClaveEmisor = "CredPay1";
     }
 
-    private async Task RecuperarButton(EditContext editContext)
+    private async Task Cambiar(EditContext editContext)
     {
         if (editContext.Validate())
         {
-            bool paso = await usuarioBLL.ValidarCorreo(model.Correo);
+   //         bool paso = await usuarioBLL.ValidarCorreo(model.Correo);
 
-            if (paso == true)
-            {
-                var usuario = await usuarioBLL.BuscarCorreo(model.Correo);
-                InfoCorreo.CorreoReceptores = usuario.Correo;
-                InfoCorreo.CorreoReceptoresCopias = "";
-                InfoCorreo.Asunto = "Recuperación de Contraseña";
-                InfoCorreo.CuerpoCorreo = "Su Usuario es: (" + (usuario.NombreUsuario) + "), La Contraseña suya es: (" + Seguridad.Descrypt(usuario.Contrasena) + ")";
-                await EnviarCorreo();
-                navManager.NavigateTo("/ConfirmarCodigo");
-            }
-			else
-			{
-				toastService.ShowError("Correo incorrecto", "Error");
-			}
+   //         if (paso == true)
+   //         {
+   //             var usuario = await usuarioBLL.BuscarCorreo(model.Correo);
+   //             InfoCorreo.CorreoReceptores = usuario.Correo;
+   //             InfoCorreo.CorreoReceptoresCopias = "";
+   //             InfoCorreo.Asunto = "Recuperación de Contraseña";
+   //             InfoCorreo.CuerpoCorreo = "Su Usuario es: (" + (usuario.NombreUsuario) + "), La Contraseña suya es: (" + Seguridad.Descrypt(usuario.Contrasena) + ")";
+   //             await EnviarCorreo();
+   //         }
+			//else
+			//{
+			//	toastService.ShowError("Correo incorrecto", "Error");
+			//}
 		}
 
     async Task EnviarCorreo()
