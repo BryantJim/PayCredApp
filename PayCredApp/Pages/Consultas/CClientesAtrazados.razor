@@ -1,0 +1,140 @@
+﻿@page "/Consulta/ClientesAtrazados"
+
+@inject ePrestamoBLL eprestamoBLL
+
+<div class="page">
+	<div class="page-header">
+		<div class="row align-items-center mw-100">
+			<div class="col">
+				<div class="mb-1">
+					<ol class="breadcrumb" aria-label="breadcrumbs">
+						<li class="breadcrumb-item"><a href="/Home">Inicio</a></li>
+						<li class="breadcrumb-item active" aria-current="page"><a href="#">Clientes Atrazados</a></li>
+					</ol>
+				</div>
+				<h2 class="page-title">
+					<span class="text-truncate">Consulta de Clientes Atrazados</span>
+				</h2>
+			</div>
+		</div>
+	</div>
+	<div class="page-body">
+		<div class="container-xl">
+			<div class="card">
+				<div class="card-body">
+					<div class="accordion mb-3">
+						<div class="accordion-item">
+							<h2 class="accordion-header" style="background-color:#DDDDDD;">
+								<button class="accordion-button " type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1" aria-expanded="true">
+									Criterio de Búsqueda
+								</button>
+							</h2>
+							<div id="collapse-1" class="accordion-collapse collapse mt-2" data-bs-parent="#accordion-example">
+								<div class="accordion-body pt-0">
+
+									<div class="row">
+										<div class="col-12 col-md-2">
+											<label class="form-label">Campo a buscar</label>
+											<select class="form-select">
+												<option value="Id">Id Cliente</option>
+												<option value="Nombre">Nombre</option>
+											</select>
+										</div>
+										<div class="col-12 col-md-2">
+											<label class="form-label">Forma</label>
+											<select class="form-select">
+												<option value="Similitud">Similitud</option>
+												<option value="Igualdad">Igualdad</option>
+											</select>
+										</div>
+										<div class="col-12 col-md-8">
+											<label class="form-label">Criterio</label>
+											<input type="text" class="form-control" placeholder="Criterio del campo" />
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-12 mt-3 text-end">
+											<button class="btn btn-primary">
+												<i class="fa-solid fa-magnifying-glass me-2"></i>Consultar
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th><button class="table-sort">ID</button></th>
+									<th><button class="table-sort">Cliente</button></th>
+									<th>Fecha Cuota</th>
+									<th>Día atrazados</th>
+									<th>Monto</th>
+									<th class="w-1"></th>
+								</tr>
+							</thead>
+							<tbody class="table-tbody">
+								@foreach (var item in ListPrestamos)
+								{
+									<tr>
+										<td>@item.IdPrestamo</td>
+										<td>@(item.Clientes.Nombres + " " + item.Clientes.Apellidos)</td>
+										<td>@item.Fecha</td>
+										<td>@item.Cuotas</td>
+										<td>@item.Capital</td>
+										<td class="text-end">
+											<div class="btn-list flex-nowrap">
+												<a class="btn btn-info" href="#" style="background-color:#25d366;"><i class="fa-brands fa-whatsapp me-2"></i>Enviar a WhatsApp</a>
+												<a class="btn btn-secondary"><i class="fa-solid fa-envelope me-2"></i>Enviar al Correo</a>
+											</div>
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	List<ePrestamos> ListPrestamos = new List<ePrestamos>();
+	public int ClienteEliminar { get; set; } = 0;
+	public bool Fechas { get; set; } = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LlenarLista();
+	}
+
+	private async Task LlenarLista()
+	{
+	//	ListPrestamos = await eprestamoBLL.GetList(x => true);
+		ListPrestamos = new List<ePrestamos>();
+	}
+
+	private async Task LlenarClienteEliminar(int Id)
+	{
+		//await Task.Run(() => ClienteEliminar = Id);
+	}
+
+	private async Task EliminarPrestamos()
+	{
+		//var paso = await eprestamoBLL.Eliminar(ClienteEliminar);
+		//await LlenarLista();
+	}
+
+	private void DesdeHasta()
+	{
+		if (Fechas == false)
+			Fechas = true;
+		else
+			Fechas = false;
+
+		this.StateHasChanged();
+	}
+}
