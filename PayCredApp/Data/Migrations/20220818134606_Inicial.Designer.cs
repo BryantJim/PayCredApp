@@ -12,7 +12,7 @@ using PayCredApp.Data;
 namespace PayCredApp.Data.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20220817234240_Inicial")]
+    [Migration("20220818134606_Inicial")]
     partial class Inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
