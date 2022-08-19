@@ -1,0 +1,180 @@
+﻿@page "/Usuarios"
+
+@inject UsuarioBLL usuarioBLL
+
+<div class="page">
+	<div class="page-header">
+		<div class="row align-items-center mw-100">
+			<div class="col">
+				<div class="mb-1">
+					<ol class="breadcrumb" aria-label="breadcrumbs">
+						<li class="breadcrumb-item"><a href="/Configurations">Configuraciones</a></li>
+						<li class="breadcrumb-item active" aria-current="page"><a href="/Clientes">Usuarios</a></li>
+					</ol>
+				</div>
+				<h2 class="page-title">
+					<span class="text-truncate">Listado de Usuarios</span>
+				</h2>
+			</div>
+			<div class="col-auto">
+				<div class="btn-list">
+					<a href="/Registro/Usuarios" class="btn btn-primary">
+						<span class="oi oi-plus me-2"></span>Agregar Usuarios
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="page-body">
+		<div class="container-xl">
+			<div class="card">
+				<div class="card-body">
+					<div class="accordion mb-3">
+						<div class="accordion-item">
+							<h2 class="accordion-header" style="background-color:#DDDDDD;">
+								<button class="accordion-button " type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1" aria-expanded="true">
+									Criterio de Búsqueda
+								</button>
+							</h2>
+							<div id="collapse-1" class="accordion-collapse collapse mt-2" data-bs-parent="#accordion-example">
+								<div class="accordion-body pt-0">
+
+									<div class="row">
+										<div class="col-12 col-md-2">
+											<label class="form-label">Campo a buscar</label>
+											<select class="form-select">
+												<option value="Id">Id Usuario</option>
+												<option value="Nombre">Nombre</option>
+												<option value="Cedula">Cédula</option>
+											</select>
+										</div>
+										<div class="col-12 col-md-2">
+											<label class="form-label">Forma</label>
+											<select class="form-select">
+												<option value="Similitud">Similitud</option>
+												<option value="Igualdad">Igualdad</option>
+											</select>
+										</div>
+										<div class="col-12 col-md-8">
+											<label class="form-label">Criterio</label>
+											<input type="text" class="form-control" placeholder="Criterio del campo" />
+										</div>
+									</div>
+									<div class="row">
+										<div class="col mt-3 text-end">
+											<button class="btn btn-primary">
+												<i class="fa-solid fa-magnifying-glass me-2"></i>Consultar
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th><button class="table-sort">ID Usuario</button></th>
+									<th><button class="table-sort">Roles</button></th>
+									<th>Nombres</th>
+									<th>Usuario</th>
+									<th>Correo</th>
+									<th class="w-1"></th>
+								</tr>
+							</thead>
+							<tbody class="table-tbody">
+								@foreach (var item in clientes)
+								{
+									<tr>
+										<td>@item.IdUsuario</td>
+										<td>@item.Roles</td>
+										<td>@(item.Nombres)</td>
+										<td>@item.NombreUsuario</td>
+										<td>@item.Correo</td>
+										<td class="text-end">
+											<div class="btn-list flex-nowrap">
+
+												<a class="btn btn-info" href="/Registro/Clientes/"><i class="fa-solid fa-eye me-2"></i>Ver</a>
+												<a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-danger" ><i class="fa-solid fa-trash-can me-2"></i>Eliminar</a>
+											</div>
+
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal modal-blur fade" id="modal-danger" tabindex="-1" style="display: none;" aria-modal="true">
+	<div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			<div class="modal-status bg-danger"></div>
+			<div class="modal-body text-center py-4">
+				<svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 9v2m0 4v.01"></path><path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"></path></svg>
+				<h3>¿Está seguro?</h3>
+				<div class="text-muted">¿Realmente quiere eliminar el Usuario? Esta acción no se puede deshacer.</div>
+			</div>
+			<div class="modal-footer">
+				<div class="w-100">
+					<div class="row">
+						<div class="col">
+							<a href="#" class="btn w-100" data-bs-dismiss="modal">
+								<i class="fa-solid fa-ban me-2"></i>Cancelar
+							</a>
+						</div>
+						<div class="col">
+							<a href="#" class="btn btn-danger w-100" data-bs-dismiss="modal" >
+								<i class="fa-solid fa-trash-can me-2"></i>Eliminar
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	List<Usuarios> clientes = new List<Usuarios>();
+	//public int ClienteEliminar { get; set; } = 0;
+	//public bool Fechas { get; set; } = false;
+
+	//protected override async Task OnInitializedAsync()
+	//{
+	//	await LlenarLista();
+	//}
+
+	//private async Task LlenarLista()
+	//{
+	//	//clientes = await clienteBLL.GetList(x => true);
+	//	//clientes.OrderByDescending(x => x.IdCliente);
+	//}
+
+	//private async Task LlenarClienteEliminar(int Id)
+	//{
+	//	await Task.Run(() => ClienteEliminar = Id);
+	//}
+
+	//private async Task EliminarCliente()
+	//{
+	//	var paso = await clienteBLL.Eliminar(ClienteEliminar);
+	//	await LlenarLista();
+	//}
+
+	//private void DesdeHasta()
+	//{
+	//	if (Fechas == false)
+	//		Fechas = true;
+	//	else
+	//		Fechas = false;
+
+	//	this.StateHasChanged();
+	//}
+}

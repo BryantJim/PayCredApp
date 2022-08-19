@@ -1,0 +1,235 @@
+﻿@page "/Registro/Usuarios"
+
+@using System.Security.Claims
+
+@inject AuthenticationStateProvider authStateProvider
+@inject ClienteBLL clienteBLL
+@inject CiudadBLL ciudadBLL
+@inject ProvinciaBLL provinciaBLL
+@inject UsuarioBLL usuarioBLL
+@inject IToastService toastService
+@inject NavigationManager navManager
+@inject UsuarioBLL usuarioBLL
+
+<div class="page">
+	<div class="page-header">
+		<div class="row align-items-center mw-100">
+			<div class="col">
+				<h2 class="page-title">
+					<span class="text-truncate">Registro de Usuarios</span>
+				</h2>
+			</div>
+			<div class="col-auto">
+				<div class="btn-list">
+					<a href="/Usuarios" class="btn btn-primary">
+						<span class="oi oi-arrow-thick-left me-2"></span>Atrás
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="page-body">
+		<div class="container-xl p-0">
+			<div class="card">
+				<EditForm Model="model" >
+					<div class="card-body">
+						<div class="row mb-3">
+							<div class="col-4">
+								<label class="form-label">Id Usuario</label>
+								<InputNumber type="text" class="form-control" @bind-Value="usuario.IdUsuario" placeholder="ID del Usuario" disabled />
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-12 col-md-12">
+								<label class="form-label">Rol</label>
+								<div class="row g-2">
+									<div class="col">
+										<select class="form-select" @bind="usuario.IdRol">
+											<option value="0" selected>Seleccionar Rol</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="row mb-3">
+							<div class="col-12 col-md-12">
+								<label class="form-label">Nombres</label>
+								<input type="text" class="form-control" placeholder="" @bind-value="usuario.Nombres" />
+							</div>
+						</div>
+
+						<div class="row mb-3">
+							<div class="col-12 col-md-12">
+								<label class="form-label">Usuario</label>
+								<input class="form-control " type="text"  @bind-value="usuario.NombreUsuario">
+							</div>
+						</div>
+
+						<div class="row mb-3">
+							<div class="col-12 col-md-6">
+								<label class="form-label">Contraseña</label>
+								<InputText type="password" class="form-control" placeholder="Introducir contraseña nueva" @bind-Value="model.Contrasena" />
+								<ValidationMessage For="() => model.Contrasena" />
+							</div>
+							<div class="col-12 col-md-6 mt-2 mt-md-0">
+								<label class="form-label">Confirmar Contraseña</label>
+								<InputText type="password" class="form-control" placeholder="Vuelva a introducir la nueva contraseña" @bind-Value="model.ConfirmarContrasena" />
+								<ValidationMessage For="() => model.ConfirmarContrasena" />
+							</div>
+						</div>
+
+						<div class="row mb-3">
+							<div class="col-12 col-md-12">
+								<label class="form-label">Correo</label>
+								<InputText type="text" class="form-control" @bind-Value="model.correo" placeholder="Colocar su Correo" />
+								<ValidationMessage For="() => model.correo" />
+							</div>
+						</div>
+					</div>
+					<div class="card-footer">
+						<div class="text-center">
+							<button type="button"  class="btn btn-info btn-lg"><i class="fa-solid fa-pen-to-square me-2"></i>Editar</button>
+							<button type="submit" class="btn btn-success btn-lg"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
+							<button type="button"  class="btn btn-danger btn-lg"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</button>
+						</div>
+					</div>
+				</EditForm>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	private class LoginViewModel
+	{
+		[Required(ErrorMessage = "correo es requerido")]
+		public string correo { get; set; } = string.Empty;
+		[Required(ErrorMessage = "Contraseña es requerida")]
+		public string Contrasena { get; set; } = string.Empty;
+		[Required(ErrorMessage = "Confirmacion es requerida")]
+		public string ConfirmarContrasena { get; set; } = string.Empty;
+	}
+	LoginViewModel model = new LoginViewModel();
+	Usuarios usuario = new Usuarios();
+	//List<Usuarios> usuarios = new List<Usuarios>();
+	//Clientes cliente = new Clientes();
+	//Provincias provincia = new Provincias();
+	//Ciudades ciudad = new Ciudades();
+
+	//bool IsDisabled = false;
+	//bool IsDisabledButtons = true;
+
+	//List<Provincias> provincias = new List<Provincias>();
+	//List<Ciudades> ciudades = new List<Ciudades>();
+
+	//public int UsuarioCreador { get; set; }
+	//InputMask mask { get; set; }
+
+	//[Parameter]
+	//public int Id { get; set; }
+
+	//protected override async Task OnInitializedAsync()
+	//{
+	//	await LlenarProvincias();
+	//	await LlenarCiudades();
+
+	//	var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+	//	ClaimsPrincipal usuario = (await customAuthStateProvider.GetAuthenticationStateAsync()).User;
+
+	//	if (usuario.Claims.Any())
+	//	{
+	//		UsuarioCreador = Convert.ToInt32(usuario.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+	//	}
+
+	//	await BuscarParametro();
+	//}
+
+	//private async Task BuscarParametro()
+	//{
+	//	if (Id > 0)
+	//	{
+	//		cliente = await clienteBLL.Buscar(Id);
+
+	//		if (cliente.Activo == true)
+	//		{
+	//			if (cliente == null)
+	//			{
+	//				cliente = new Clientes();
+	//				toastService.ShowError("Cliente no encontrado");
+	//			}
+	//		}
+	//		else
+	//		{
+	//			toastService.ShowError("El cliente está nulo");
+	//			cliente = new Clientes();
+	//		}
+	//		IsDisabled = true;
+	//		IsDisabledButtons = false;
+	//	}
+	//}
+
+	//public async Task Editar()
+	//{
+	//	IsDisabled = false;
+	//	IsDisabledButtons = true;
+	//}
+
+	//public async Task Guardar(EditContext editContext)
+	//{
+	//	if (editContext.Validate())
+	//	{
+	//		cliente.Usuarios = await usuarioBLL.Buscar(UsuarioCreador);
+
+	//		var paso = await clienteBLL.Guardar(cliente);
+
+	//		if (paso)
+	//			navManager.NavigateTo("/Clientes");
+	//		else
+	//			toastService.ShowError("No fue posible guardar");
+	//	}
+	//}
+
+	//private async Task GuardarProvincia(EditContext editContext)
+	//{
+	//	if (editContext.Validate())
+	//	{
+	//		var paso = await provinciaBLL.Guardar(provincia);
+
+	//		if (paso)
+	//		{
+	//			toastService.ShowSuccess("Provincia agregada con éxito!!");
+	//			await LlenarProvincias();
+	//		}
+	//		else
+	//			toastService.ShowError("Provincia no fue agregada!!");
+	//	}
+	//}
+
+	//private async Task GuardarCiudad(EditContext editContext)
+	//{
+	//	if (editContext.Validate())
+	//	{
+	//		var paso = await ciudadBLL.Guardar(ciudad);
+
+	//		if (paso)
+	//		{
+	//			toastService.ShowSuccess("Ciudad agregada con éxito!!");
+	//			await LlenarCiudades();
+	//		}
+	//		else
+	//			toastService.ShowError("Ciudad no fue agregada!!");
+	//	}
+	//}
+
+	//private async Task LlenarProvincias()
+	//{
+	//	provincias = await provinciaBLL.GetList(x => true);
+	//}
+
+	//private async Task LlenarCiudades()
+	//{
+	//	ciudades = await ciudadBLL.GetList(x => true);
+	//}
+}
