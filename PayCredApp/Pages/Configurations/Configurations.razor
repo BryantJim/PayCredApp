@@ -19,24 +19,11 @@
 						<li class="breadcrumb-item active" aria-current="page"><a href="/Configurations">Configuraciones</a></li>
 					</ol>
 				</div>
-				<br/>
+				<br />
 				<div class="btn-list">
 					<h2 class="page-title">
 						<span class="text-truncate">Configuraciones</span>
 					</h2>
-				</div>
-			</div>
-			<div class="col-auto">
-				<div class="btn-list">
-					<a href="/Home" class="btn btn-primary">
-						<span class="oi oi-arrow-thick-left me-2"></span>Atrás
-					</a>
-				</div>
-				<br/>
-				<div class="btn-list">
-					<a href="/TipoPrestamos" class="btn btn-primary">
-						<span class="oi oi-text me-2"></span>Tipos Préstamos
-					</a>
 				</div>
 			</div>
 		</div>
@@ -47,36 +34,58 @@
 				<EditForm Model="configuracion" OnValidSubmit="Guardar">
 					<div class="card-body">
 
-						<div class="row mb-3">
-							<div class="col-12 col-md-6">
-								<label class="form-label">Nombres</label>
-								<input type="text" class="form-control"@bind-value="configuracion.Nombres" placeholder="Colocar Su Nombre"/>
+						<fieldset class="form-fieldset">
+							<legend>Informaciones</legend>
+							<div class="row mb-3">
+								<div class="col-12">
+									<label class="form-label">Nombres</label>
+									<input type="text" class="form-control" @bind-value="configuracion.Nombres" placeholder="Colocar Su Nombre" />
+								</div>
 							</div>
-						</div>
 
-						<div class="row mb-3">
-							<div class="col-12 col-md-6">
-								<label class="form-label">Teléfono</label>
-								<InputMask @ref="mask" id="telefono" @bind-Value="configuracion.Telefono" class="form-control" data-mask="(000)-000-0000" placeholder="(000)-000-0000" validateOnKeyPress="false" returnRawValue="true" />
+							<div class="row mb-3">
+								<div class="col-12 col-md-6">
+									<label class="form-label">Teléfono o Celular</label>
+									<InputMask @ref="mask" id="telefono" @bind-Value="configuracion.Telefono" class="form-control" data-mask="(000)-000-0000" placeholder="Su Teléfono o Celular" validateOnKeyPress="false" returnRawValue="true" />
+								</div>
+								<div class="col-12 col-md-6 mt-2 mt-md-0">
+									<label class="form-label">Dirección</label>
+									<input type="text" class="form-control" @bind-value="configuracion.Direccion" placeholder="Su Dirección" />
+								</div>
 							</div>
-							<div class="col-12 col-md-6 mt-2 mt-md-0">
-								<label class="form-label">Dirección</label>
-								<input type="text" class="form-control"@bind-value="configuracion.Direccion" placeholder="Su Dirección"/>
-							</div>
-						</div>
 
-						<div class="row mb-3">
-							<div class="col-12 col-md-6">
-								<label class="form-label">Correo</label>
-								<InputText type="text" class="form-control" @bind-Value="model.correo" placeholder="Colocar su Correo" />
-								<ValidationMessage For="() => model.correo"/>
+						</fieldset>
+
+						<fieldset class="form-fieldset">
+							<legend>Configuración del sistema</legend>
+
+							<div class="row mb-3">
+								<div class="col-12">
+									<button class="btn btn-info">Usuarios</button>
+									<a class="btn btn-info" href="/TipoPrestamos">Tipo de préstamos</a>
+								</div>
 							</div>
-							<div class="col-12 col-md-6 mt-2 mt-md-0">
-								<label class="form-label">Contraseña</label>
-								<InputText type="password" class="form-control" placeholder="Contraseña del Correo" @bind-Value="model.Contrasena" />
-								<ValidationMessage For="() => model.correo" />
+
+						</fieldset>
+
+
+						<fieldset class="form-fieldset">
+							<legend>Configuración del Correo</legend>
+							<div class="row mb-3">
+								<div class="col-12 col-md-6">
+									<label class="form-label">Correo</label>
+									<InputText type="text" class="form-control" @bind-Value="model.correo" placeholder="Colocar su Correo de outlook" />
+									<ValidationMessage For="() => model.correo" />
+								</div>
+								<div class="col-12 col-md-6 mt-2 mt-md-0">
+									<label class="form-label">Contraseña</label>
+									<InputText type="password" class="form-control" placeholder="Contraseña del Correo" @bind-Value="model.Contrasena" />
+									<ValidationMessage For="() => model.correo" />
+								</div>
 							</div>
-						</div>
+						</fieldset>
+
+
 					</div>
 					<div class="card-footer">
 						<div class="text-center">
