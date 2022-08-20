@@ -90,7 +90,7 @@
 										<td>@item.DiaGracias</td>
 										<td class="text-end">
 											<div class="btn-list flex-nowrap">
-												<a class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modal-edit"><i class="fa-solid fa-pen-to-square me-2"></i>Editar</a>
+												<a class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modal-edit" @onclick="() => LlenarTipoModificar(item.IdTipoPrestamo)"><i class="fa-solid fa-pen-to-square me-2"></i>Editar</a>
 											</div>
 
 										</td>
@@ -116,13 +116,13 @@
 				<div class="row mb-3">
 					<div class="col">
 						<label class="form-label">Descripción</label>
-						<input type="text" class="form-control" value="Anual" disabled>
+						<input type="text" class="form-control" @bind-value="tipoPrestamo.Descripcion" disabled>
 					</div>
 				</div>
 				<div class="row mb-3">
 					<div class="col">
 						<label class="form-label">Día de gracia</label>
-						<input type="number" class="form-control" value="5">
+						<input type="number" class="form-control" @bind-value="tipoPrestamo.DiaGracias"/>
 					</div>
 				</div>
 			</div>
@@ -135,7 +135,7 @@
 							</a>
 						</div>
 						<div class="col">
-							<a href="#" class="btn btn-success w-100" data-bs-dismiss="modal">
+							<a href="#" class="btn btn-success w-100" data-bs-dismiss="modal" @onclick="TipoModificar">
 								<i class="fa-solid fa-floppy-disk me-2"></i>Guardar
 							</a>
 						</div>
@@ -148,6 +148,7 @@
 
 @code {
 	List<TipoPrestamos> tipoPrestamos = new List<TipoPrestamos>();
+	TipoPrestamos tipoPrestamo = new TipoPrestamos();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -157,6 +158,17 @@
 	private async Task LlenarLista()
 	{
 		tipoPrestamos = await tipoPrestamoBLL.GetList(x => true);
+	}
+
+	private async Task LlenarTipoModificar(int id)
+	{
+		tipoPrestamo = await Task.Run(() => tipoPrestamoBLL.Buscar(id));
+	}
+
+	private async Task TipoModificar()
+	{
+		var paso = await tipoPrestamoBLL.Guardar(tipoPrestamo);
+		await LlenarLista();
 	}
 
 }
