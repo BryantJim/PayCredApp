@@ -14,8 +14,10 @@ namespace PayCredApp.Models
 		public int IdRol { get; set; } = 1;
 		public Roles? Roles { get; set; }
 		public bool EsNulo { get; set; } = false;
+		public string Token { get; set; } = "";
+        public DateTime FechaExpiracion { get; set; } = DateTime.Now;
 
-		public virtual ICollection<Clientes> Clientes { get; set; } = new HashSet<Clientes>();
+        public virtual ICollection<Clientes> Clientes { get; set; } = new HashSet<Clientes>();
 		public virtual ICollection<ePrestamos> ePrestamos { get; set; } = new HashSet<ePrestamos>();
 		public virtual ICollection<eCobros> eCobros { get; set; } = new HashSet<eCobros>();
 	}

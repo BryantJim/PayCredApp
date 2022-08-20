@@ -11,11 +11,11 @@
 --INSERT INTO Roles 
 --VALUES('Administrador')
 
---INSERT INTO Usuarios(Nombres,NombreUsuario,Contrasena,Correo,IdRol,EsNulo) 
---VALUES('Anthony Brian Jiménez López','admin','BnSC6ZTaUpDN4KqrYi+lN8Pgha22XTWL','jimenezbrian588@gmail.com',1,0)	 --1234
+--INSERT INTO Usuarios(Nombres,NombreUsuario,Contrasena,Correo,IdRol,EsNulo,Token,FechaExpiracion) 
+--VALUES('Anthony Brian Jiménez López','admin','BnSC6ZTaUpDN4KqrYi+lN8Pgha22XTWL','jimenezbrian588@gmail.com',1,0,'',GETDATE())
 
---INSERT INTO Usuarios(Nombres,NombreUsuario,Contrasena,Correo,IdRol,EsNulo) 
---VALUES('Luis David Sánchez Ovalles','luis','BnSC6ZTaUpDN4KqrYi+lN8Pgha22XTWL','luisdavidsanchez149@gmail.com',1,0)	 --1234
+--INSERT INTO Usuarios(Nombres,NombreUsuario,Contrasena,Correo,IdRol,EsNulo,Token,FechaExpiracion) 
+--VALUES('Luis David Sánchez Ovalles','luis','BnSC6ZTaUpDN4KqrYi+lN8Pgha22XTWL','luisdavidsanchez149@gmail.com',1,0,'',GETDATE())	 --1234
 
 --INSERT INTO Ciudades VALUES ('S.F.M')
 --INSERT INTO Provincias VALUES ('Duarte')

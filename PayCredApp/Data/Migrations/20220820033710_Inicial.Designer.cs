@@ -12,7 +12,7 @@ using PayCredApp.Data;
 namespace PayCredApp.Data.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20220818134606_Inicial")]
+    [Migration("20220820033710_Inicial")]
     partial class Inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -433,6 +433,9 @@ namespace PayCredApp.Data.Migrations
                     b.Property<bool>("EsNulo")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("FechaExpiracion")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("IdRol")
                         .HasColumnType("int");
 
@@ -441,6 +444,10 @@ namespace PayCredApp.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nombres")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Token")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

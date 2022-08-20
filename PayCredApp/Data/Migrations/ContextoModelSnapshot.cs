@@ -431,6 +431,9 @@ namespace PayCredApp.Data.Migrations
                     b.Property<bool>("EsNulo")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("FechaExpiracion")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("IdRol")
                         .HasColumnType("int");
 
@@ -439,6 +442,10 @@ namespace PayCredApp.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nombres")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Token")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

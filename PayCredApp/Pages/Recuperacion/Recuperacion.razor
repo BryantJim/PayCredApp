@@ -89,6 +89,7 @@
 
     private async Task RecuperarButton(EditContext editContext)
     {
+        Random rd = new Random();
         if (editContext.Validate())
         {
             bool paso = await usuarioBLL.ValidarCorreo(model.Correo);
@@ -99,9 +100,12 @@
                 InfoCorreo.CorreoReceptores = usuario.Correo;
                 InfoCorreo.CorreoReceptoresCopias = "";
                 InfoCorreo.Asunto = "Recuperación de Contraseña";
-                InfoCorreo.CuerpoCorreo = "Su Usuario es: (" + (usuario.NombreUsuario) + "), La Contraseña suya es: (" + Seguridad.Descrypt(usuario.Contrasena) + ")";
+                usuario.Token = rd.NextInt64(1000000, 9999999).ToString();
+                usuario.FechaExpiracion = DateTime.Now.AddDays(1);
+                InfoCorreo.CuerpoCorreo = $"Hola {usuario.Nombres}\n\nHemos recibido una solicitud para recuperar la contraseña del Correo {usuario.Correo}.\n\nEl código de recuperación de la cuenta: {usuario.Token}";
                 await EnviarCorreo();
-                navManager.NavigateTo("/ConfirmarCodigo");
+                await usuarioBLL.Guardar(usuario);
+                navManager.NavigateTo($"/ConfirmarCodigo/{usuario.IdUsuario}");
             }
 			else
 			{

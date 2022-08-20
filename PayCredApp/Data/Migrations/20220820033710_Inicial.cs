@@ -90,7 +90,9 @@ namespace PayCredApp.Data.Migrations
                     Contrasena = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Correo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IdRol = table.Column<int>(type: "int", nullable: false),
-                    EsNulo = table.Column<bool>(type: "bit", nullable: false)
+                    EsNulo = table.Column<bool>(type: "bit", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FechaExpiracion = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
