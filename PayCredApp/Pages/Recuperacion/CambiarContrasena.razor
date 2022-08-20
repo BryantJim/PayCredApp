@@ -86,11 +86,16 @@
 
     protected override async Task OnInitializedAsync()
     {
-        InfoCorreo.NombreEmisor = "PayCred";
-        InfoCorreo.CorreoEmisor = "paycred1@outlook.com";
-        InfoCorreo.ClaveEmisor = "CredPay1";
-
         await BuscarParametro();
+
+        if(usuario.Token == "")
+            navManager.NavigateTo("/");
+        else
+        {
+            InfoCorreo.NombreEmisor = "PayCred";
+            InfoCorreo.CorreoEmisor = "paycred1@outlook.com";
+            InfoCorreo.ClaveEmisor = "CredPay1"; 
+        }
     }
 
     private async Task BuscarParametro()
