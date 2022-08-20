@@ -65,7 +65,7 @@
 			navManager.NavigateTo("/Recuperacion");
 
 		if (model.Codigo == usuario.Token)
-			navManager.NavigateTo("/CambiarContrasena");
+			navManager.NavigateTo($"/CambiarContrasena/{usuario.IdUsuario}");
 		else
 			toastService.ShowInfo("Código incorrecto");
 	}
