@@ -96,7 +96,7 @@
 						<div class="text-center">
 							<button type="button" disabled="@IsDisabledButtons" class="btn btn-info btn-lg" @onclick="Editar"><i class="fa-solid fa-pen-to-square me-2" ></i>Editar</button>
 							<button type="submit" disabled="@IsDisabled" class="btn btn-success btn-lg"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
-							<button class="btn btn-danger btn-lg" disabled="@IsDisabledButtons" data-bs-toggle="modal" data-bs-target="#modal-danger" @onclick="() => LlenarUsuarioEliminar(usuario.IdUsuario)"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</button>
+							<button type="button" class="btn btn-danger btn-lg" disabled="@IsDisabledButtons" data-bs-toggle="modal" data-bs-target="#modal-danger" @onclick="() => LlenarUsuarioEliminar(usuario.IdUsuario)"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</button>
 						</div>
 					</div>
 				</EditForm>
@@ -119,7 +119,7 @@
 				<div class="w-100">
 					<div class="row">
 						<div class="col">
-							<a href="#" class="btn w-100" data-bs-dismiss="modal" @onclick="PonerTrueVariableDios">
+							<a href="#" class="btn w-100" data-bs-dismiss="modal">
 								<i class="fa-solid fa-ban me-2"></i>Cancelar
 							</a>
 						</div>
@@ -152,7 +152,6 @@
 
 	bool IsDisabled = false;
 	bool IsDisabledButtons = true;
-	bool VariableDios = true;//sirve para arreglar un bug de entrada en un if no correspondiente al darle eliminar entraba al else de la linea 233
 
 	public int UsuarioCreador { get; set; }
 
@@ -227,11 +226,8 @@
 						else
 							toastService.ShowError("No fue posible guardar");
 					}
-
-					if(model.Contrasena != model.ConfirmarContrasena && VariableDios == true)
+					else
 						toastService.ShowError("Contraseña y Confirmar Contraseña no coinciden");
-					//else
-					//	toastService.ShowError("Contraseña y Confirmar Contraseña no coinciden");
 				}
 				else
 					toastService.ShowError("El usuario ya existe.");
@@ -248,7 +244,6 @@
 
 	private async Task LlenarUsuarioEliminar(int Id)
 	{
-		VariableDios = false;
 		await Task.Run(() => UsuarioEliminar = Id);
 	}
 
@@ -256,10 +251,5 @@
 	{
 		var paso = await usuarioBLL.Eliminar(Id);
 		navManager.NavigateTo("/Usuarios");
-	}
-
-	private async Task PonerTrueVariableDios()
-	{
-		VariableDios = true;
 	}
 }
