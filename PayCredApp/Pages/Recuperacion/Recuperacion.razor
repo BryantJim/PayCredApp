@@ -14,30 +14,30 @@
 @inject UsuarioBLL usuarioBLL
 
 <EditForm Model="@model" OnValidSubmit="@RecuperarButton">
-	<DataAnnotationsValidator />
-	<div class="card-body">
-		<h1 class="text-center mb-4">Recuperar Contraseña</h1>
+    <DataAnnotationsValidator />
+    <div class="card-body">
+        <h1 class="text-center mb-4">Recuperar Contraseña</h1>
 
-		<div class="mb-3">
-			<label class="form-label">Correo</label>
-			<InputText  @bind-Value="model.Correo" type="email" class="form-control" placeholder="Ingresar Correo para recibir el código" />
-			<ValidationMessage For="() => model.Correo" />
-		</div>
+        <div class="mb-3">
+            <label class="form-label">Correo</label>
+            <InputText @bind-Value="model.Correo" type="email" class="form-control" placeholder="Ingresar Correo para recibir el código" />
+            <ValidationMessage For="() => model.Correo" />
+        </div>
 
-		@*<div class="mb-2">
-			<label class="form-label">Usuario</label>
-			<InputText @bind-Value="model.Usuario" type="text" class="form-control" placeholder="Ingresar Usuario"  />
-			<ValidationMessage For="() => model.Correo" />
-		</div>*@
+        @*<div class="mb-2">
+        <label class="form-label">Usuario</label>
+        <InputText @bind-Value="model.Usuario" type="text" class="form-control" placeholder="Ingresar Usuario"  />
+        <ValidationMessage For="() => model.Correo" />
+        </div>*@
 
-		<div class="mb-2">
-			<a href="/">Volver al Login</a>
-		</div>
+        <div class="mb-2">
+            <a href="/">Volver al Login</a>
+        </div>
 
-		<div class="form-footer">
-			<button type="submit" class="btn btn-primary w-100" style="font-size:16px;">Enviar Correo <span class="oi oi-account-login ms-2"></span></button>
-		</div>
-	</div>
+        <div class="form-footer">
+            <button type="submit" class="btn btn-primary w-100" style="font-size:16px;">Enviar Correo <span class="oi oi-account-login ms-2"></span></button>
+        </div>
+    </div>
 </EditForm>
 
 @code {
@@ -92,178 +92,181 @@
         Random rd = new Random();
         if (editContext.Validate())
         {
-            bool paso = await usuarioBLL.ValidarCorreo(model.Correo);
-
-            if (paso == true)
+            if (Utilitarios.IsValidEmail(model.Correo))
             {
-                var usuario = await usuarioBLL.BuscarCorreo(model.Correo);
-                InfoCorreo.CorreoReceptores = usuario.Correo;
-                InfoCorreo.CorreoReceptoresCopias = "";
-                InfoCorreo.Asunto = "Recuperación de Contraseña";
-                usuario.Token = rd.NextInt64(1000000, 9999999).ToString();
-                usuario.FechaExpiracion = DateTime.Now.AddDays(1);
-                InfoCorreo.CuerpoCorreo = $"Hola {usuario.Nombres}\n\nHemos recibido una solicitud para recuperar la contraseña del Correo {usuario.Correo}.\n\nEl código de recuperación de la cuenta: {usuario.Token}";
-                await EnviarCorreo();
-                await usuarioBLL.Guardar(usuario);
-                navManager.NavigateTo($"/ConfirmarCodigo/{usuario.IdUsuario}");
-            }
-			else
-			{
-				toastService.ShowError("Correo incorrecto", "Error");
-			}
-		}
+                bool paso = await usuarioBLL.ValidarCorreo(model.Correo);
 
-    async Task EnviarCorreo()
-    {
-        try
-        {
-            await Task.Run(() =>
-            {
-                var smtpClient = ConfigurarSmtpClient();
-                var mensaje = GenerarCorreo();
-
-                smtpClient.Send(mensaje);
-                toastService.ShowSuccess("Correo enviado!");
-
-            });
-
-        }
-        catch (Exception e)
-        {
-            toastService.ShowError(e.Message);
-        }
-    }
-
-    SmtpClient ConfigurarSmtpClient()
-    {
-        (string host, int port) = ObtenerHost(InfoCorreo.CorreoEmisor);
-        var smtpClient = new SmtpClient(host, port);
-
-        smtpClient.Credentials = new NetworkCredential(InfoCorreo.CorreoEmisor, InfoCorreo.ClaveEmisor);
-        smtpClient.EnableSsl = true;
-
-        return smtpClient;
-    }
-
-    (string host, int port) ObtenerHost(string correo)
-    {
-        if (correo.Contains(microsoftDomains, ignoreCase: true))
-        {
-            return ("smtp-mail.outlook.com", microsoftPorts[0]);
-
-        }
-        else if (correo.Contains(googleDomains, ignoreCase: true))
-        {
-            return ("smtp.gmail.com", googlePorts[0]);
-
-        }
-        else if (correo.Contains(yahooDomains, ignoreCase: true))
-        {
-            return ("smtp.mail.yahoo.com", yahooPorts[0]);
-        }
-
-        throw new InvalidOperationException("No hay un host configurado para este correo");
-    }
-
-    MailMessage GenerarCorreo()
-    {
-        var mail = new MailMessage();
-        mail.From = new MailAddress(InfoCorreo.CorreoEmisor, InfoCorreo.NombreEmisor, System.Text.Encoding.UTF8);
-        AgregarReceptores(InfoCorreo.CorreoReceptores, mail.To);
-        AgregarReceptoresCopias(InfoCorreo.CorreoReceptoresCopias, mail, InfoCorreo.TipoCopias);
-
-        mail.Subject = InfoCorreo.Asunto;
-        mail.SubjectEncoding = System.Text.Encoding.UTF8;
-
-        mail.Body = InfoCorreo.CuerpoCorreo;
-        mail.IsBodyHtml = InfoCorreo.EsHtml;
-        mail.BodyEncoding = System.Text.Encoding.UTF8;
-
-        AgregarArchivosAdjuntos(mail);
-
-        return mail;
-    }
-
-    void AgregarArchivosAdjuntos(MailMessage mail)
-    {
-        foreach (var adjunto in InfoCorreo.ArchivosAdjuntos)
-        {
-            mail.Attachments.Add(adjunto);
-        }
-    }
-
-    void AgregarReceptores(string correosAgregar, MailAddressCollection correosDestino)
-    {
-
-        string[] receptores = correosAgregar.Split(separadores);
-        foreach (string receptor in receptores)
-        {
-            if (receptor.IsValidEmail())
-            {
-                correosDestino.Add(receptor.Trim());
-            }
-            else
-            {
-                throw new Exception($"El correo {receptor} es invalido");
-            }
-        }
-    }
-
-    void AgregarReceptoresCopias(string correosAgregar, MailMessage mail, TipoCopias tipo)
-    {
-        if (string.IsNullOrWhiteSpace(correosAgregar))
-        {
-            return;
-        }
-
-        string[] receptores = correosAgregar.Split(separadores);
-        foreach (string receptor in receptores)
-        {
-            if (receptor.IsValidEmail())
-            {
-                if (tipo == TipoCopias.CC)
+                if (paso == true)
                 {
-                    mail.CC.Add(receptor.Trim());
+                    var usuario = await usuarioBLL.BuscarCorreo(model.Correo);
+                    InfoCorreo.CorreoReceptores = usuario.Correo;
+                    InfoCorreo.CorreoReceptoresCopias = "";
+                    InfoCorreo.Asunto = "Recuperación de Contraseña";
+                    usuario.Token = rd.NextInt64(1000000, 9999999).ToString();
+                    usuario.FechaExpiracion = DateTime.Now.AddDays(1);
+                    InfoCorreo.CuerpoCorreo = $"Hola {usuario.Nombres}\n\nHemos recibido una solicitud para recuperar la contraseña del Correo {usuario.Correo}.\n\nEl código de recuperación de la cuenta: {usuario.Token}";
+                    await EnviarCorreo();
+                    await usuarioBLL.Guardar(usuario);
+                    navManager.NavigateTo($"/ConfirmarCodigo/{usuario.IdUsuario}");
                 }
                 else
-                {
-                    mail.Bcc.Add(receptor.Trim());
-                }
+                    toastService.ShowError("Correo incorrecto", "Error");
             }
             else
-            {
-                throw new Exception($"El correo {receptor} es invalido");
-            }
+                toastService.ShowError("Correo invalido");
         }
-    }
 
-    async Task ActualizarArchivos(InputFileChangeEventArgs args)
-    {
-        InfoCorreo.ArchivosAdjuntos = new();
-
-        var archivos = args.GetMultipleFiles(int.MaxValue);
-        foreach (var archivo in archivos)
+        async Task EnviarCorreo()
         {
             try
             {
-                using (var stream = archivo.OpenReadStream(long.MaxValue))
+                await Task.Run(() =>
                 {
-                    string stringContent;
+                    var smtpClient = ConfigurarSmtpClient();
+                    var mensaje = GenerarCorreo();
 
-                    using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
-                    {
-                        stringContent = await reader.ReadToEndAsync();
-                    }
+                    smtpClient.Send(mensaje);
+                    toastService.ShowSuccess("Correo enviado!");
 
-                    InfoCorreo.ArchivosAdjuntos.Add(Attachment.CreateAttachmentFromString(stringContent, new ContentType(archivo.ContentType) { Name = archivo.Name }));
-                }
+                });
+
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                toastService.ShowError(e.Message);
+            }
+        }
+
+        SmtpClient ConfigurarSmtpClient()
+        {
+            (string host, int port) = ObtenerHost(InfoCorreo.CorreoEmisor);
+            var smtpClient = new SmtpClient(host, port);
+
+            smtpClient.Credentials = new NetworkCredential(InfoCorreo.CorreoEmisor, InfoCorreo.ClaveEmisor);
+            smtpClient.EnableSsl = true;
+
+            return smtpClient;
+        }
+
+        (string host, int port) ObtenerHost(string correo)
+        {
+            if (correo.Contains(microsoftDomains, ignoreCase: true))
+            {
+                return ("smtp-mail.outlook.com", microsoftPorts[0]);
+
+            }
+            else if (correo.Contains(googleDomains, ignoreCase: true))
+            {
+                return ("smtp.gmail.com", googlePorts[0]);
+
+            }
+            else if (correo.Contains(yahooDomains, ignoreCase: true))
+            {
+                return ("smtp.mail.yahoo.com", yahooPorts[0]);
             }
 
+            throw new InvalidOperationException("No hay un host configurado para este correo");
+        }
+
+        MailMessage GenerarCorreo()
+        {
+            var mail = new MailMessage();
+            mail.From = new MailAddress(InfoCorreo.CorreoEmisor, InfoCorreo.NombreEmisor, System.Text.Encoding.UTF8);
+            AgregarReceptores(InfoCorreo.CorreoReceptores, mail.To);
+            AgregarReceptoresCopias(InfoCorreo.CorreoReceptoresCopias, mail, InfoCorreo.TipoCopias);
+
+            mail.Subject = InfoCorreo.Asunto;
+            mail.SubjectEncoding = System.Text.Encoding.UTF8;
+
+            mail.Body = InfoCorreo.CuerpoCorreo;
+            mail.IsBodyHtml = InfoCorreo.EsHtml;
+            mail.BodyEncoding = System.Text.Encoding.UTF8;
+
+            AgregarArchivosAdjuntos(mail);
+
+            return mail;
+        }
+
+        void AgregarArchivosAdjuntos(MailMessage mail)
+        {
+            foreach (var adjunto in InfoCorreo.ArchivosAdjuntos)
+            {
+                mail.Attachments.Add(adjunto);
+            }
+        }
+
+        void AgregarReceptores(string correosAgregar, MailAddressCollection correosDestino)
+        {
+
+            string[] receptores = correosAgregar.Split(separadores);
+            foreach (string receptor in receptores)
+            {
+                if (receptor.IsValidEmail())
+                {
+                    correosDestino.Add(receptor.Trim());
+                }
+                else
+                {
+                    throw new Exception($"El correo {receptor} es invalido");
+                }
+            }
+        }
+
+        void AgregarReceptoresCopias(string correosAgregar, MailMessage mail, TipoCopias tipo)
+        {
+            if (string.IsNullOrWhiteSpace(correosAgregar))
+            {
+                return;
+            }
+
+            string[] receptores = correosAgregar.Split(separadores);
+            foreach (string receptor in receptores)
+            {
+                if (receptor.IsValidEmail())
+                {
+                    if (tipo == TipoCopias.CC)
+                    {
+                        mail.CC.Add(receptor.Trim());
+                    }
+                    else
+                    {
+                        mail.Bcc.Add(receptor.Trim());
+                    }
+                }
+                else
+                {
+                    throw new Exception($"El correo {receptor} es invalido");
+                }
+            }
+        }
+
+        async Task ActualizarArchivos(InputFileChangeEventArgs args)
+        {
+            InfoCorreo.ArchivosAdjuntos = new();
+
+            var archivos = args.GetMultipleFiles(int.MaxValue);
+            foreach (var archivo in archivos)
+            {
+                try
+                {
+                    using (var stream = archivo.OpenReadStream(long.MaxValue))
+                    {
+                        string stringContent;
+
+                        using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+                        {
+                            stringContent = await reader.ReadToEndAsync();
+                        }
+
+                        InfoCorreo.ArchivosAdjuntos.Add(Attachment.CreateAttachmentFromString(stringContent, new ContentType(archivo.ContentType) { Name = archivo.Name }));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+
+            }
         }
     }
-}
 }

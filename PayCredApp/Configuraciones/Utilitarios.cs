@@ -78,6 +78,16 @@ namespace PayCredApp.Configuraciones
             return Regex.IsMatch(email ?? "", @"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$");
         }
 
+        public static bool IsValidCedula(this string Cedula)
+        {
+            return Regex.IsMatch(Cedula ?? "", @"^\(?([0-9]{3})\)?[-]?([0-9]{7})[-]?([0-9]{1})$");
+        }
+
+        public static bool IsValidTelefono(this string Telefono)
+        {
+            return Regex.IsMatch(Telefono ?? "", @"^(\+1)?\s?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})(\s?(x|([Ee]xt[.:]?\s?))[0-9]{4})?$");
+        }
+
         public static (string host, int port) ObtenerHost(string correo)
         {
             if (correo.Contains(microsoftDomains, ignoreCase: true))

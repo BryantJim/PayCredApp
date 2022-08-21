@@ -10,137 +10,146 @@
 @inject NavigationManager navManager
 
 <div class="page">
-	<div class="page-header">
-		<div class="row align-items-center mw-100">
-			<div class="col">
-				<div class="mb-1">
-					<ol class="breadcrumb" aria-label="breadcrumbs">
-						<li class="breadcrumb-item"><a href="/Home">Inicio</a></li>
-						<li class="breadcrumb-item active" aria-current="page"><a href="/Configurations">Configuraciones</a></li>
-					</ol>
-				</div>
-				<br />
-				<div class="btn-list">
-					<h2 class="page-title">
-						<span class="text-truncate">Configuraciones</span>
-					</h2>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="page-body">
-		<div class="container-xl p-0">
-			<div class="card">
-				<EditForm Model="configuracion" OnValidSubmit="Guardar">
-					<div class="card-body">
+    <div class="page-header">
+        <div class="row align-items-center mw-100">
+            <div class="col">
+                <div class="mb-1">
+                    <ol class="breadcrumb" aria-label="breadcrumbs">
+                        <li class="breadcrumb-item"><a href="/Home">Inicio</a></li>
+                        <li class="breadcrumb-item active" aria-current="page"><a href="/Configurations">Configuraciones</a></li>
+                    </ol>
+                </div>
+                <br />
+                <div class="btn-list">
+                    <h2 class="page-title">
+                        <span class="text-truncate">Configuraciones</span>
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-body">
+        <div class="container-xl p-0">
+            <div class="card">
+                <EditForm Model="configuracion" OnValidSubmit="Guardar">
+                    <div class="card-body">
 
-						<fieldset class="form-fieldset">
-							<legend>Informaciones</legend>
-							<div class="row mb-3">
-								<div class="col-12">
-									<label class="form-label">Nombres</label>
-									<input type="text" class="form-control" @bind-value="configuracion.Nombres" placeholder="Colocar Su Nombre" />
-								</div>
-							</div>
+                        <fieldset class="form-fieldset">
+                            <legend>Informaciones</legend>
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label class="form-label">Nombres</label>
+                                    <input type="text" class="form-control" @bind-value="configuracion.Nombres" placeholder="Colocar Su Nombre" />
+                                </div>
+                            </div>
 
-							<div class="row mb-3">
-								<div class="col-12 col-md-6">
-									<label class="form-label">Teléfono o Celular</label>
-									<InputMask @ref="mask" id="telefono" @bind-Value="configuracion.Telefono" class="form-control" data-mask="(000)-000-0000" placeholder="Su Teléfono o Celular" validateOnKeyPress="false" returnRawValue="true" />
-								</div>
-								<div class="col-12 col-md-6 mt-2 mt-md-0">
-									<label class="form-label">Dirección</label>
-									<input type="text" class="form-control" @bind-value="configuracion.Direccion" placeholder="Su Dirección" />
-								</div>
-							</div>
+                            <div class="row mb-3">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Teléfono o Celular</label>
+                                    <InputMask @ref="mask" id="telefono" @bind-Value="configuracion.Telefono" class="form-control" data-mask="(000)-000-0000" placeholder="Su Teléfono o Celular" validateOnKeyPress="false" returnRawValue="true" />
+                                </div>
+                                <div class="col-12 col-md-6 mt-2 mt-md-0">
+                                    <label class="form-label">Dirección</label>
+                                    <input type="text" class="form-control" @bind-value="configuracion.Direccion" placeholder="Su Dirección" />
+                                </div>
+                            </div>
 
-						</fieldset>
+                        </fieldset>
 
-						<fieldset class="form-fieldset">
-							<legend>Configuración del sistema</legend>
+                        <fieldset class="form-fieldset">
+                            <legend>Configuración del sistema</legend>
 
-							<div class="row mb-3">
-								<div class="col-12">
-									<a class="btn btn-info" href="/Usuarios">Usuarios</a>
-									<a class="btn btn-info" href="/TipoPrestamos">Tipo de préstamos</a>
-								</div>
-							</div>
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <a class="btn btn-info" href="/Usuarios">Usuarios</a>
+                                    <a class="btn btn-info" href="/TipoPrestamos">Tipo de préstamos</a>
+                                </div>
+                            </div>
 
-						</fieldset>
-
-
-						<fieldset class="form-fieldset">
-							<legend>Configuración del Correo</legend>
-							<div class="row mb-3">
-								<div class="col-12 col-md-6">
-									<label class="form-label">Correo</label>
-									<InputText type="text" class="form-control" @bind-Value="model.correo" placeholder="Colocar su Correo de outlook" />
-									<ValidationMessage For="() => model.correo" />
-								</div>
-								<div class="col-12 col-md-6 mt-2 mt-md-0">
-									<label class="form-label">Contraseña</label>
-									<InputText type="password" class="form-control" placeholder="Contraseña del Correo" @bind-Value="model.Contrasena" />
-									<ValidationMessage For="() => model.correo" />
-								</div>
-							</div>
-						</fieldset>
+                        </fieldset>
 
 
-					</div>
-					<div class="card-footer">
-						<div class="text-center">
-							<button type="submit" class="btn btn-success btn-lg"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar Cambios</button>
-						</div>
-					</div>
-				</EditForm>
-			</div>
-		</div>
-	</div>
+                        <fieldset class="form-fieldset">
+                            <legend>Configuración del Correo</legend>
+                            <div class="row mb-3">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Correo</label>
+                                    <InputText type="text" class="form-control" @bind-Value="model.correo" placeholder="Colocar su Correo de outlook" />
+                                    <ValidationMessage For="() => model.correo" />
+                                </div>
+                                <div class="col-12 col-md-6 mt-2 mt-md-0">
+                                    <label class="form-label">Contraseña</label>
+                                    <InputText type="password" class="form-control" placeholder="Contraseña del Correo" @bind-Value="model.Contrasena" />
+                                    <ValidationMessage For="() => model.correo" />
+                                </div>
+                            </div>
+                        </fieldset>
+
+
+                    </div>
+                    <div class="card-footer">
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success btn-lg"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar Cambios</button>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
 </div>
 
 @code {
 
-	private class LoginViewModel
-	{
-		[Required(ErrorMessage = "correo es requerido")]
-		public string correo { get; set; } = string.Empty;
-		[Required(ErrorMessage = "Contraseña es requerida")]
-		public string Contrasena { get; set; } = string.Empty;
-	}
+    private class LoginViewModel
+    {
+        [Required(ErrorMessage = "correo es requerido")]
+        public string correo { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Contraseña es requerida")]
+        public string Contrasena { get; set; } = string.Empty;
+    }
 
-	LoginViewModel model = new LoginViewModel();
+    LoginViewModel model = new LoginViewModel();
 
-	Configuracion configuracion = new Configuracion();
+    Configuracion configuracion = new Configuracion();
 
-	InputMask mask { get; set; }
+    InputMask mask { get; set; }
 
-	public int Id = 1;
+    public int Id = 1;
 
-	protected override async Task OnInitializedAsync()
-	{
-		await Llenar();
-		model.correo = configuracion.Correo;
-		model.Contrasena = configuracion.Clave;
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        await Llenar();
+        model.correo = configuracion.Correo;
+        model.Contrasena = configuracion.Clave;
+    }
 
-	private async Task Llenar()
-	{
-		configuracion = await configuracionBLL.Buscar(Id);
-	}
+    private async Task Llenar()
+    {
+        configuracion = await configuracionBLL.Buscar(Id);
+    }
 
-	public async Task Guardar(EditContext editContext)
-	{
-		if (editContext.Validate())
-		{
-			configuracion.Correo = model.correo;
-			configuracion.Clave = model.Contrasena;
+    public async Task Guardar(EditContext editContext)
+    {
+        if (editContext.Validate())
+        {
+            configuracion.Correo = model.correo;
+            configuracion.Clave = model.Contrasena;
+            if (Utilitarios.IsValidEmail(model.correo))
+            {
+                if (Utilitarios.IsValidTelefono(configuracion.Telefono))
+                {
+                    var paso = await configuracionBLL.Modificar(configuracion);
 
-			var paso = await configuracionBLL.Modificar(configuracion);
-
-			if (paso)
-				toastService.ShowSuccess("Cambios Realizados");
-			else
-				toastService.ShowError("No fue posible guardar");
-		}
-	}
+                    if (paso)
+                        toastService.ShowSuccess("Cambios Realizados");
+                    else
+                        toastService.ShowError("No fue posible guardar Cambios");
+                }
+                else
+                    toastService.ShowError("Teléfono o Celular no valido");
+            }
+            else
+                toastService.ShowError("Correo no valido");
+        }
+    }
 }
