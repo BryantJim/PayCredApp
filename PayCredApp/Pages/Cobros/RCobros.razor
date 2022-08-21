@@ -165,7 +165,7 @@
 							<button type="submit" disabled="@IsDisabled" class="btn btn-success btn-lg"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
 							<button type="button" disabled="@IsDisabledButtons" class="btn btn-info btn-lg" style="background-color:#25d366;"><i class="fa-brands fa-whatsapp me-2"></i>Enviar a WhatsApp</button>
 							<button type="button" disabled="@IsDisabledButtons" class="btn btn-secondary btn-lg"><i class="fa-solid fa-envelope me-2"></i>Enviar al Correo</button>
-							<button type="button" disabled="@IsDisabledButtons" class="btn btn-danger btn-lg"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</button>
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-danger btn-lg" @onclick="Eliminar"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</button>
 						</div>
 					</div>
 				</EditForm>
@@ -438,6 +438,29 @@
 			navManager.NavigateTo("/Cobros");
 		}
 
+	}
+
+	private async Task Eliminar()
+	{
+		var paso = false;
+		var CobrosEliminar = await ecobroBLL.Buscar(eCobro.IdCobro);
+		var dCobroEliminar = CobrosEliminar.dCobros.Last();
+
+		var Cobros = await ecobroBLL.GetList(x => true && x.EsNulo == false);
+		var LastCobro = Cobros.Last();
+		var LastDCobro = LastCobro.dCobros.Last();
+
+		if (dCobroEliminar.NoCuota == LastDCobro.NoCuota && dCobroEliminar.IdCobro == LastDCobro.IdCobro)
+		{
+			paso = await ecobroBLL.Eliminar(eCobro.IdCobro);
+			toastService.ShowSuccess("Cobros eliminado");
+			navManager.NavigateTo("/Cobros");
+		}
+		else
+		{
+			toastService.ShowError("No puede eliminar este cobro porque no es el último Cobro");
+			return;
+		}
 	}
 
 	private class ModeloCobro

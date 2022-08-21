@@ -44,11 +44,15 @@ namespace PayCredApp.BLL
 
             try
             {
+                _context.Database.BeginTransaction();
+
                 foreach (var item in eCobro.dCobros)
                 {
                     await _context.Database.ExecuteSqlRawAsync($"UPDATE dPrestamos SET BceCapital -= " +
                         $"{item.CapitalCobrado},BceInteres -= {item.InteresCobrado} WHERE IdPrestamo = {item.IdPrestamo} AND NoCuota = {item.NoCuota}");
                 }
+
+                _context.Database.ExecuteSqlRaw($"UPDATE ePrestamos SET BceCapital -= {eCobro.CapitalCobrado}, BceInteres -= {eCobro.InteresCobrado} WHERE IdPrestamo = {eCobro.IdPrestamo}");
 
                 eCobro.CreadoPor = eCobro.Usuarios.IdUsuario;
                 eCobro.FechaCreacion = DateTime.Now;
@@ -61,9 +65,11 @@ namespace PayCredApp.BLL
             }
             catch (Exception)
             {
+                _context.Database.RollbackTransaction();
                 throw;
             }
 
+            _context.Database.CommitTransaction();
             return guardado;
         }
 
@@ -72,6 +78,7 @@ namespace PayCredApp.BLL
             bool modificado = false;
             try
             {
+
                 _context.Database.ExecuteSqlRaw($"DELETE FROM dCobros WHERE IdCobro = {eCobro.IdCobro}");
 
                 foreach (var item in eCobro.dCobros)
@@ -121,14 +128,26 @@ namespace PayCredApp.BLL
         public async Task<bool> Eliminar(int id)
         {
             bool eliminado = false;
-
+            _context.Database.BeginTransaction();
+            
             try
             {
                 var eCobro = await Buscar(id);
 
                 if (eCobro != null)
                 {
-                    eCobro.EsNulo = false;
+
+                    foreach (var item in eCobro.dCobros)
+                    {
+                        await _context.Database.ExecuteSqlRawAsync($"UPDATE dPrestamos SET BceCapital += " +
+                            $"{item.CapitalCobrado},BceInteres += {item.InteresCobrado} WHERE IdPrestamo = {item.IdPrestamo} AND NoCuota = {item.NoCuota}");
+                    }
+
+                    _context.Database.ExecuteSqlRaw($"UPDATE ePrestamos SET BceCapital += {eCobro.CapitalCobrado}, BceInteres += {eCobro.InteresCobrado} WHERE IdPrestamo = {eCobro.IdPrestamo}");
+
+                    _context.Database.ExecuteSqlRaw($"DELETE FROM dCobros WHERE IdCobro = {eCobro.IdCobro}");
+
+                    eCobro.EsNulo = true;
                     _context.Entry(eCobro).State = EntityState.Modified;
                     eliminado = await _context.SaveChangesAsync() > 0;
                     _context.ChangeTracker.Clear();
@@ -136,8 +155,11 @@ namespace PayCredApp.BLL
             }
             catch (Exception)
             {
+                _context.Database.RollbackTransaction();
                 throw;
             }
+
+            _context.Database.CommitTransaction();
             return eliminado;
         }
 
