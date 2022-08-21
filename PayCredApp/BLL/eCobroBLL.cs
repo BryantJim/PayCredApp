@@ -146,7 +146,7 @@ namespace PayCredApp.BLL
             List<eCobros> Lista = new List<eCobros>();
             try
             {
-                Lista = await _context.eCobros.Where(expression).Where(x => x.EsNulo == true).AsNoTracking().ToListAsync();
+                Lista = await _context.eCobros.Where(expression).Where(x => x.EsNulo == false).Include(x => x.Clientes).Include(x => x.dCobros).AsNoTracking().ToListAsync();
             }
             catch (Exception)
             {

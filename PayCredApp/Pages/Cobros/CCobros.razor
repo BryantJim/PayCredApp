@@ -3,6 +3,9 @@
 @inject ePrestamoBLL eprestamoBLL
 @inject eCobroBLL ecobroBLL
 
+@inject IToastService toastService
+@inject NavigationManager navManager
+
 <div class="page">
 	<div class="page-header">
 		<div class="row align-items-center mw-100">
@@ -102,6 +105,7 @@
 									<th>Fecha</th>
 									<th>Descuento</th>
 									<th>Monto</th>
+									<th>Total</th>
 									<th class="w-1"></th>
 								</tr>
 							</thead>
@@ -115,10 +119,11 @@
 										<td>@item.Fecha.ToShortDateString()</td>
 										<td>@item.Descuento</td>
 										<td>@item.Monto</td>
+										<td>@(item.Monto - item.Descuento)</td>
 										<td class="text-end">
 											<div class="btn-list flex-nowrap">
 
-												<a class="btn btn-info" href="/Registro/Prestamos/@item.IdCobro"><span class="oi oi-pencil me-2"></span>Editar</a>
+												<a class="btn btn-info" href="/Registro/Cobros/@item.IdCobro"><span class="oi oi-pencil me-2"></span>Editar</a>
 												<a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-danger" @onclick="() => LlenarCobroEliminar(item.IdCobro)"><span class="oi oi-trash me-2"></span>Eliminar</a>
 											</div>
 										</td>
@@ -185,7 +190,25 @@
 
 	private async Task EliminarCobro()
 	{
-		var paso = await ecobroBLL.Eliminar(CobroEliminar);
+		var paso = false;
+		var CobrosEliminar = await ecobroBLL.Buscar(CobroEliminar);
+		var dCobroEliminar = CobrosEliminar.dCobros.Last();
+
+		var Cobros = await ecobroBLL.GetList(x => true && x.EsNulo == false);
+		var LastCobro = Cobros.Last();
+		var LastDCobro = LastCobro.dCobros.Last();
+
+		if(dCobroEliminar.NoCuota == LastDCobro.NoCuota && dCobroEliminar.IdCobro == LastDCobro.IdCobro)
+		{
+			paso = await ecobroBLL.Eliminar(CobroEliminar);
+			toastService.ShowSuccess("Cobros eliminado");
+		}
+		else
+		{
+			toastService.ShowError("No puede eliminar este cobro porque no es el último Cobro");
+			return;
+		}
+
 		await LlenarLista();
 	}
 
