@@ -41,8 +41,15 @@ namespace PayCredApp.BLL
         private async Task<bool> Insertar(eCobros eCobro)
         {
             bool guardado = false;
+
             try
             {
+                foreach (var item in eCobro.dCobros)
+                {
+                    await _context.Database.ExecuteSqlRawAsync($"UPDATE dPrestamos SET BceCapital -= " +
+                        $"{item.CapitalCobrado},BceInteres -= {item.InteresCobrado} WHERE IdPrestamo = {item.IdPrestamo} AND NoCuota = {item.NoCuota}");
+                }
+
                 eCobro.CreadoPor = eCobro.Usuarios.IdUsuario;
                 eCobro.FechaCreacion = DateTime.Now;
                 eCobro.ModificadoPor = eCobro.Usuarios.IdUsuario;

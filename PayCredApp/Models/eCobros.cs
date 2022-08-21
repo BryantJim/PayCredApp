@@ -16,6 +16,7 @@ namespace PayCredApp.Models
 		public decimal CapitalCobrado { get; set; } = 0;
 		public decimal InteresCobrado { get; set; } = 0;
 		public decimal MoraCobrada { get; set; } = 0;
+		public string Observaciones { get; set; } = string.Empty;
 		public bool EsNulo { get; set; } = false;
 		public int CreadoPor { get; set; } = 1;
 		public virtual Usuarios? Usuarios { get; set; }

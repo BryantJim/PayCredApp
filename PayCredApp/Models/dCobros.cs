@@ -10,6 +10,7 @@ namespace PayCredApp.Models
 		public virtual eCobros? eCobros { get; set; }
 		public int IdPrestamo { get; set; }
 		public int NoCuota { get; set; }
+		public DateTime FechaCuota { get; set; }
 		public decimal CapitalCobrado { get; set; }
 		public decimal InteresCobrado { get; set; }
 		public decimal MoraCobrada { get; set; }

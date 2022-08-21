@@ -7,6 +7,7 @@
 @inject ClienteBLL clienteBLL
 @inject CiudadBLL ciudadBLL
 @inject ProvinciaBLL provinciaBLL
+@inject eCobroBLL ecobroBLL
 @inject UsuarioBLL usuarioBLL
 @inject TipoPrestamoBLL tipoPrestamoBLL
 @inject ePrestamoBLL eprestamoBLL
@@ -37,7 +38,7 @@
 		<div class="container-xl p-0">
 			<div class="card">
 
-				<EditForm Model="eCobro">
+				<EditForm Model="eCobro" OnValidSubmit="Guardar">
 
 					<div class="card-body">
 
@@ -46,13 +47,13 @@
 								<div class="row">
 									<div class="col-12 col-md-5">
 										<label class="form-label">Id Cobro</label>
-										<InputNumber @bind-Value="eCobro.IdCobro" class="form-control" placeholder="ID" readonly />
+										<InputNumber @bind-Value="eCobro.IdCobro" class="form-control" placeholder="ID" disabled />
 									</div>
 								</div>
 							</div>
 							<div class="col-12 col-md-4 mt-2 mt-md-0">
 								<label class="form-label">Fecha</label>
-								<input class="form-control " type="date" @bind-value="eCobro.Fecha">
+								<input class="form-control " type="date" disabled="@IsDisabled" @bind-value="eCobro.Fecha">
 							</div>
 						</div>
 
@@ -61,7 +62,7 @@
 								<label class="form-label">Cliente</label>
 								<div class="row g-2">
 									<div class="col">
-										<select class="form-select" @bind="eCobro.IdCliente" @onblur="LlenarPrestamos">
+										<select class="form-select" @bind="eCobro.IdCliente" @onblur="LlenarPrestamos" disabled="@IsDisabled">
 											<option value="0" selected>Seleccionar un cliente</option>
 											@foreach (var item in clientes)
 											{
@@ -75,7 +76,7 @@
 								<label class="form-label">Prestamo</label>
 								<div class="row g-2">
 									<div class="col">
-										<select class="form-select" @bind="eCobro.IdPrestamo" @onblur="LlenarGrid">
+										<select class="form-select" @bind="eCobro.IdPrestamo" @onblur="LlenarGrid" disabled="@IsDisabled">
 											<option value="0" selected>Seleccionar un Prestamo</option>
 											@foreach (var item in eprestamos)
 											{
@@ -90,10 +91,10 @@
 								<div class="row g-2">
 									<div class="col">
 										<label class="form-label">Monto a Pagar</label>
-										<input class="form-control" type="number" min="0" @bind-value="eCobro.Monto" />
+										<input class="form-control" type="number" min="0" step="0.01" @bind-value="eCobro.Monto" disabled="@IsDisabled" />
 									</div>
 									<div class="col-auto mt-4">
-										<button class="btn btn-primary"><span class="oi oi-plus me-2"></span>Pagar</button>
+										<button type="button" class="btn btn-primary" @onclick="Pagar"><span class="oi oi-plus me-2" disabled="@IsDisabled"></span>Pagar</button>
 									</div>
 								</div>
 							</div>
@@ -141,7 +142,7 @@
 						<div class="row justify-content-end mt-1">
 							<div class="col-7 col-md-5 col-xl-2">
 								<label class="form-label">Descuento</label>
-								<input type="number" class="form-control" @bind-value="eCobro.Descuento" />
+								<input type="number" class="form-control" disabled="@IsDisabled" @bind-value="eCobro.Descuento" @onblur="Descuento" />
 							</div>
 						</div>
 
@@ -155,19 +156,20 @@
 						<div class="row mb-2 mt-3">
 							<div class="col-12">
 								<label class="form-label">Observaciones</label>
-								<textarea class="form-control" />
+								<textarea class="form-control" @bind="eCobro.Observaciones" disabled="@IsDisabled" />
 							</div>
 						</div>
 					</div>
 					<div class="card-footer">
 						<div class="text-center">
-							<button type="submit" class="btn btn-success btn-lg"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>	
-							<button type="button" class="btn btn-info btn-lg" style="background-color:#25d366;"><i class="fa-brands fa-whatsapp me-2"></i>Enviar a WhatsApp</button>
-							<button type="button" class="btn btn-secondary btn-lg"><i class="fa-solid fa-envelope me-2"></i>Enviar al Correo</button>
-							<button type="button" class="btn btn-danger btn-lg"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</button>
+							<button type="submit" disabled="@IsDisabled" class="btn btn-success btn-lg"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-info btn-lg" style="background-color:#25d366;"><i class="fa-brands fa-whatsapp me-2"></i>Enviar a WhatsApp</button>
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-secondary btn-lg"><i class="fa-solid fa-envelope me-2"></i>Enviar al Correo</button>
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-danger btn-lg"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</button>
 						</div>
 					</div>
 				</EditForm>
+
 
 
 			</div>
@@ -181,6 +183,9 @@
 	public int Id { get; set; }
 	public decimal Total = 0;
 	public decimal Mora = 0;
+	bool IsDisabled = false;
+	bool IsDisabledButtons = true;
+	public int Usuario { get; set; }
 
 	eCobros eCobro = new eCobros();
 	ePrestamos ePrestamo = new ePrestamos();
@@ -194,6 +199,46 @@
 	protected override async Task OnInitializedAsync()
 	{
 		await LlenarListas();
+
+		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+		ClaimsPrincipal usuario = (await customAuthStateProvider.GetAuthenticationStateAsync()).User;
+
+		if (usuario.Claims.Any())
+		{
+			Usuario = Convert.ToInt32(usuario.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+		}
+
+		await BuscarParametro();
+	}
+
+	private async Task BuscarParametro()
+	{
+		if (Id > 0)
+		{
+			eCobro = await ecobroBLL.Buscar(Id);
+
+			if (eCobro.EsNulo == false)
+			{
+				if (eCobro.IdCobro == 0)
+				{
+					eCobro = new eCobros();
+					toastService.ShowError("Cobro no encontrado");
+					return;
+				}
+			}
+			else
+			{
+				toastService.ShowError("El Cobro está nulo");
+				eCobro = new eCobros();
+				return;
+			}
+
+			Total = Utilitarios.ConverToN2(eCobro.Monto - eCobro.Descuento);
+
+			IsDisabled = true;
+			IsDisabledButtons = false;
+			await LlenarGridBuscar();
+		}
 	}
 
 	private async Task LlenarListas()
@@ -208,17 +253,40 @@
 		{
 			foreach (var item in ePrestamo.dPrestamos)
 			{
-				CobroPendiente = new ModeloCobro();
-				CobroPendiente.NoCuota = item.NoCuota;
-				CobroPendiente.FechaCuota = item.FechaCuota;
-				CobroPendiente.Capital = item.Capital;
-				CobroPendiente.Interes = item.Interes;
-				CobroPendiente.Mora = CalcularMora(item.Capital, ePrestamo.TasaMora, item.FechaCuota);
-				CobroPendiente.Total = CobroPendiente.Capital + CobroPendiente.Interes + CobroPendiente.Mora;
-				CobroPendiente.TotalAPagar = 0;
+				if (item.BceCapital > 0)
+				{
+					CobroPendiente = new ModeloCobro();
+					CobroPendiente.NoCuota = item.NoCuota;
+					CobroPendiente.FechaCuota = item.FechaCuota;
+					CobroPendiente.Capital = item.BceCapital;
+					CobroPendiente.Interes = item.BceInteres;
+					CobroPendiente.Mora = CalcularMora(item.BceCapital, ePrestamo.TasaMora, item.FechaCuota);
+					CobroPendiente.Total = CobroPendiente.Capital + CobroPendiente.Interes + CobroPendiente.Mora;
+					CobroPendiente.TotalAPagar = 0;
 
-				CobroPendientes.Add(CobroPendiente);
+					CobroPendientes.Add(CobroPendiente);
+				}
 			}
+		}
+	}
+
+	private async Task LlenarGridBuscar()
+	{
+		ePrestamo = await eprestamoBLL.Buscar(eCobro.IdPrestamo);
+		CobroPendientes = new List<ModeloCobro>();
+
+		foreach (var item in eCobro.dCobros)
+		{
+			CobroPendiente = new ModeloCobro();
+			CobroPendiente.NoCuota = item.NoCuota;
+			CobroPendiente.FechaCuota = item.FechaCuota;
+			CobroPendiente.Capital = item.CapitalCobrado;
+			CobroPendiente.Interes = item.InteresCobrado;
+			CobroPendiente.Mora = item.MoraCobrada;
+			CobroPendiente.Total = CobroPendiente.Capital + CobroPendiente.Interes + CobroPendiente.Mora;
+			CobroPendiente.TotalAPagar = CobroPendiente.Total;
+
+			CobroPendientes.Add(CobroPendiente);
 		}
 	}
 
@@ -267,6 +335,109 @@
 		eCobro.MoraCobrada += Mora;
 
 		return Math.Round(Mora, 2);
+	}
+
+	private async Task Pagar()
+	{
+		if (eCobro.Monto > 0)
+		{
+			if (eCobro.Monto > (ePrestamo.BceCapital + ePrestamo.BceInteres))
+			{
+				toastService.ShowWarning($"El monto a pagar no puede ser mayor al Monto {ePrestamo.BceCapital + ePrestamo.BceInteres} del prestamo");
+				return;
+			}
+
+			decimal MontoAPagar = Utilitarios.ConverToN2(eCobro.Monto);
+			eCobro.Monto = Utilitarios.ConverToN2(eCobro.Monto);
+			Total = 0;
+
+			foreach (var item in CobroPendientes)
+			{
+				if (MontoAPagar >= item.Total)
+					item.TotalAPagar = item.Total;
+				else
+					item.TotalAPagar = MontoAPagar;
+
+				MontoAPagar -= item.TotalAPagar;
+
+				Total += item.TotalAPagar;
+			}
+		}
+	}
+
+	private async Task Descuento()
+	{
+		if (eCobro.Descuento > 0)
+			Total -= eCobro.Descuento;
+		else
+			Total = eCobro.Monto;
+	}
+
+	private async Task Guardar()
+	{
+		decimal Interes, Capital, Mora = 0;
+
+		if (Total < 0 && eCobro.Descuento > 0)
+		{
+			toastService.ShowError("El total no puede ser menor que 0", "Total");
+			return;
+		}
+
+		if (eCobro.IdPrestamo < 1)
+		{
+			toastService.ShowInfo("Seleccione un préstamo");
+			return;
+		}
+
+		foreach (var item in CobroPendientes)
+		{
+			decimal Monto = item.TotalAPagar;
+
+			if (Monto < 1)
+				break;
+
+			if (Monto >= item.Interes)
+				Interes = item.Interes;
+			else
+				Interes = Monto;
+
+			Monto -= Interes;
+
+			if (Monto >= item.Mora)
+				Mora = item.Mora;
+			else
+				Mora = Monto;
+
+			Monto -= Mora;
+
+			Capital = Monto;
+
+			eCobro.dCobros.Add(new dCobros
+				{
+					IdCobro = eCobro.IdCobro,
+					IdPrestamo = eCobro.IdPrestamo,
+					NoCuota = item.NoCuota,
+					FechaCuota = item.FechaCuota,
+					CapitalCobrado = Capital,
+					InteresCobrado = Interes,
+					MoraCobrada = Mora
+				});
+
+
+			eCobro.CapitalCobrado += Capital;
+			eCobro.InteresCobrado += Interes;
+			eCobro.MoraCobrada += Mora;
+		}
+
+		eCobro.Usuarios = await usuarioBLL.Buscar(Usuario);
+		var paso = await ecobroBLL.Guardar(eCobro);
+
+		if (paso)
+		{
+			toastService.ShowSuccess("Cobro Guardado!!!");
+			navManager.NavigateTo("/Cobros");
+		}
+
 	}
 
 	private class ModeloCobro
