@@ -12,28 +12,28 @@
 <div class="container-fluid">
 
     <h3 class="text-center">Envió de correo</h3>
-    <EditForm Model="InfoCorreo" OnValidSubmit="EnviarCorreo">
+    <EditForm Model="Utilitarios.InfoCorreo" OnValidSubmit="EnviarCorreo">
         <div class="row mt-4">
             <b>Datos del emisor</b>
             <div class="col">
                 <div class="form-floating mb-3">
-                    <InputText @bind-Value="InfoCorreo.NombreEmisor" class="form-control" placeholder="." readonly/>
+                    <InputText @bind-Value="Utilitarios.InfoCorreo.NombreEmisor" class="form-control" placeholder="." readonly/>
                     <label for="">Nombre</label>
-                    <ValidationMessage For="()=>InfoCorreo.NombreEmisor" />
+                    <ValidationMessage For="()=>Utilitarios.InfoCorreo.NombreEmisor" />
                 </div>
             </div>
             <div class="col">
                 <div class="form-floating mb-3">
-                    <InputText @bind-Value="InfoCorreo.CorreoEmisor" type="email" class="form-control" placeholder="." readonly/>
+                    <InputText @bind-Value="Utilitarios.InfoCorreo.CorreoEmisor" type="email" class="form-control" placeholder="." readonly/>
                     <label for="">Correo</label>
-                    <ValidationMessage For="()=>InfoCorreo.CorreoEmisor" />
+                    <ValidationMessage For="()=>Utilitarios.InfoCorreo.CorreoEmisor" />
                 </div>
             </div>
             <div class="col">
                 <div class="form-floating mb-3">
-                    <InputText @bind-Value="InfoCorreo.ClaveEmisor" type="password" class="form-control" placeholder="." readonly/>
+                    <InputText @bind-Value="Utilitarios.InfoCorreo.ClaveEmisor" type="password" class="form-control" placeholder="." readonly/>
                     <label for="">Clave</label>
-                    <ValidationMessage For="()=>InfoCorreo.ClaveEmisor" />
+                    <ValidationMessage For="()=>Utilitarios.InfoCorreo.ClaveEmisor" />
                 </div>
             </div>
         </div>
@@ -41,18 +41,18 @@
             <b>Datos del receptor</b>
             <div class="col">
                 <div class="form-floating mb-3">
-                    <InputText @bind-Value="InfoCorreo.CorreoReceptores" class="form-control" placeholder="." />
+                    <InputText @bind-Value="Utilitarios.InfoCorreo.CorreoReceptores" class="form-control" placeholder="." />
                     <label for="">Correo receptores. separados por coma (,)</label>
-                    <ValidationMessage For="()=>InfoCorreo.CorreoReceptores" />
+                    <ValidationMessage For="()=>Utilitarios.InfoCorreo.CorreoReceptores" />
                 </div>
             </div>
             <div class="col">
                 <div class="form-floating mb-3">
-                    <InputText @bind-Value="InfoCorreo.CorreoReceptoresCopias" class="form-control" placeholder="." />
+                    <InputText @bind-Value="Utilitarios.InfoCorreo.CorreoReceptoresCopias" class="form-control" placeholder="." />
                     <label for="">Receptores copias. separados por coma (,)</label>
-                    <ValidationMessage For="()=>InfoCorreo.CorreoReceptoresCopias" />
+                    <ValidationMessage For="()=>Utilitarios.InfoCorreo.CorreoReceptoresCopias" />
                 </div>
-                <InputRadioGroup @bind-Value="InfoCorreo.TipoCopias">
+                <InputRadioGroup @bind-Value="Utilitarios.InfoCorreo.TipoCopias">
                     @foreach (var tipoCopia in Enum.GetValues(typeof(TipoCopias)))
                     {
                         <InputRadio class="form-check-input" Value="@tipoCopia" />
@@ -67,27 +67,27 @@
             <div class="col">
                 <b>Datos del mensaje</b>
                 <div class="form-floating mb-3">
-                    <InputText @bind-Value="InfoCorreo.Asunto" class="form-control" placeholder="." />
+                    <InputText @bind-Value="Utilitarios.InfoCorreo.Asunto" class="form-control" placeholder="." />
                     <label for="">Asunto</label>
-                    <ValidationMessage For="()=>InfoCorreo.Asunto" />
+                    <ValidationMessage For="()=>Utilitarios.InfoCorreo.Asunto" />
                 </div>
                 <div class="form-floating mb-3">
-                    <InputTextArea style="height: 200px" @bind-Value="InfoCorreo.CuerpoCorreo" class="form-control" placeholder="." />
+                    <InputTextArea style="height: 200px" @bind-Value="Utilitarios.InfoCorreo.CuerpoCorreo" class="form-control" placeholder="." />
                     <label for="">Cuerpo del mensaje</label>
-                    <ValidationMessage For="()=>InfoCorreo.CuerpoCorreo" />
+                    <ValidationMessage For="()=>Utilitarios.InfoCorreo.CuerpoCorreo" />
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col">
                 <div class="form-check form-switch">
-                    <InputCheckbox @bind-Value="InfoCorreo.EsHtml" class="form-check-input" role="switch" id="flexSwitchCheckDefault" />
+                    <InputCheckbox @bind-Value="Utilitarios.InfoCorreo.EsHtml" class="form-check-input" role="switch" id="flexSwitchCheckDefault" />
                     <label class="form-check-label" for="flexSwitchCheckDefault">Es HTML</label>
                 </div>
             </div>
             <div class="col-12 d-flex flex-column mt-2">
                 <span>Archivos adjuntos</span>
-                <InputFile class="form-control" multiple OnChange="ActualizarArchivos" />
+                <InputFile class="form-control" multiple OnChange="Utilitarios.ActualizarArchivos" />
             </div>
         </div>
         <div class="row my-2">
@@ -118,27 +118,27 @@
       puerto: 25 ó 265
        */
 
-    string[] microsoftDomains = new string[] { "@outlook", "@live", "@hotmail" };
-    int[] microsoftPorts = new int[] { 587 };
+    //string[] microsoftDomains = new string[] { "@outlook", "@live", "@hotmail" };
+    //int[] microsoftPorts = new int[] { 587 };
 
-    string[] googleDomains = new string[] { "@gmail" };
-    int[] googlePorts = new int[] { 587, 487 };
+    //string[] googleDomains = new string[] { "@gmail" };
+    //int[] googlePorts = new int[] { 587, 487 };
 
-    string[] yahooDomains = new string[] { "@yahoo" };
-    int[] yahooPorts = new int[] { 25, 265 };
+    //string[] yahooDomains = new string[] { "@yahoo" };
+    //int[] yahooPorts = new int[] { 25, 265 };
 
-    private char[] separadores = new char[] { ',', '|' };
+    //private char[] separadores = new char[] { ',', '|' };
 
-    public InfoCorreo InfoCorreo { get; set; } = new();
+    //public InfoCorreo InfoCorreo { get; set; } = new();
 
     Configuracion configuracion = new Configuracion();
 
     protected override async Task OnInitializedAsync()
     {
         configuracion = await configuracionBLL.Buscar(1);
-        InfoCorreo.NombreEmisor = configuracion.Nombres;
-        InfoCorreo.CorreoEmisor = configuracion.Correo;
-        InfoCorreo.ClaveEmisor = configuracion.Clave;
+        Utilitarios.InfoCorreo.NombreEmisor = configuracion.Nombres;
+        Utilitarios.InfoCorreo.CorreoEmisor = configuracion.Correo;
+        Utilitarios.InfoCorreo.ClaveEmisor = configuracion.Clave;
     }
 
     async Task EnviarCorreo()
@@ -147,8 +147,8 @@
         {
             await Task.Run(() =>
             {
-                var smtpClient = ConfigurarSmtpClient();
-                var mensaje = GenerarCorreo();
+                var smtpClient = Utilitarios.ConfigurarSmtpClient();
+                var mensaje = Utilitarios.GenerarCorreo();
 
                 smtpClient.Send(mensaje);
                 toastService.ShowSuccess("Correo enviado!");
@@ -162,136 +162,136 @@
         }
     }
 
-    SmtpClient ConfigurarSmtpClient()
-    {
-        (string host, int port) = ObtenerHost(InfoCorreo.CorreoEmisor);
-        var smtpClient = new SmtpClient(host, port);
+    //SmtpClient ConfigurarSmtpClient()
+    //{
+    //    (string host, int port) = ObtenerHost(InfoCorreo.CorreoEmisor);
+    //    var smtpClient = new SmtpClient(host, port);
 
-        smtpClient.Credentials = new NetworkCredential(InfoCorreo.CorreoEmisor, InfoCorreo.ClaveEmisor);
-        smtpClient.EnableSsl = true;
+    //    smtpClient.Credentials = new NetworkCredential(InfoCorreo.CorreoEmisor, InfoCorreo.ClaveEmisor);
+    //    smtpClient.EnableSsl = true;
 
-        return smtpClient;
-    }
+    //    return smtpClient;
+    //}
 
-    (string host, int port) ObtenerHost(string correo)
-    {
-        if (correo.Contains(microsoftDomains, ignoreCase: true))
-        {
-            return ("smtp-mail.outlook.com", microsoftPorts[0]);
+    //(string host, int port) ObtenerHost(string correo)
+    //{
+    //    if (correo.Contains(microsoftDomains, ignoreCase: true))
+    //    {
+    //        return ("smtp-mail.outlook.com", microsoftPorts[0]);
 
-        }
-        else if (correo.Contains(googleDomains, ignoreCase: true))
-        {
-            return ("smtp.gmail.com", googlePorts[0]);
+    //    }
+    //    else if (correo.Contains(googleDomains, ignoreCase: true))
+    //    {
+    //        return ("smtp.gmail.com", googlePorts[0]);
 
-        }
-        else if (correo.Contains(yahooDomains, ignoreCase: true))
-        {
-            return ("smtp.mail.yahoo.com", yahooPorts[0]);
-        }
+    //    }
+    //    else if (correo.Contains(yahooDomains, ignoreCase: true))
+    //    {
+    //        return ("smtp.mail.yahoo.com", yahooPorts[0]);
+    //    }
 
-        throw new InvalidOperationException("No hay un host configurado para este correo");
-    }
+    //    throw new InvalidOperationException("No hay un host configurado para este correo");
+    //}
 
-    MailMessage GenerarCorreo()
-    {
-        var mail = new MailMessage();
-        mail.From = new MailAddress(InfoCorreo.CorreoEmisor, InfoCorreo.NombreEmisor, System.Text.Encoding.UTF8);
-        AgregarReceptores(InfoCorreo.CorreoReceptores, mail.To);
-        AgregarReceptoresCopias(InfoCorreo.CorreoReceptoresCopias, mail, InfoCorreo.TipoCopias);
+    //MailMessage GenerarCorreo()
+    //{
+    //    var mail = new MailMessage();
+    //    mail.From = new MailAddress(InfoCorreo.CorreoEmisor, InfoCorreo.NombreEmisor, System.Text.Encoding.UTF8);
+    //    AgregarReceptores(InfoCorreo.CorreoReceptores, mail.To);
+    //    AgregarReceptoresCopias(InfoCorreo.CorreoReceptoresCopias, mail, InfoCorreo.TipoCopias);
 
-        mail.Subject = InfoCorreo.Asunto;
-        mail.SubjectEncoding = System.Text.Encoding.UTF8;
+    //    mail.Subject = InfoCorreo.Asunto;
+    //    mail.SubjectEncoding = System.Text.Encoding.UTF8;
 
-        mail.Body = InfoCorreo.CuerpoCorreo;
-        mail.IsBodyHtml = InfoCorreo.EsHtml;
-        mail.BodyEncoding = System.Text.Encoding.UTF8;
+    //    mail.Body = InfoCorreo.CuerpoCorreo;
+    //    mail.IsBodyHtml = InfoCorreo.EsHtml;
+    //    mail.BodyEncoding = System.Text.Encoding.UTF8;
 
-        AgregarArchivosAdjuntos(mail);
+    //    AgregarArchivosAdjuntos(mail);
 
-        return mail;
-    }
+    //    return mail;
+    //}
 
-    void AgregarArchivosAdjuntos(MailMessage mail)
-    {
-        foreach (var adjunto in InfoCorreo.ArchivosAdjuntos)
-        {
-            mail.Attachments.Add(adjunto);
-        }
-    }
+    //void AgregarArchivosAdjuntos(MailMessage mail)
+    //{
+    //    foreach (var adjunto in InfoCorreo.ArchivosAdjuntos)
+    //    {
+    //        mail.Attachments.Add(adjunto);
+    //    }
+    //}
 
-    void AgregarReceptores(string correosAgregar, MailAddressCollection correosDestino)
-    {
+    //void AgregarReceptores(string correosAgregar, MailAddressCollection correosDestino)
+    //{
 
-        string[] receptores = correosAgregar.Split(separadores);
-        foreach (string receptor in receptores)
-        {
-            if (receptor.IsValidEmail())
-            {
-                correosDestino.Add(receptor.Trim());
-            }
-            else
-            {
-                throw new Exception($"El correo {receptor} es invalido");
-            }
-        }
-    }
+    //    string[] receptores = correosAgregar.Split(separadores);
+    //    foreach (string receptor in receptores)
+    //    {
+    //        if (receptor.IsValidEmail())
+    //        {
+    //            correosDestino.Add(receptor.Trim());
+    //        }
+    //        else
+    //        {
+    //            throw new Exception($"El correo {receptor} es invalido");
+    //        }
+    //    }
+    //}
 
-    void AgregarReceptoresCopias(string correosAgregar, MailMessage mail, TipoCopias tipo)
-    {
-        if (string.IsNullOrWhiteSpace(correosAgregar))
-        {
-            return;
-        }
+    //void AgregarReceptoresCopias(string correosAgregar, MailMessage mail, TipoCopias tipo)
+    //{
+    //    if (string.IsNullOrWhiteSpace(correosAgregar))
+    //    {
+    //        return;
+    //    }
 
-        string[] receptores = correosAgregar.Split(separadores);
-        foreach (string receptor in receptores)
-        {
-            if (receptor.IsValidEmail())
-            {
-                if (tipo == TipoCopias.CC)
-                {
-                    mail.CC.Add(receptor.Trim());
-                }
-                else
-                {
-                    mail.Bcc.Add(receptor.Trim());
-                }
-            }
-            else
-            {
-                throw new Exception($"El correo {receptor} es invalido");
-            }
-        }
-    }
+    //    string[] receptores = correosAgregar.Split(separadores);
+    //    foreach (string receptor in receptores)
+    //    {
+    //        if (receptor.IsValidEmail())
+    //        {
+    //            if (tipo == TipoCopias.CC)
+    //            {
+    //                mail.CC.Add(receptor.Trim());
+    //            }
+    //            else
+    //            {
+    //                mail.Bcc.Add(receptor.Trim());
+    //            }
+    //        }
+    //        else
+    //        {
+    //            throw new Exception($"El correo {receptor} es invalido");
+    //        }
+    //    }
+    //}
 
-    async Task ActualizarArchivos(InputFileChangeEventArgs args)
-    {
-        InfoCorreo.ArchivosAdjuntos = new();
+    //async Task ActualizarArchivos(InputFileChangeEventArgs args)
+    //{
+    //    InfoCorreo.ArchivosAdjuntos = new();
 
-        var archivos = args.GetMultipleFiles(int.MaxValue);
-        foreach (var archivo in archivos)
-        {
-            try
-            {
-                using (var stream = archivo.OpenReadStream(long.MaxValue))
-                {
-                    string stringContent;
+    //    var archivos = args.GetMultipleFiles(int.MaxValue);
+    //    foreach (var archivo in archivos)
+    //    {
+    //        try
+    //        {
+    //            using (var stream = archivo.OpenReadStream(long.MaxValue))
+    //            {
+    //                string stringContent;
 
-                    using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
-                    {
-                        stringContent = await reader.ReadToEndAsync();
-                    }
+    //                using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+    //                {
+    //                    stringContent = await reader.ReadToEndAsync();
+    //                }
 
-                    InfoCorreo.ArchivosAdjuntos.Add(Attachment.CreateAttachmentFromString(stringContent, new ContentType(archivo.ContentType) { Name = archivo.Name }));
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
+    //                InfoCorreo.ArchivosAdjuntos.Add(Attachment.CreateAttachmentFromString(stringContent, new ContentType(archivo.ContentType) { Name = archivo.Name }));
+    //            }
+    //        }
+    //        catch (Exception e)
+    //        {
+    //            Console.WriteLine(e.Message);
+    //        }
 
-        }
-    }
+    //    }
+    //}
 
 }
