@@ -1,6 +1,9 @@
 ﻿@page "/Prestamos"
 
+@inject eCobroBLL ecobroBLL
 @inject ePrestamoBLL eprestamoBLL
+@inject IToastService toastService
+@inject NavigationManager navManager
 
 <div class="page">
 	<div class="page-header">
@@ -166,7 +169,7 @@
 
 @code {
 	List<ePrestamos> ListPrestamos = new List<ePrestamos>();
-	public int ClienteEliminar { get; set; } = 0;
+	public int PrestamoEliminar { get; set; } = 0;
 	public bool Fechas { get; set; } = false;
 
 	protected override async Task OnInitializedAsync()
@@ -181,13 +184,21 @@
 
 	private async Task LlenarClienteEliminar(int Id)
 	{
-		//await Task.Run(() => ClienteEliminar = Id);
+		await Task.Run(() => PrestamoEliminar = Id);
 	}
 
 	private async Task EliminarPrestamos()
 	{
-		//var paso = await eprestamoBLL.Eliminar(ClienteEliminar);
-		//await LlenarLista();
+		var tieneCobros = await ecobroBLL.tieneCobros(PrestamoEliminar);
+
+		if (tieneCobros)
+		{
+			toastService.ShowError("No puede eliminar el prestamo porque tiene cobros realizados");
+			return;
+		}
+
+		var paso = await eprestamoBLL.Eliminar(PrestamoEliminar);
+		await LlenarLista();
 	}
 
 	private void DesdeHasta()

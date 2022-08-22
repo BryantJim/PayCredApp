@@ -176,5 +176,26 @@ namespace PayCredApp.BLL
             }
             return Lista;
         }
+
+        public async Task<bool> tieneCobros(int IdPrestamo)
+		{
+            List<eCobros> Lista = new List<eCobros>();
+            bool tieneC = false;
+
+            try
+            {
+                Lista = await _context.eCobros.Where(x => x.EsNulo == false && x.IdPrestamo == IdPrestamo).ToListAsync();
+
+                if(Lista.Count == 0)
+                    tieneC = false;  
+                else
+                    tieneC = true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return tieneC;
+        }
     }
 }
