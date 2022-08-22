@@ -1,6 +1,8 @@
 ﻿@page "/Consulta/ClientesAtrazados"
 
 @inject ePrestamoBLL eprestamoBLL
+@inject ConfiguracionBLL configuracionBLL
+@inject IToastService toastService
 
 <div class="page">
 	<div class="page-header">
@@ -35,26 +37,26 @@
 									<div class="row">
 										<div class="col-12 col-md-2">
 											<label class="form-label">Campo a buscar</label>
-											<select class="form-select">
-												<option value="Id">Id Cliente</option>
-												<option value="Nombre">Nombre</option>
+											<select class="form-select" @bind="CampoBuscar">
+												<option value="1">Id Prestamo</option>
+												<option value="2">Nombre</option>
 											</select>
 										</div>
 										<div class="col-12 col-md-2">
 											<label class="form-label">Forma</label>
-											<select class="form-select">
-												<option value="Similitud">Similitud</option>
-												<option value="Igualdad">Igualdad</option>
+											<select class="form-select" @bind="Forma">
+												<option value="1">Similitud</option>
+												<option value="2">Igualdad</option>
 											</select>
 										</div>
 										<div class="col-12 col-md-8">
 											<label class="form-label">Criterio</label>
-											<input type="text" class="form-control" placeholder="Criterio del campo" />
+											<input type="text" class="form-control" @bind-value="Criterio" placeholder="Criterio del campo" />
 										</div>
 									</div>
 									<div class="row">
 										<div class="col-12 mt-3 text-end">
-											<button class="btn btn-primary">
+											<button class="btn btn-primary" @onclick="Consulta">
 												<i class="fa-solid fa-magnifying-glass me-2"></i>Consultar
 											</button>
 										</div>
@@ -76,21 +78,25 @@
 								</tr>
 							</thead>
 							<tbody class="table-tbody">
-								@foreach (var item in ListPrestamos)
+								@foreach (var item in Atrasados)
 								{
-									<tr>
-										<td>@item.IdPrestamo</td>
-										<td>@(item.Clientes.Nombres + " " + item.Clientes.Apellidos)</td>
-										<td>@item.Fecha</td>
-										<td>@item.Cuotas</td>
-										<td>@item.Capital</td>
-										<td class="text-end">
-											<div class="btn-list flex-nowrap">
-												<a class="btn btn-info" href="#" style="background-color:#25d366;"><i class="fa-brands fa-whatsapp me-2"></i>Enviar a WhatsApp</a>
-												<a class="btn btn-secondary"><i class="fa-solid fa-envelope me-2"></i>Enviar al Correo</a>
-											</div>
-										</td>
-									</tr>
+									@if (item.DiasAtrasados > 0 && item.Monto > 0)
+									{
+										<tr>
+											<td>@item.IdPrestamo</td>
+											<td>@(item.Cliente)</td>
+											<td>@item.FechaCuota</td>
+											<td>@item.DiasAtrasados</td>
+											<td>@item.Monto</td>
+											<td class="text-end">
+												<div class="btn-list flex-nowrap">
+													<a class="btn btn-info" @onclick="() => EnviarNotificacion(item.DiasAtrasados,item.Monto,item.IdPrestamo)" style="background-color:#25d366;"><i class="fa-brands fa-whatsapp me-2"></i>Enviar a WhatsApp</a>
+													<a class="btn btn-secondary" @onclick="() => EnviarCorreo(item.DiasAtrasados,item.Monto,item.IdPrestamo)"><i class="fa-solid fa-envelope me-2"></i>Enviar al Correo</a>
+												</div>
+											</td>
+										</tr>
+									}
+
 								}
 							</tbody>
 						</table>
@@ -106,26 +112,101 @@
 	public int ClienteEliminar { get; set; } = 0;
 	public bool Fechas { get; set; } = false;
 
+	string Criterio = "";
+	int Forma = 1, CampoBuscar = 1, Id;
+
+	List<ModeloAtrasados> Atrasados = new List<ModeloAtrasados>();
+	ModeloAtrasados atrasado = new ModeloAtrasados();
+
+	Configuracion configuracion = new Configuracion();
+
 	protected override async Task OnInitializedAsync()
 	{
+		configuracion = await configuracionBLL.Buscar(1);
+        Utilitarios.InfoCorreo.NombreEmisor = configuracion.Nombres;
+        Utilitarios.InfoCorreo.CorreoEmisor = configuracion.Correo;
+        Utilitarios.InfoCorreo.ClaveEmisor = configuracion.Clave;
 		await LlenarLista();
 	}
 
+	 public async Task EnviarCorreo(int DiaAtrazados, decimal Monto, int IdPrestamo)
+    {
+		var prestamo = await eprestamoBLL.Buscar(IdPrestamo);
+        try
+        {
+            await Task.Run(() =>
+            {
+                var smtpClient = Utilitarios.ConfigurarSmtpClient();
+				Utilitarios.InfoCorreo.Asunto = "Cuota Atrasada";
+				Utilitarios.InfoCorreo.CuerpoCorreo = $"Usted cuenta con una cuota Vencida de {DiaAtrazados} días, del préstamo #{IdPrestamo}, por un Monto de {Monto.ToString("N2")} RD$.";
+				Utilitarios.InfoCorreo.CorreoReceptores = prestamo.Clientes.Correo;
+                var mensaje = Utilitarios.GenerarCorreo();
+
+                smtpClient.Send(mensaje);
+                toastService.ShowSuccess("Correo enviado!");
+
+            });
+
+        }
+        catch (Exception e)
+        {
+            toastService.ShowError(e.Message);
+        }
+    }
+
 	private async Task LlenarLista()
 	{
-	//	ListPrestamos = await eprestamoBLL.GetList(x => true);
-		ListPrestamos = new List<ePrestamos>();
+		ListPrestamos = await eprestamoBLL.GetList(x => true);
+
+		foreach (var item in ListPrestamos)
+		{
+			var prestamo = await eprestamoBLL.Buscar(item.IdPrestamo);
+
+			foreach (var itemPrestamo in prestamo.dPrestamos)
+			{
+				atrasado = new ModeloAtrasados();
+
+				atrasado.IdPrestamo = item.IdPrestamo;
+				atrasado.Cliente = item.Clientes.Nombres + " " + item.Clientes.Apellidos;
+				atrasado.FechaCuota = itemPrestamo.FechaCuota;
+
+				int DiasAtrazados = (DateTime.Now - atrasado.FechaCuota).Days;
+
+				if (DiasAtrazados > 0)
+					DiasAtrazados -= prestamo.TipoPrestamos.DiaGracias;
+
+				if (DiasAtrazados < 0)
+					DiasAtrazados = 0;
+
+				atrasado.DiasAtrasados = DiasAtrazados;
+
+				atrasado.Monto = itemPrestamo.BceCapital + itemPrestamo.BceInteres + await CalcularMora(itemPrestamo.BceCapital, item.TasaMora, atrasado.FechaCuota, atrasado.IdPrestamo);
+
+				Atrasados.Add(atrasado);
+			}
+
+
+
+		}
 	}
 
-	private async Task LlenarClienteEliminar(int Id)
+	private async Task<decimal> CalcularMora(decimal Capital, decimal TasaMora, DateTime FechaCuota, int IdPrestamo)
 	{
-		//await Task.Run(() => ClienteEliminar = Id);
-	}
+		decimal Mora = 0;
+		var ePrestamo = await eprestamoBLL.Buscar(IdPrestamo);
+		decimal MontoMoraxDia = Capital * (TasaMora / 100);
 
-	private async Task EliminarPrestamos()
-	{
-		//var paso = await eprestamoBLL.Eliminar(ClienteEliminar);
-		//await LlenarLista();
+		int DiasAtrazados = (DateTime.Now - FechaCuota).Days;
+
+		if (DiasAtrazados > 0)
+			DiasAtrazados -= ePrestamo.TipoPrestamos.DiaGracias;
+
+		if (DiasAtrazados < 0)
+			DiasAtrazados = 0;
+
+		Mora = (MontoMoraxDia * DiasAtrazados);
+
+		return Math.Round(Mora, 2);
 	}
 
 	private void DesdeHasta()
@@ -137,4 +218,59 @@
 
 		this.StateHasChanged();
 	}
+
+	private async Task Consulta()
+	{
+		await LlenarLista();
+
+		if (Criterio != "")
+		{
+			if (CampoBuscar == 1)
+				Id = Convert.ToInt32(Criterio);
+
+			if (CampoBuscar == 1 && Forma == 1)
+				Atrasados = Atrasados.Where(x => x.IdPrestamo.ToString().Contains(Criterio)).ToList();
+			else if (CampoBuscar == 2 && Forma == 1)
+				Atrasados = Atrasados.Where(x => x.Cliente.ToLower().Contains(Criterio.ToLower())).ToList();
+
+			if (CampoBuscar == 1 && Forma == 2)
+				Atrasados = Atrasados.Where(x => x.IdPrestamo == Id).ToList();
+			else if (CampoBuscar == 2 && Forma == 2)
+				Atrasados = Atrasados.Where(x => x.Cliente == Criterio).ToList();
+		}
+	}
+
+	private async Task EnviarNotificacion(int DiaAtrazados, decimal Monto, int IdPrestamo)
+	{
+		var prestamo = await eprestamoBLL.Buscar(IdPrestamo);
+		string url = "https://api.ultramsg.com/instance15367/messages/chat";
+		var cliente = new HttpClient();
+
+		var data = new[]
+		{
+		new KeyValuePair<string, string>("token", "zonbpen0kep2pwpy"),
+		new KeyValuePair<string, string>("to", "1"+prestamo.Clientes.Celular.Replace("-","").Replace("(","").Replace(")","")),
+		new KeyValuePair<string, string>("body", $"Usted cuenta con una cuota Vencida de {DiaAtrazados} días, del préstamo #{IdPrestamo}, por un Monto de {Monto.ToString("N2")} RD$."),
+		new KeyValuePair<string, string>("priority", "1"),
+		new KeyValuePair<string, string>("referenceId", ""),
+	};
+
+		var respuesta = cliente.PostAsync(url, new FormUrlEncodedContent(data)).GetAwaiter().GetResult();
+
+		if (respuesta.IsSuccessStatusCode)
+			toastService.ShowSuccess("Mensaje enviado");
+		else
+			toastService.ShowError("Mensaje no enviado");
+	}
+
+
+	private class ModeloAtrasados
+	{
+		public int IdPrestamo { get; set; }
+		public string Cliente { get; set; } = string.Empty;
+		public DateTime FechaCuota { get; set; }
+		public int DiasAtrasados { get; set; }
+		public decimal Monto { get; set; }
+	}
+
 }

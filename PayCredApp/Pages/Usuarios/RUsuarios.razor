@@ -74,12 +74,12 @@
                         <div class="row mb-3">
                             <div class="col-12 col-md-6">
                                 <label class="form-label">Contraseña</label>
-                                <InputText type="password" class="form-control" placeholder="Introducir contraseña nueva" @bind-Value="model.Contrasena" disabled="@IsDisabled" />
+                                <InputText type="password" class="form-control" placeholder="Introducir contraseña nueva" @bind-Value="model.Contrasena" disabled="@IsDisableContrasena" />
                                 <ValidationMessage For="() => model.Contrasena" />
                             </div>
                             <div class="col-12 col-md-6 mt-2 mt-md-0">
                                 <label class="form-label">Confirmar Contraseña</label>
-                                <InputText type="password" class="form-control" placeholder="Vuelva a introducir la nueva contraseña" @bind-Value="model.ConfirmarContrasena" disabled="@IsDisabled" />
+                                <InputText type="password" class="form-control" placeholder="Vuelva a introducir la nueva contraseña" @bind-Value="model.ConfirmarContrasena" disabled="@IsDisableContrasena" />
                                 <ValidationMessage For="() => model.ConfirmarContrasena" />
                             </div>
                         </div>
@@ -152,6 +152,7 @@
 
     bool IsDisabled = false;
     bool IsDisabledButtons = true;
+    bool IsDisableContrasena = false;
 
     public int UsuarioCreador { get; set; }
 
@@ -197,6 +198,7 @@
             }
 
             IsDisabled = true;
+            IsDisableContrasena = true;
             IsDisabledButtons = false;
         }
     }
@@ -205,6 +207,8 @@
     {
         IsDisabled = false;
         IsDisabledButtons = true;
+        IsDisableContrasena = true;
+        model.ConfirmarContrasena = model.Contrasena;
     }
 
     public async Task Guardar(EditContext editContext)

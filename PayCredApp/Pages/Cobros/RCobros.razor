@@ -11,6 +11,7 @@
 @inject UsuarioBLL usuarioBLL
 @inject TipoPrestamoBLL tipoPrestamoBLL
 @inject ePrestamoBLL eprestamoBLL
+@inject ConfiguracionBLL configuracionBLL
 @inject IToastService toastService
 @inject NavigationManager navManager
 
@@ -163,8 +164,8 @@
 					<div class="card-footer">
 						<div class="text-center">
 							<button type="submit" disabled="@IsDisabled" class="btn btn-success btn-lg"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
-							<button type="button" disabled="@IsDisabledButtons" class="btn btn-info btn-lg" style="background-color:#25d366;"><i class="fa-brands fa-whatsapp me-2"></i>Enviar a WhatsApp</button>
-							<button type="button" disabled="@IsDisabledButtons" class="btn btn-secondary btn-lg"><i class="fa-solid fa-envelope me-2"></i>Enviar al Correo</button>
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-info btn-lg" @onclick="EnviarNotificacion" style="background-color:#25d366;"><i class="fa-brands fa-whatsapp me-2"></i>Enviar a WhatsApp</button>
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-secondary btn-lg" @onclick="EnviarCorreo"><i class="fa-solid fa-envelope me-2"></i>Enviar al Correo</button>
 							<button type="button" disabled="@IsDisabledButtons" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#modal-danger"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</button>
 						</div>
 					</div>
@@ -227,6 +228,8 @@
 	ModeloCobro CobroPendiente = new ModeloCobro();
 	List<ModeloCobro> CobroPendientes = new List<ModeloCobro>();
 
+	Configuracion configuracion = new Configuracion();
+
 	protected override async Task OnInitializedAsync()
 	{
 		await LlenarListas();
@@ -238,6 +241,11 @@
 		{
 			Usuario = Convert.ToInt32(usuario.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
 		}
+
+		configuracion = await configuracionBLL.Buscar(1);
+		Utilitarios.InfoCorreo.NombreEmisor = configuracion.Nombres;
+		Utilitarios.InfoCorreo.CorreoEmisor = configuracion.Correo;
+		Utilitarios.InfoCorreo.ClaveEmisor = configuracion.Clave;
 
 		await BuscarParametro();
 	}
@@ -414,6 +422,12 @@
 			return;
 		}
 
+		if (eCobro.Monto < 1)
+		{
+			toastService.ShowError("El total no puede ser menor que 0", "Total");
+			return;
+		}
+
 		if (eCobro.IdPrestamo < 1)
 		{
 			toastService.ShowInfo("Seleccione un préstamo");
@@ -460,6 +474,12 @@
 			eCobro.MoraCobrada += Mora;
 		}
 
+		if(eCobro.dCobros.Count < 1)
+		{
+			toastService.ShowInfo("Debe abonar al menos una cuota");
+			return;
+		}
+
 		eCobro.Usuarios = await usuarioBLL.Buscar(Usuario);
 		var paso = await ecobroBLL.Guardar(eCobro);
 
@@ -493,6 +513,52 @@
 			return;
 		}
 	}
+
+	private async Task EnviarNotificacion()
+	{
+		string url = "https://api.ultramsg.com/instance15367/messages/chat";
+		var cliente = new HttpClient();
+
+		var data = new[]
+		{
+        new KeyValuePair<string, string>("token", "zonbpen0kep2pwpy"),
+        new KeyValuePair<string, string>("to", "1"+ePrestamo.Clientes.Celular.Replace("-","").Replace("(","").Replace(")","")),
+        new KeyValuePair<string, string>("body", $"Usted ha abonado al préstamo #{ePrestamo.IdPrestamo}, un monto de {eCobro.Monto} RD$ y se aplicó un descuento de {eCobro.Descuento} RD$. \n\nEl Balance de su préstamo ahora es: \nCapital: {ePrestamo.BceCapital} RD$ \nInterés: {ePrestamo.BceInteres} RD$"),
+        new KeyValuePair<string, string>("priority", "1"),
+        new KeyValuePair<string, string>("referenceId", ""),
+    };
+
+		var respuesta = cliente.PostAsync(url, new FormUrlEncodedContent(data)).GetAwaiter().GetResult();
+
+		if (respuesta.IsSuccessStatusCode)
+			toastService.ShowSuccess("Mensaje enviado");
+		else
+			toastService.ShowError("Mensaje no enviado");
+	}
+
+	 public async Task EnviarCorreo()
+    {
+        try
+        {
+            await Task.Run(() =>
+            {
+                var smtpClient = Utilitarios.ConfigurarSmtpClient();
+				Utilitarios.InfoCorreo.Asunto = "Cuota";
+				Utilitarios.InfoCorreo.CuerpoCorreo = $"Usted ha abonado al préstamo #{ePrestamo.IdPrestamo}, un monto de {eCobro.Monto} RD$ y se aplicó un descuento de {eCobro.Descuento} RD$. \n\nEl Balance de su préstamo ahora es: \nCapital: {ePrestamo.BceCapital} RD$ \nInterés: {ePrestamo.BceInteres} RD$";
+				Utilitarios.InfoCorreo.CorreoReceptores = ePrestamo.Clientes.Correo;
+                var mensaje = Utilitarios.GenerarCorreo();
+
+                smtpClient.Send(mensaje);
+                toastService.ShowSuccess("Correo enviado!");
+
+            });
+
+        }
+        catch (Exception e)
+        {
+            toastService.ShowError(e.Message);
+        }
+    }
 
 	private class ModeloCobro
 	{

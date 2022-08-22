@@ -42,27 +42,26 @@
 									<div class="row">
 										<div class="col-12 col-md-2">
 											<label class="form-label">Campo a buscar</label>
-											<select class="form-select">
-												<option value="Id">Id Usuario</option>
-												<option value="Nombre">Nombre</option>
-												<option value="Cedula">Cédula</option>
+											<select class="form-select" @bind="CampoBuscar">
+												<option value="1">Id Usuario</option>
+												<option value="2">Nombre</option>
 											</select>
 										</div>
 										<div class="col-12 col-md-2">
 											<label class="form-label">Forma</label>
-											<select class="form-select">
-												<option value="Similitud">Similitud</option>
-												<option value="Igualdad">Igualdad</option>
+											<select class="form-select" @bind="Forma">
+												<option value="1">Similitud</option>
+												<option value="2">Igualdad</option>
 											</select>
 										</div>
 										<div class="col-12 col-md-8">
 											<label class="form-label">Criterio</label>
-											<input type="text" class="form-control" placeholder="Criterio del campo" />
+											<input type="text" class="form-control" @bind-value="Criterio" placeholder="Criterio del campo" />
 										</div>
 									</div>
 									<div class="row">
 										<div class="col mt-3 text-end">
-											<button class="btn btn-primary">
+											<button class="btn btn-primary" @onclick="Consulta">
 												<i class="fa-solid fa-magnifying-glass me-2"></i>Consultar
 											</button>
 										</div>
@@ -146,6 +145,9 @@
 	public int UsuarioEliminar { get; set; } = 0;
 	public bool Fechas { get; set; } = false;
 
+	string Criterio = "";
+	int Forma = 1, CampoBuscar = 1, Id;
+
 	protected override async Task OnInitializedAsync()
 	{
 		await LlenarLista();
@@ -154,7 +156,6 @@
 	private async Task LlenarLista()
 	{
 		usuarios = await usuarioBLL.GetList(x => true);
-		usuarios.OrderByDescending(x => x.IdUsuario);
 	}
 
 	private async Task LlenarUsuarioEliminar(int Id)
@@ -177,5 +178,26 @@
 			Fechas = false;
 
 		this.StateHasChanged();
+	}
+
+	private async Task Consulta()
+	{
+		await LlenarLista();
+
+		if (Criterio != "")
+		{
+			if (CampoBuscar == 1)
+				Id = Convert.ToInt32(Criterio);
+
+			if (CampoBuscar == 1 && Forma == 1)
+				usuarios = usuarios.Where(x => x.IdUsuario.ToString().Contains(Criterio)).ToList();
+			else if (CampoBuscar == 2 && Forma == 1)
+				usuarios = usuarios.Where(x => x.Nombres.ToLower().Contains(Criterio.ToLower())).ToList();
+
+			if (CampoBuscar == 1 && Forma == 2)
+				usuarios = usuarios.Where(x => x.IdUsuario == Id).ToList();
+			else if (CampoBuscar == 2 && Forma == 2)
+				usuarios = usuarios.Where(x => x.Nombres == Criterio).ToList();
+		}
 	}
 }

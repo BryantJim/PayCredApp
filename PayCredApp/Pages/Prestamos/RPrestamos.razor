@@ -11,6 +11,7 @@
 @inject TipoPrestamoBLL tipoPrestamoBLL
 @inject eCobroBLL ecobroBLL
 @inject ePrestamoBLL eprestamoBLL
+@inject ConfiguracionBLL configuracionBLL
 @inject IToastService toastService
 @inject NavigationManager navManager
 
@@ -180,7 +181,7 @@
 							<button type="button" disabled="@IsDisabledButtons" class="btn btn-info btn-lg" @onclick="Editar"><i class="fa-solid fa-pen-to-square me-2"></i>Editar</button>
 							<button type="submit" disabled="@IsDisabled" class="btn btn-success btn-lg"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>	
 							<button type="button" disabled="@IsDisabledButtons" @onclick="EnviarNotificacion" class="btn btn-info btn-lg" style="background-color:#25d366;"><i class="fa-brands fa-whatsapp me-2"></i>Enviar a WhatsApp</button>
-							<button type="button" disabled="@IsDisabledButtons" class="btn btn-secondary btn-lg"><i class="fa-solid fa-envelope me-2"></i>Enviar al Correo</button>
+							<button type="button" disabled="@IsDisabledButtons" @onclick="EnviarCorreo" class="btn btn-secondary btn-lg"><i class="fa-solid fa-envelope me-2"></i>Enviar al Correo</button>
 							<button type="button" disabled="@IsDisabledButtons" class="btn btn-danger btn-lg"  data-bs-toggle="modal" data-bs-target="#modal-danger"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</button>
 						</div>
 					</div>
@@ -232,6 +233,7 @@
 
 	List<Clientes> clientes = new List<Clientes>();
 	List<TipoPrestamos> TipoPrestamo = new List<TipoPrestamos>();
+	Configuracion configuracion = new Configuracion();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -245,6 +247,11 @@
 		{
 			Usuario = Convert.ToInt32(usuario.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
 		}
+
+		configuracion = await configuracionBLL.Buscar(1);
+        Utilitarios.InfoCorreo.NombreEmisor = configuracion.Nombres;
+        Utilitarios.InfoCorreo.CorreoEmisor = configuracion.Correo;
+        Utilitarios.InfoCorreo.ClaveEmisor = configuracion.Clave;
 
 		await BuscarParametro();
 	}
@@ -496,8 +503,8 @@
 		var data = new[]
 		{
         new KeyValuePair<string, string>("token", "zonbpen0kep2pwpy"),
-        new KeyValuePair<string, string>("to", "18295700330"),
-        new KeyValuePair<string, string>("body", "Mira ya estoy probando lo de WhatsApp"),
+        new KeyValuePair<string, string>("to", "1"+ePrestamo.Clientes.Celular.Replace("-","").Replace("(","").Replace(")","")),
+        new KeyValuePair<string, string>("body", $"Usted ha tomado un préstamo a PayCred en la fecha {ePrestamo.Fecha.ToShortDateString()}, por un Capital de {ePrestamo.Capital} RD$, a una tasa de interés del {ePrestamo.TasaInteres}% y una tasa de Mora de {ePrestamo.TasaMora}%.\n\nA pagar en {ePrestamo.Cuotas} Cuotas. \n\nEl Balance de su préstamo es: \nCapital: {ePrestamo.BceCapital} RD$ \nInterés: {ePrestamo.BceInteres} RD$"),
         new KeyValuePair<string, string>("priority", "1"),
         new KeyValuePair<string, string>("referenceId", ""),
     };
@@ -509,5 +516,29 @@
 		else
 			toastService.ShowError("Mensaje no enviado");
 	}
+
+	 public async Task EnviarCorreo()
+    {
+        try
+        {
+            await Task.Run(() =>
+            {
+                var smtpClient = Utilitarios.ConfigurarSmtpClient();
+				Utilitarios.InfoCorreo.Asunto = "Préstamo";
+				Utilitarios.InfoCorreo.CuerpoCorreo = $"Usted ha tomado un préstamo a PayCred en la fecha {ePrestamo.Fecha.ToShortDateString()}, por un Capital de {ePrestamo.Capital} RD$, a una tasa de interés del {ePrestamo.TasaInteres}% y una tasa de Mora de {ePrestamo.TasaMora}%.\n\nA pagar en {ePrestamo.Cuotas} Cuotas. \n\nEl Balance de su préstamo es: \nCapital: {ePrestamo.BceCapital} RD$ \nInterés: {ePrestamo.BceInteres} RD$";
+				Utilitarios.InfoCorreo.CorreoReceptores = ePrestamo.Clientes.Correo;
+                var mensaje = Utilitarios.GenerarCorreo();
+
+                smtpClient.Send(mensaje);
+                toastService.ShowSuccess("Correo enviado!");
+
+            });
+
+        }
+        catch (Exception e)
+        {
+            toastService.ShowError(e.Message);
+        }
+    }
 
 }

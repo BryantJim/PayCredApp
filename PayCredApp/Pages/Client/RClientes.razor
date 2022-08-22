@@ -13,318 +13,346 @@
 @inject NavigationManager navManager
 
 <div class="page">
-    <div class="page-header">
-        <div class="row align-items-center mw-100">
-            <div class="col">
-                <h2 class="page-title">
-                    <span class="text-truncate">Registro de Clientes</span>
-                </h2>
-            </div>
-            <div class="col-auto">
-                <div class="btn-list">
-                    <a href="/Clientes" class="btn btn-primary">
-                        <span class="oi oi-arrow-thick-left me-2"></span>Atrás
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="page-body">
-        <div class="container-xl p-0">
-            <div class="card">
-                <EditForm Model="cliente" OnValidSubmit="Guardar">
-                    <div class="card-body">
-                        <div class="row mb-3">
-                            <div class="col-4">
-                                <label class="form-label">Id Cliente</label>
-                                <InputNumber type="text" class="form-control" @bind-Value="cliente.IdCliente" placeholder="ID del clientes" disabled />
-                            </div>
-                        </div>
+	<div class="page-header">
+		<div class="row align-items-center mw-100">
+			<div class="col">
+				<h2 class="page-title">
+					<span class="text-truncate">Registro de Clientes</span>
+				</h2>
+			</div>
+			<div class="col-auto">
+				<div class="btn-list">
+					<a href="/Clientes" class="btn btn-primary">
+						<span class="oi oi-arrow-thick-left me-2"></span>Atrás
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="page-body">
+		<div class="container-xl p-0">
+			<div class="card">
+				<EditForm Model="cliente" OnValidSubmit="Guardar">
+					<DataAnnotationsValidator />
+					<div class="card-body">
+						<div class="row mb-3">
+							<div class="col-4">
+								<label class="form-label">Id Cliente</label>
+								<InputNumber type="text" class="form-control" @bind-Value="cliente.IdCliente" placeholder="ID del clientes" disabled />
+							</div>
+						</div>
 
-                        <div class="row mb-3">
-                            <div class="col-12 col-md-6">
-                                <label class="form-label">Nombres</label>
-                                <input type="text" class="form-control" disabled="@IsDisabled" placeholder="Nombres del cliente" @bind-value="cliente.Nombres" />
-                            </div>
-                            <div class="col-12 col-md-6 mt-2 mt-md-0">
-                                <label class="form-label">Apellidos</label>
-                                <input type="text" class="form-control" disabled="@IsDisabled" placeholder="Apellidos del cliente" @bind-value="cliente.Apellidos" />
-                            </div>
-                        </div>
+						<div class="row mb-3">
+							<div class="col-12 col-md-6">
+								<label class="form-label">Nombres</label>
+								<input type="text" class="form-control" disabled="@IsDisabled" placeholder="Nombres del cliente" @bind-value="cliente.Nombres" />
+								<ValidationMessage For="@(() => cliente.Nombres)" />
+							</div>
+							<div class="col-12 col-md-6 mt-2 mt-md-0">
+								<label class="form-label">Apellidos</label>
+								<input type="text" class="form-control" disabled="@IsDisabled" placeholder="Apellidos del cliente" @bind-value="cliente.Apellidos" />
+								<ValidationMessage For="@(() => cliente.Apellidos)" />
+							</div>
+						</div>
 
-                        <div class="row mb-3">
-                            <div class="col-12 col-md-6">
-                                <label class="form-label">Fecha de Nacimiento</label>
-                                <input class="form-control " type="date" disabled="@IsDisabled" @bind-value="cliente.FechaNacimiento">
-                            </div>
-                            <div class="col-12 col-md-6 mt-2 mt-md-0">
-                                <label class="form-label">Cédula</label>
-                                <InputMask @ref="mask" id="cedula" @bind-Value="cliente.Cedula" disabled="@IsDisabled" class="form-control" data-mask="000-0000000-0" placeholder="000-0000000-0" validateOnKeyPress="false" returnRawValue="true" />
-                            </div>
-                        </div>
+						<div class="row mb-3">
+							<div class="col-12 col-md-6">
+								<label class="form-label">Fecha de Nacimiento</label>
+								<input class="form-control " type="date" disabled="@IsDisabled" @bind-value="cliente.FechaNacimiento">
+								<ValidationMessage For="@(() => cliente.FechaNacimiento)" />
+							</div>
+							<div class="col-12 col-md-6 mt-2 mt-md-0">
+								<label class="form-label">Cédula</label>
+								<InputMask @ref="mask" id="cedula" @bind-Value="cliente.Cedula" disabled="@IsDisabled" class="form-control" data-mask="000-0000000-0" placeholder="000-0000000-0" validateOnKeyPress="false" returnRawValue="true" />
+								<ValidationMessage For="@(() => cliente.Cedula)" />
+							</div>
+						</div>
 
-                        <div class="row mb-3">
-                            <div class="col-12 col-md-6">
-                                <label class="form-label">Teléfono</label>
-                                <InputMask @ref="mask" id="telefono" @bind-Value="cliente.Telefono" disabled="@IsDisabled" class="form-control" data-mask="(000)-000-0000" placeholder="(000)-000-0000" validateOnKeyPress="false" returnRawValue="true" />
-                            </div>
-                            <div class="col-12 col-md-6 mt-2 mt-md-0">
-                                <label class="form-label">Celular</label>
-                                <InputMask @ref="mask" id="celular" @bind-Value="cliente.Celular" disabled="@IsDisabled" class="form-control" data-mask="(000)-000-0000" placeholder="(000)-000-0000" validateOnKeyPress="false" returnRawValue="true" />
-                            </div>
-                        </div>
+						<div class="row mb-3">
+							<div class="col-12 col-md-6">
+								<label class="form-label">Teléfono</label>
+								<InputMask @ref="mask" id="telefono" @bind-Value="cliente.Telefono" disabled="@IsDisabled" class="form-control" data-mask="(000)-000-0000" placeholder="(000)-000-0000" validateOnKeyPress="false" returnRawValue="true" />
+								<ValidationMessage For="@(() => cliente.Telefono)" />
+							</div>
+							<div class="col-12 col-md-6 mt-2 mt-md-0">
+								<label class="form-label">Celular</label>
+								<InputMask @ref="mask" id="celular" @bind-Value="cliente.Celular" disabled="@IsDisabled" class="form-control" data-mask="(000)-000-0000" placeholder="(000)-000-0000" validateOnKeyPress="false" returnRawValue="true" />
+								<ValidationMessage For="@(() => cliente.Celular)" />
+							</div>
+						</div>
 
-                        <div class="row mb-3">
-                            <div class="col-12">
-                                <label class="form-label">Dirección</label>
-                                <input type="text" class="form-control" placeholder="Dirección del cliente" disabled="@IsDisabled" @bind-value="cliente.Direccion" />
-                            </div>
-                        </div>
+						<div class="row mb-3">
+							<div class="col-12">
+								<label class="form-label">Dirección</label>
+								<input type="text" class="form-control" placeholder="Dirección del cliente" disabled="@IsDisabled" @bind-value="cliente.Direccion" />
+							</div>
+						</div>
 
-                        <div class="row">
-                            <div class="col-12 col-md-6">
-                                <label class="form-label">Provincia</label>
-                                <div class="row g-2">
-                                    <div class="col">
-                                        <select class="form-select" @bind="cliente.IdProvincia" disabled="@IsDisabled">
-                                            <option value="0" selected>Seleccionar Provincia</option>
-                                            @foreach (var item in provincias)
-                                            {
-                                                <option value="@item.IdProvincia">@item.Nombres</option>
-                                            }
-                                        </select>
-                                    </div>
-                                    <div class="col-auto">
-                                        <a class="btn btn-indigo btn-icon" data-bs-toggle="modal" data-bs-target="#modal-team" style="height:100%"><span class="oi oi-plus"></span></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-6 mt-2 mt-md-0">
-                                <label class="form-label">Ciudad</label>
-                                <div class="row g-2">
-                                    <div class="col">
-                                        <select class="form-select" @bind="cliente.IdCiudad" disabled="@IsDisabled">
-                                            <option value="0" selected>Seleccionar Ciudad</option>
-                                            @foreach (var item in ciudades)
-                                            {
-                                                <option value="@item.IdCiudad">@item.Nombres</option>
-                                            }
-                                        </select>
-                                    </div>
-                                    <div class="col-auto">
-                                        <a class="btn btn-indigo btn-icon" data-bs-toggle="modal" data-bs-target="#modal-ciudades" style="height:100%"><span class="oi oi-plus"></span></a>
-                                    </div>
-                                </div>
-                            </div>
+						<div class="row">
+							<div class="col-12 col-md-6">
+								<label class="form-label">Provincia</label>
+								<div class="row g-2">
+									<div class="col">
+										<select class="form-select" @bind="cliente.IdProvincia" disabled="@IsDisabled">
+											<option value="0" selected>Seleccionar Provincia</option>
+											@foreach (var item in provincias)
+											{
+												<option value="@item.IdProvincia">@item.Nombres</option>
+											}
+										</select>
+										<ValidationMessage For="@(() => cliente.IdProvincia)" />
+									</div>
+									<div class="col-auto">
+										<a class="btn btn-indigo btn-icon" data-bs-toggle="modal" data-bs-target="#modal-team" style="height:100%"><span class="oi oi-plus"></span></a>
+									</div>
+								</div>
+							</div>
+							<div class="col-12 col-md-6 mt-2 mt-md-0">
+								<label class="form-label">Ciudad</label>
+								<div class="row g-2">
+									<div class="col">
+										<select class="form-select" @bind="cliente.IdCiudad" disabled="@IsDisabled">
+											<option value="0" selected>Seleccionar Ciudad</option>
+											@foreach (var item in ciudades)
+											{
+												<option value="@item.IdCiudad">@item.Nombres</option>
+											}
+										</select>
+										<ValidationMessage For="@(() => cliente.IdCiudad)" />
+									</div>
+									<div class="col-auto">
+										<a class="btn btn-indigo btn-icon" data-bs-toggle="modal" data-bs-target="#modal-ciudades" style="height:100%"><span class="oi oi-plus"></span></a>
+									</div>
+								</div>
+							</div>
 
-                            <div class="row mt-2">
-                                <div class="col-12">
-                                    <label class="form-label">Correo</label>
-                                    <input type="text" class="form-control" placeholder="Dirección de correo electronico" @bind-value="cliente.Correo" disabled="@IsDisabled"  />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="text-center">
-                            <button type="button" disabled="@IsDisabledButtons" class="btn btn-info btn-lg" @onclick="Editar"><i class="fa-solid fa-pen-to-square me-2"></i>Editar</button>
-                            <button type="submit" disabled="@IsDisabled" class="btn btn-success btn-lg"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
-                            <button type="button" disabled="@IsDisabledButtons" class="btn btn-danger btn-lg"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</button>
-                        </div>
-                    </div>
-                </EditForm>
-            </div>
-        </div>
-    </div>
+							<div class="row mt-2">
+								<div class="col-12">
+									<label class="form-label">Correo</label>
+									<input type="text" class="form-control" placeholder="Dirección de correo electronico" @bind-value="cliente.Correo" disabled="@IsDisabled" />
+									<ValidationMessage For="@(() => cliente.Correo)" />
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card-footer">
+						<div class="text-center">
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-info btn-lg" @onclick="Editar"><i class="fa-solid fa-pen-to-square me-2"></i>Editar</button>
+							<button type="submit" disabled="@IsDisabled" class="btn btn-success btn-lg"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
+							<button type="button" disabled="@IsDisabledButtons" class="btn btn-danger btn-lg"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</button>
+						</div>
+					</div>
+				</EditForm>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div class="modal modal-blur fade" id="modal-team" tabindex="-1" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Registrar Provincia</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <EditForm Model="provincia" OnValidSubmit="GuardarProvincia">
-                <div class="modal-body">
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label class="form-label">Nombre</label>
-                            <InputText class="form-control" @bind-Value="provincia.Nombres" placeholder="Nombre de la provincia" />
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success" data-bs-dismiss="modal"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
-                </div>
-            </EditForm>
-        </div>
-    </div>
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Registrar Provincia</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<EditForm Model="provincia" OnValidSubmit="GuardarProvincia">
+				<DataAnnotationsValidator />
+				<div class="modal-body">
+					<div class="row mb-3">
+						<div class="col">
+							<label class="form-label">Nombre</label>
+							<InputText class="form-control" @bind-Value="provincia.Nombres" placeholder="Nombre de la provincia" />
+							<ValidationMessage For="@(() => provincia.Nombres)" />
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-success" data-bs-dismiss="modal"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
+				</div>
+			</EditForm>
+		</div>
+	</div>
 </div>
 
 
 <div class="modal modal-blur fade" id="modal-ciudades" tabindex="-1" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Registrar Ciudad</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <EditForm Model="ciudad" OnValidSubmit="GuardarCiudad">
-                <div class="modal-body">
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label class="form-label">Nombre</label>
-                            <InputText class="form-control" @bind-Value="ciudad.Nombres" placeholder="Nombre de la Ciudad" />
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success" data-bs-dismiss="modal"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
-                </div>
-            </EditForm>
-        </div>
-    </div>
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Registrar Ciudad</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<EditForm Model="ciudad" OnValidSubmit="GuardarCiudad">
+				<DataAnnotationsValidator />
+				<div class="modal-body">
+					<div class="row mb-3">
+						<div class="col">
+							<label class="form-label">Nombre</label>
+							<InputText class="form-control" @bind-Value="ciudad.Nombres" placeholder="Nombre de la Ciudad" />
+							<ValidationMessage For="@(() => ciudad.Nombres)" />
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-success" data-bs-dismiss="modal"><i class="fa-solid fa-floppy-disk me-2"></i>Guardar</button>
+				</div>
+			</EditForm>
+		</div>
+	</div>
 </div>
 
 @code {
-    Clientes cliente = new Clientes();
-    Provincias provincia = new Provincias();
-    Ciudades ciudad = new Ciudades();
+	Clientes cliente = new Clientes();
+	Provincias provincia = new Provincias();
+	Ciudades ciudad = new Ciudades();
 
-    bool IsDisabled = false;
-    bool IsDisabledButtons = true;
+	bool IsDisabled = false;
+	bool IsDisabledButtons = true;
 
-    List<Provincias> provincias = new List<Provincias>();
-    List<Ciudades> ciudades = new List<Ciudades>();
+	List<Provincias> provincias = new List<Provincias>();
+	List<Ciudades> ciudades = new List<Ciudades>();
 
-    public int UsuarioCreador { get; set; }
-    InputMask mask { get; set; }
+	public int UsuarioCreador { get; set; }
+	InputMask mask { get; set; }
 
-    [Parameter]
-    public int Id { get; set; }
+	[Parameter]
+	public int Id { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LlenarProvincias();
-        await LlenarCiudades();
+	protected override async Task OnInitializedAsync()
+	{
+		await LlenarProvincias();
+		await LlenarCiudades();
 
-        var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
-        ClaimsPrincipal usuario = (await customAuthStateProvider.GetAuthenticationStateAsync()).User;
+		var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+		ClaimsPrincipal usuario = (await customAuthStateProvider.GetAuthenticationStateAsync()).User;
 
-        if (usuario.Claims.Any())
-        {
-            UsuarioCreador = Convert.ToInt32(usuario.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
-        }
+		if (usuario.Claims.Any())
+		{
+			UsuarioCreador = Convert.ToInt32(usuario.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+		}
 
-        await BuscarParametro();
-    }
+		await BuscarParametro();
+	}
 
-    private async Task BuscarParametro()
-    {
-        if (Id > 0)
-        {
-            cliente = await clienteBLL.Buscar(Id);
+	private async Task BuscarParametro()
+	{
+		if (Id > 0)
+		{
+			cliente = await clienteBLL.Buscar(Id);
 
-            if (cliente.Activo == true)
-            {
-                if (cliente == null)
-                {
-                    cliente = new Clientes();
-                    toastService.ShowError("Cliente no encontrado");
-                }
-            }
-            else
-            {
-                toastService.ShowError("El cliente está nulo");
-                cliente = new Clientes();
-            }
-            IsDisabled = true;
-            IsDisabledButtons = false;
-        }
-    }
+			if (cliente.Activo == true)
+			{
+				if (cliente == null)
+				{
+					cliente = new Clientes();
+					toastService.ShowError("Cliente no encontrado");
+				}
+			}
+			else
+			{
+				toastService.ShowError("El cliente está nulo");
+				cliente = new Clientes();
+			}
+			IsDisabled = true;
+			IsDisabledButtons = false;
+		}
+	}
 
-    public async Task Editar()
-    {
-        IsDisabled = false;
-        IsDisabledButtons = true;
-    }
+	public async Task Editar()
+	{
+		IsDisabled = false;
+		IsDisabledButtons = true;
+	}
 
-    public async Task Guardar(EditContext editContext)
-    {
-        if (editContext.Validate())
-        {
-            if  (Utilitarios.IsValidCedula(cliente.Cedula))
-            {
-                if  (Utilitarios.IsValidEmail(cliente.Correo))
-                {
-                    if  (Utilitarios.IsValidTelefono(cliente.Telefono))
-                    {
-                        if  (Utilitarios.IsValidTelefono(cliente.Celular))
-                        {
-                            cliente.Usuarios = await usuarioBLL.Buscar(UsuarioCreador);
+	public async Task Guardar(EditContext editContext)
+	{
+		if (editContext.Validate())
+		{
+			if(cliente.FechaNacimiento.AddYears(18) > DateTime.Now)
+			{
+				toastService.ShowError("El cliente debe ser mayor de edad");
+				return;
+			}
 
-                            var paso = await clienteBLL.Guardar(cliente);
+			if(cliente.Telefono == cliente.Celular)
+			{
+				toastService.ShowError("El telefono no puede ser igual al celular");
+				return;
+			}
 
-                            if (paso)
-                                navManager.NavigateTo("/Clientes");
-                            else
-                                toastService.ShowError("No fue posible guardar");
-                        }
-                        else
-                        toastService.ShowError("Celular Invalido");
-                    }
-                    else
-                    toastService.ShowError("Teléfono Invalido");
-                }
-                else
-                toastService.ShowError("Correo Invalido");
-            }
-            else
-            toastService.ShowError("Cédula Invalido");
-        }
-    }
+			if(await clienteBLL.ExisteCorreo(cliente.Correo))
+			{
+				toastService.ShowError("Existe un cliente con este correo");
+				return;
+			}
+			if(await clienteBLL.ExisteCedula(cliente.Cedula))
+			{
+				toastService.ShowError("Existe un cliente con esta cédula");
+				return;
+			}
+			if(await clienteBLL.ExisteTelefono(cliente.Telefono))
+			{
+				toastService.ShowError("Existe un cliente con este teléfono");
+				return;
+			}
+			if(await clienteBLL.ExisteCelular(cliente.Celular))
+			{
+				toastService.ShowError("Existe un cliente con este celular");
+				return;
+			}
 
-    private async Task GuardarProvincia(EditContext editContext)
-    {
-        if (editContext.Validate())
-        {
-            var paso = await provinciaBLL.Guardar(provincia);
 
-            if (paso)
-            {
-                toastService.ShowSuccess("Provincia agregada con éxito!!");
-                await LlenarProvincias();
-            }
-            else
-                toastService.ShowError("Provincia no fue agregada!!");
-        }
-    }
+			cliente.Usuarios = await usuarioBLL.Buscar(UsuarioCreador);
 
-    private async Task GuardarCiudad(EditContext editContext)
-    {
-        if (editContext.Validate())
-        {
-            var paso = await ciudadBLL.Guardar(ciudad);
+			var paso = await clienteBLL.Guardar(cliente);
 
-            if (paso)
-            {
-                toastService.ShowSuccess("Ciudad agregada con éxito!!");
-                await LlenarCiudades();
-            }
-            else
-                toastService.ShowError("Ciudad no fue agregada!!");
-        }
-    }
+			if (paso)
+				navManager.NavigateTo("/Clientes");
+			else
+				toastService.ShowError("No fue posible guardar");
+		}
+	}
 
-    private async Task LlenarProvincias()
-    {
-        provincias = await provinciaBLL.GetList(x => true);
-    }
+	private async Task GuardarProvincia(EditContext editContext)
+	{
+		if (editContext.Validate())
+		{
+			var paso = await provinciaBLL.Guardar(provincia);
 
-    private async Task LlenarCiudades()
-    {
-        ciudades = await ciudadBLL.GetList(x => true);
-    }
+			if (paso)
+			{
+				toastService.ShowSuccess("Provincia agregada con éxito!!");
+				await LlenarProvincias();
+			}
+			else
+				toastService.ShowError("Provincia no fue agregada!!");
+		}
+	}
+
+	private async Task GuardarCiudad(EditContext editContext)
+	{
+		if (editContext.Validate())
+		{
+			var paso = await ciudadBLL.Guardar(ciudad);
+
+			if (paso)
+			{
+				toastService.ShowSuccess("Ciudad agregada con éxito!!");
+				await LlenarCiudades();
+			}
+			else
+				toastService.ShowError("Ciudad no fue agregada!!");
+		}
+	}
+
+	private async Task LlenarProvincias()
+	{
+		provincias = await provinciaBLL.GetList(x => true);
+	}
+
+	private async Task LlenarCiudades()
+	{
+		ciudades = await ciudadBLL.GetList(x => true);
+	}
 
 }

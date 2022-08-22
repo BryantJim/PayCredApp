@@ -139,5 +139,65 @@ namespace PayCredApp.BLL
             }
             return Lista;
         }
+
+        public async Task<bool> ExisteCorreo(string Correo)
+        {
+            bool existe = false;
+            try
+            {
+                existe = await _context.Clientes.AnyAsync(x => x.Correo == Correo && x.Activo == false);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return existe;
+        }
+
+        public async Task<bool> ExisteCedula(string cedula)
+        {
+            bool existe = false;
+            try
+            {
+                existe = await _context.Clientes.AnyAsync(x => x.Cedula == cedula && x.Activo == false);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return existe;
+        }
+
+        public async Task<bool> ExisteTelefono(string telefono)
+        {
+            bool existe = false;
+            try
+            {
+                existe = await _context.Clientes.AnyAsync(x => x.Telefono == telefono && x.Activo == false);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return existe;
+        }
+
+        public async Task<bool> ExisteCelular(string celular)
+        {
+            bool existe = false;
+            try
+            {
+                existe = await _context.Clientes.AnyAsync(x => x.Celular == celular && x.Activo == false);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return existe;
+        }
     }
 }

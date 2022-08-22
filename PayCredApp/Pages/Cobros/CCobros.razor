@@ -46,22 +46,22 @@
 									<div class="row">
 										<div class="col-12 col-md-2">
 											<label class="form-label">Campo a buscar</label>
-											<select class="form-select">
-												<option value="Id">Id Cobro</option>
-												<option value="Nombre">Cliente</option>
-												<option value="Cedula">Id Prestamo</option>
+											<select class="form-select" @bind="CampoBuscar">
+												<option value="1">Id Cobro</option>
+												<option value="2">Cliente</option>
+												<option value="3">Id Prestamo</option>
 											</select>
 										</div>
 										<div class="col-12 col-md-2">
 											<label class="form-label">Forma</label>
-											<select class="form-select">
-												<option value="Similitud">Similitud</option>
-												<option value="Igualdad">Igualdad</option>
+											<select class="form-select" @bind="Forma">
+												<option value="1">Similitud</option>
+												<option value="2">Igualdad</option>
 											</select>
 										</div>
 										<div class="col-12 col-md-8">
 											<label class="form-label">Criterio</label>
-											<input type="text" class="form-control" placeholder="Criterio del campo" />
+											<input type="text" class="form-control" @bind-value="Criterio" placeholder="Criterio del campo" />
 										</div>
 									</div>
 									<div class="row">
@@ -75,18 +75,18 @@
 												<div class="row">
 													<div class="col-12 col-md-6">
 														<label>Desde</label>
-														<input type="date" class="form-control" />
+														<input type="date" @bind="Desde" class="form-control" />
 													</div>
 													<div class="col-12 col-md-6">
 														<label>Hasta</label>
-														<input type="date" class="form-control" />
+														<input type="date" @bind="Hasta" class="form-control" />
 													</div>
 												</div>
 											}
 
 										</div>
 										<div class="col-12 col-md-6 mt-3 text-end">
-											<button class="btn btn-primary">
+											<button class="btn btn-primary" @onclick="Consulta">
 												<span class="oi oi-magnifying-glass me-2"></span>Consultar
 											</button>
 										</div>
@@ -173,6 +173,10 @@
 	public int CobroEliminar { get; set; } = 0;
 	public bool Fechas { get; set; } = false;
 
+	string Criterio = "";
+	int Forma = 1, CampoBuscar = 1, Id;
+	DateTime Desde = DateTime.Now, Hasta = DateTime.Now;
+
 	protected override async Task OnInitializedAsync()
 	{
 		await LlenarLista();
@@ -220,5 +224,37 @@
 			Fechas = false;
 
 		this.StateHasChanged();
+	}
+
+	private async Task Consulta()
+	{
+		await LlenarLista();
+
+		if (Criterio != "")
+		{
+			if (CampoBuscar == 1 || CampoBuscar == 3)
+				Id = Convert.ToInt32(Criterio);
+
+			if (CampoBuscar == 1 && Forma == 1)
+				ListCobros = ListCobros.Where(x => x.IdCliente.ToString().Contains(Criterio)).ToList();
+			else if (CampoBuscar == 2 && Forma == 1)
+				ListCobros = ListCobros.Where(x => x.Clientes.Nombres.ToLower().Contains(Criterio.ToLower())).ToList();
+			else if (CampoBuscar == 3 && Forma == 1)
+				ListCobros = ListCobros.Where(x => x.IdPrestamo.ToString().Contains(Criterio)).ToList();
+
+			if (CampoBuscar == 1 && Forma == 2)
+				ListCobros = ListCobros.Where(x => x.IdCliente == Id).ToList();
+			else if (CampoBuscar == 2 && Forma == 2)
+				ListCobros = ListCobros.Where(x => x.Clientes.Nombres == Criterio).ToList();
+			else if (CampoBuscar == 3 && Forma == 2)
+				ListCobros = ListCobros.Where(x => x.IdPrestamo == Id).ToList();
+		}
+
+		if (Fechas)
+		{
+			var desde = new DateTime(Desde.Year, Desde.Month, Desde.Day, 0, 0, 1);
+			var hasta = new DateTime(Hasta.Year, Hasta.Month, Hasta.Day, 23, 59, 59);
+			ListCobros = ListCobros.Where(x => x.Fecha >= desde && x.Fecha <= hasta).ToList();
+		}
 	}
 }
