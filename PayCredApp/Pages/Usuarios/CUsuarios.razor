@@ -85,21 +85,25 @@
 							<tbody class="table-tbody">
 								@foreach (var item in usuarios)
 								{
-									<tr>
-										<td>@item.IdUsuario</td>
-										<td>@item.Roles</td>
-										<td>@(item.Nombres)</td>
-										<td>@item.NombreUsuario</td>
-										<td>@item.Correo</td>
-										<td class="text-end">
-											<div class="btn-list flex-nowrap">
+									@if (item.IdUsuario > 1)
+									{
+										<tr>
+											<td>@item.IdUsuario</td>
+											<td>@item.Roles</td>
+											<td>@(item.Nombres)</td>
+											<td>@item.NombreUsuario</td>
+											<td>@item.Correo</td>
+											<td class="text-end">
+												<div class="btn-list flex-nowrap">
 
-												<a class="btn btn-info" href="/Registro/Usuarios/@item.IdUsuario"><i class="fa-solid fa-eye me-2"></i>Ver</a>
-												<a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-danger" @onclick="() => LlenarUsuarioEliminar(item.IdUsuario)"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</a>
-											</div>
+													<a class="btn btn-info" href="/Registro/Usuarios/@item.IdUsuario"><i class="fa-solid fa-eye me-2"></i>Ver</a>
+													<a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-danger" @onclick="() => LlenarUsuarioEliminar(item.IdUsuario)"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</a>
+												</div>
 
-										</td>
-									</tr>
+											</td>
+										</tr>
+									}
+
 								}
 							</tbody>
 						</table>
@@ -166,7 +170,7 @@
 	private async Task EliminarUsuario()
 	{
 		var paso = await usuarioBLL.Eliminar(UsuarioEliminar);
-		
+
 		await LlenarLista();
 	}
 
