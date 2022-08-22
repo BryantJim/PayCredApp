@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace PayCredApp.Data.Migrations
+namespace PayCredApp.Data.Migratioms
 {
     public partial class Inicial : Migration
     {
@@ -236,6 +236,7 @@ namespace PayCredApp.Data.Migrations
                     CapitalCobrado = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     InteresCobrado = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     MoraCobrada = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Observaciones = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EsNulo = table.Column<bool>(type: "bit", nullable: false),
                     CreadoPor = table.Column<int>(type: "int", nullable: false),
                     FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -272,6 +273,7 @@ namespace PayCredApp.Data.Migrations
                     IdCobro = table.Column<int>(type: "int", nullable: false),
                     IdPrestamo = table.Column<int>(type: "int", nullable: false),
                     NoCuota = table.Column<int>(type: "int", nullable: false),
+                    FechaCuota = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CapitalCobrado = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     InteresCobrado = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     MoraCobrada = table.Column<decimal>(type: "decimal(18,2)", nullable: false)

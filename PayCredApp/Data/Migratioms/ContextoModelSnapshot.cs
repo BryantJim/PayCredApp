@@ -3,19 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PayCredApp.Data;
 
 #nullable disable
 
-namespace PayCredApp.Data.Migrations
+namespace PayCredApp.Data.Migratioms
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20220820033710_Inicial")]
-    partial class Inicial
+    partial class ContextoModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,6 +165,9 @@ namespace PayCredApp.Data.Migrations
                     b.Property<decimal>("CapitalCobrado")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateTime>("FechaCuota")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("IdCobro")
                         .HasColumnType("int");
 
@@ -271,6 +272,10 @@ namespace PayCredApp.Data.Migrations
 
                     b.Property<decimal>("MoraCobrada")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Observaciones")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("IdCobro");
 

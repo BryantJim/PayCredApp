@@ -121,7 +121,7 @@ namespace PayCredApp.BLL
             List<Usuarios> Lista = new List<Usuarios>();
             try
             {
-                Lista = await _context.Usuarios.Where(usuario).Where(x => x.EsNulo == false).AsNoTracking().ToListAsync();
+                Lista = await _context.Usuarios.Where(usuario).Where(x => x.EsNulo == false).Include(x => x.Roles).AsNoTracking().ToListAsync();
             }
             catch (Exception)
             {
